@@ -18,10 +18,12 @@ JS_TARGETS = \
 	static/js/views/view-world.js \
 	static/js/main.js
 
+LESS_FILES = static/less/style.less
+
 # ---------------------------------------
 #  Make
 # ---------------------------------------
-all: coffee
+all: coffee less
 
 #Coffee script
 coffee:
@@ -34,6 +36,18 @@ coffee:
 	@coffee --compile --output static/js/spec static/coffee/spec
 	@echo "Compiled coffeejs...	${CHECK} Done\n"
 	@echo "${HR}"
+	@echo "\n${HR}"
+	
+less: 
+	@echo "\n${HR}"
+	@echo "Combining Less Files"
+	@cat $(LESS_FILES) > static/css/all.less
+	@echo "${CHECK} Done"
+	@echo "\n${HR}"
+	@echo "Compiling CSS"
+	@./node_modules/less/bin/lessc static/css/all.less static/css/style-all.css
+	@rm static/css/all.less
+	@echo "Running Less compiler... ${CHECK} Done"
 	@echo "\n${HR}"
 
 watch:
