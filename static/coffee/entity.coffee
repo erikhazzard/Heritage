@@ -3,34 +3,61 @@
 #Entity Class - Definition for Entity
 #
 #============================================================================
-define(['vector'], (Vector)->
+define(['components/vector', 'world'], (Vector, world)->
     class Entity
+        #Constants
+        @DEFAULTS = {
+            health: 80
+            food: 40
+        }
+
         constructor: (params) ->
             #Setup the entity
             params = params or {}
+            rules = params.rules || {}
+
+            #MOVEMENT
+            #----------------------------
             @position = params.position or new Vector(
                 Math.random() * 200 | 0,
                 Math.random() * 200 | 0
             )
+            @positionMax = params.positionMax or new Vector(
+                world.width,
+                world.height
+            )
+            @positionGrid = {i: 0, j: 0}
+            @cellSize = params.cellSize || world.cellSize
+
             @velocity = params.velocity or new Vector(0,0)
-            
             @acceleration = params.acceleration or new Vector(0,0)
-            @color = params.color
-            if not @color
-                @color = 'rgba(' + (Math.random() * 255 | 0)
-                + ',' + (Math.random() * 255 | 0) + ','
-                + (Math.random() * 255 | 0)
-                + ','
-                + '1)'
-            @health = params.health or 80
-            @mass = params.mass or (Math.random() * 20 | 0) + 5
             @maxSpeed = params.maxSpeed or 8
             @maxForce = params.maxForce or .5
+            @maxSeekForceDistance = params.maxSeekForceDistance or 100
             
+            #Flocking behavior
+            #----------------------------
+            @rules = {
+                #Boids behavior for seeking members of the same group
+                align: rules.align or Math.random() * 2
+                cohesion: rules.cohesion or Math.random() * 2
+                separate: rules.separate or Math.random() * 2
+            }
+            
+            #Stats
+            #----------------------------
+            @health = params.health or Entity.DEFAULTS.health
+            #when food goes below 0, it starts taking away health
+            @food = params.food or Entity.DEFAULTS.food
+            @mass = params.mass or (Math.random() * 20 | 0) + 5
 
-            @ruleAlign = Math.random() * 2
-            @ruleCohesion = Math.random() * 2
-            @ruleSeparate = Math.random() * 2
+            @color = params.color
+            if not @color
+                @color = 'rgba(' + (Math.random() * 255 | 0) \
+                + ',' + (Math.random() * 255 | 0) + ',' \
+                + (Math.random() * 255 | 0) \
+                + ',' \
+                + '1)'
 
             return @
     
@@ -41,9 +68,18 @@ define(['vector'], (Vector)->
 
             @position.add(@velocity)
             @checkEdges()
+            @updatePositionGrid()
 
             #reset acceleration
             @acceleration.multiply(0)
+            
+        updatePositionGrid: ()->
+            #NOTE: should this live in a grid class?
+            @positionGrid = {
+                i: Math.floor(@position.y / @cellSize)
+                j: Math.floor(@position.x / @cellSize)
+            }
+            return @
 
         draw: ()->
             #Draw entity to canvas 
@@ -63,19 +99,22 @@ define(['vector'], (Vector)->
         #--------------------------------
         checkEdges: ()->
             #Wrap around 
-            if @position.x >= width
-                @position.x = @position.x % (width)
+            if @position.x >= @positionMax.x
+                @position.x = @position.x % (@positionMax.x)
             else if @position.x < 0
-                @position.x = width - 1
+                @position.x = @positionMax.x - 1
                 
-            if @position.y >= height
-                @position.y = @position.y % (height)
+            if @position.y >= @positionMax.y
+                @position.y = @position.y % (@positionMax.y)
             else if @position.y < 0
-                @position.y = height - 1
+                @position.y = @positionMax.y - 1
+                
+            return @
 
         applyForce: (force)->
             #Add the passed in force to the acceleration
             @acceleration.add( force.copy() )
+            return force
 
         #---------------------------------------
         #
@@ -83,7 +122,7 @@ define(['vector'], (Vector)->
         #
         #---------------------------------------
         #Calculate steering force towards a target
-        seekForce: (target, flee, maxForceDistance)->
+        seekForce: (target, flee)->
             #How far to check for neighbors in
             maxDistance = 100
             
@@ -99,10 +138,10 @@ define(['vector'], (Vector)->
             #-----------------------------------
             #get distance threshold
             #-----------------------------------
-            if maxForceDistance
+            if @maxSeekForceDistance
                 curDistance = @position.distance(target)
                 #Make sure entity is within range of other entities
-                if curDistance <= 0 or curDistance > maxForceDistance
+                if curDistance <= 0 or curDistance > @maxSeekForceDistance
                     return new Vector(0,0)
 
             #-----------------------------------
@@ -235,7 +274,7 @@ define(['vector'], (Vector)->
                 curDistance = @position.distance(targetEntity.position)
 
                 #Make sure entity is within range of other entities
-                if curDistance > 0 and curDistance < separationDistance and (targetEntity not @)
+                if curDistance > 0 and curDistance < separationDistance and (targetEntity != @)
                     #get vector which points away (get a new vector)
                     diffVector = Vector.prototype.subtract(@position, targetEntity.position)
                     diffVector.normalize()
@@ -308,16 +347,22 @@ define(['vector'], (Vector)->
             
             return steer
 
+        
+        #--------------------------------
+        #Boids - Flock behavior
+        #--------------------------------
         flock: (entities)->
+            #Get each rule
             sep = @separate(entities)
-            
             align = @align(entities)
             cohesion = @cohesion(entities)
 
-            sep.multiply(@ruleSeparate)
-            align.multiply(@ruleAlign)
-            cohesion.multiply(@ruleCohesion)
+            #Mutliply the values
+            sep.multiply(@rules.separate)
+            align.multiply(@rules.align)
+            cohesion.multiply(@rules.cohesion)
             
+            #Apply the force
             @applyForce(sep)
             @applyForce(align)
             @applyForce(cohesion)

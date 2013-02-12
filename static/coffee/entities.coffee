@@ -6,18 +6,21 @@
 define([], ()->
     class Entities
         constructor: (params)->
-            @entities = []
+            @entities = {}
+            @_currentId = 0
 
-        add: (params)->
-            params = params or {}
-            @entities.push(new Entity(params))
+        #--------------------------------
+        #Entities - add / remove
+        #--------------------------------
+        add: (entity)->
+            @entities[@_currentId] = entity
+            @_currentId += 1
+            #Update indexes
+            return entity
             
-        remove: (i)->
-            @entities.splice(i,1)
+        remove: (id)->
+            delete @entities[id]
+            return @
 
-        applyForce: (force)->
-            for entity in @entities
-                @entities[entity].applyForce(force)
-                
     return Entities
 )

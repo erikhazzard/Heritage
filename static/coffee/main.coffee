@@ -21,6 +21,7 @@ requirejs.config({
 #========================================
 #Set everything up
 #========================================
-require(["jquery", "game"], ($, game)->
-    game.init()
+require(["jquery", "game"], ($, Game)->
+    game = new Game()
+    game.start()
 )

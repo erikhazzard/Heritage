@@ -1,11 +1,11 @@
 #============================================================================
 #
-#Vector Class - Definition for Vector class
-#   2D vector
+#Systems - Renderer
+#   Controls the renderer
 #
 #============================================================================
 define([], ()->
-    class Vector
+    Renderer = {}
     
-    return Vector
+    return Renderer
 )

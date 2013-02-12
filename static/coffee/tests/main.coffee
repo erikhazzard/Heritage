@@ -27,7 +27,9 @@ require(['require', 'lib/chai', 'lib/mocha'], (require,chai)->
     mocha.setup('bdd')
 
     #Tests go here
-    require(['tests/tests'], ()->
+    require(['tests/entity',
+        'tests/entities',
+        'tests/vector'], ()->
         #Start runner
         mocha.run()
     )
