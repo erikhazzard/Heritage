@@ -15,7 +15,10 @@
   require(["jquery", "game"], function($, Game) {
     var game;
     game = new Game();
-    return game.start();
+    game.start();
+    if (window) {
+      return window.game = game;
+    }
   });
 
 }).call(this);

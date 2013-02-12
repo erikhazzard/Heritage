@@ -14,6 +14,11 @@
         return new Vector(this.x, this.y);
       };
 
+      Vector.prototype.set = function(x, y) {
+        this.x = x;
+        return this.y = y;
+      };
+
       Vector.prototype.add = function(vector, vector2) {
         var returnVector;
         if (!vector2) {

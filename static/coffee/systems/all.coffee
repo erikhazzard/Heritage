@@ -6,9 +6,15 @@
 #
 #============================================================================
 define(['systems/renderer'], (Renderer)->
-    Systems = {
-        'renderer': Renderer
-    }
+    class Systems
+        constructor: (entities)->
+            @entities = entities
+            
+            @systems =  {
+                'renderer': new Renderer(@entities)
+            }
+
+            return @
     
     return Systems
 )

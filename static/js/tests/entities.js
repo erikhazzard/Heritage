@@ -28,7 +28,7 @@
         });
         return entities._currentId.should.equal(2);
       });
-      return it('should remove an entity', function() {
+      it('should remove an entity', function() {
         var entities, entity;
         entities = new Entities();
         entity = new Entity();
@@ -36,6 +36,53 @@
         entities.remove('0');
         entities.entities.should.deep.equal({});
         return entities._currentId.should.equal(1);
+      });
+      it('should get update index when component is added', function() {
+        var entities, entitiesByComponent, entity;
+        entities = new Entities();
+        entity = new Entity();
+        entities.add(entity);
+        entities.entitiesIndex.should.deep.equal({});
+        entity.addComponent('renderer');
+        entity.hasComponent('renderer').should.be["true"];
+        entitiesByComponent = entities._getEntities('renderer');
+        entitiesByComponent.should.deep.equal({
+          '0': entity
+        });
+        return entities.entitiesIndex.should.deep.equal({
+          renderer: {
+            '0': entity
+          }
+        });
+      });
+      it('should return entities with components when entity is created then added', function() {
+        var entities, entity;
+        entity = new Entity();
+        entity.addComponent('renderer');
+        entities = new Entities();
+        entities.entitiesIndex.should.deep.equal({});
+        entities.add(entity);
+        entities.entities.should.deep.equal({
+          '0': entity
+        });
+        return entities.entitiesIndex.should.deep.equal({
+          'renderer': {
+            '0': entity
+          }
+        });
+      });
+      return it('should update index when component is removed from entity', function() {
+        var entities, entity;
+        entities = new Entities();
+        entity = new Entity();
+        entities.add(entity);
+        entity.addComponent('renderer');
+        entity.hasComponent('renderer').should.be["true"];
+        entity.removeComponent('renderer');
+        entity.hasComponent('renderer').should.be["false"];
+        return entities.entitiesIndex.should.deep.equal({
+          renderer: {}
+        });
       });
     });
   });

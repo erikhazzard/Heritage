@@ -24,4 +24,7 @@ requirejs.config({
 require(["jquery", "game"], ($, Game)->
     game = new Game()
     game.start()
+    
+    if window
+        window.game = game
 )

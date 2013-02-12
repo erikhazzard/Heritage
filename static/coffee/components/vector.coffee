@@ -13,6 +13,10 @@ define([], ()->
         copy: ()->
             #returns a copy of the passed in vector
             return new Vector( @x, @y )
+
+        set: (x,y)->
+            @x = x
+            @y = y
         
         #--------------------------------
         #OPERATIONS

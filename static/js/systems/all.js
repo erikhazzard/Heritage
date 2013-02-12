@@ -3,9 +3,19 @@
 
   define(['systems/renderer'], function(Renderer) {
     var Systems;
-    Systems = {
-      'renderer': Renderer
-    };
+    Systems = (function() {
+
+      function Systems(entities) {
+        this.entities = entities;
+        this.systems = {
+          'renderer': new Renderer(this.entities)
+        };
+        return this;
+      }
+
+      return Systems;
+
+    })();
     return Systems;
   });
 
