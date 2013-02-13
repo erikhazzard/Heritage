@@ -23,7 +23,9 @@
         if (!this.entitiesIndex[componentName]) {
           this.entitiesIndex[componentName] = {};
         }
-        this.entitiesIndex[componentName][entityId] = this.entities[entityId];
+        if (entityId) {
+          this.entitiesIndex[componentName][entityId] = this.entities[entityId];
+        }
         return this.entitiesIndex;
       };
 
@@ -31,7 +33,9 @@
         if (!this.entitiesIndex[componentName]) {
           this.entitiesIndex[componentName] = {};
         }
-        delete this.entitiesIndex[componentName][entityId];
+        if (entityId) {
+          delete this.entitiesIndex[componentName][entityId];
+        }
         return this.entitiesIndex;
       };
 

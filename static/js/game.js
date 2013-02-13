@@ -14,7 +14,18 @@
       }
 
       Game.prototype.start = function() {
-        this.entities.add(new Entity()).addComponent('position').addComponent('renderer').addComponent('physics');
+        var entity, i;
+        i = 0;
+        while (i < 10) {
+          entity = new Entity();
+          entity.addComponent('position').addComponent('renderer').addComponent('physics');
+          entity.components.position.x = Math.random() * 30 | 0;
+          entity.components.position.y = Math.random() * 200 | 0;
+          entity.components.physics.velocity.x = Math.random() * 22 | 0;
+          entity.components.physics.velocity.y = Math.random() * 22 | 0;
+          this.entities.add(entity);
+          i++;
+        }
         return this.loop();
       };
 

@@ -12,18 +12,76 @@
         this.acceleration = new Vector(0, 0);
         this.maxSpeed = params.maxSpeed || 8;
         this.maxForce = params.maxForce || 5;
-        this.maxSeekForceDistance = params.maxSeekForceDistance || 100;
+        this.maxSeekForceDistance = params.maxSeekForceDistance || 150;
         this.mass = params.mass || 10;
+        this.maxX = 200;
+        this.maxY = 200;
         return this;
       }
 
       Physics.prototype.tick = function(delta) {
         this.velocity.add(this.acceleration);
         this.velocity.limit(this.maxSpeed);
+        this.checkEdges();
         if (this.entity) {
           this.entity.components.position.add(this.velocity);
         }
-        return this.acceleration.multiply(0);
+        this.acceleration.multiply(0);
+        return this;
+      };
+
+      Physics.prototype.checkEdges = function() {
+        if (this.entity.components.position.x >= this.maxX) {
+          this.entity.components.position.x = this.entity.components.position.x % this.maxX;
+        } else if (this.entity.components.position.x < 0) {
+          this.entity.components.position.x = this.maxX - 1;
+        }
+        if (this.entity.components.position.y >= this.maxY) {
+          this.entity.components.position.y = this.entity.components.position.y % this.maxY;
+        } else if (this.entity.components.position.y < 0) {
+          this.entity.components.position.y = this.maxY - 1;
+        }
+        return this;
+      };
+
+      Physics.prototype.applyForce = function(force) {
+        this.acceleration.add(force.copy());
+        return force;
+      };
+
+      Physics.prototype.cosLookup = {};
+
+      Physics.prototype.sinLookup = {};
+
+      Physics.prototype.seekForce = function(target, flee) {
+        var curDistance, desiredVelocity, distance, magnitude, maxDistance, scale, steer, steerLine;
+        maxDistance = 80;
+        if (target && target.components.position) {
+          target = target.components.position;
+        }
+        desiredVelocity = Vector.prototype.subtract(target, this.position);
+        if (this.maxSeekForceDistance) {
+          curDistance = this.position.distance(target);
+          if (curDistance <= 0 || curDistance > this.maxSeekForceDistance) {
+            return new Vector(0, 0);
+          }
+        }
+        distance = desiredVelocity.magnitude();
+        magnitude = 0;
+        scale = d3.scale.linear().domain([0, maxDistance]).range([0, this.maxSpeed]);
+        if (distance < maxDistance) {
+          magnitude = scale(distance);
+          desiredVelocity.multiply(magnitude);
+        } else {
+          desiredVelocity.multiply(this.maxSpeed);
+        }
+        steer = Vector.prototype.subtract(desiredVelocity, this.velocity);
+        steerLine = Vector.prototype.add(this.position, steer);
+        steer.limit(this.maxForce);
+        if (flee) {
+          steer.multiply(-1);
+        }
+        return steer;
       };
 
       return Physics;

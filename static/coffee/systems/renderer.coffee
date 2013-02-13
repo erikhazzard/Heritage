@@ -20,7 +20,6 @@ define([], ()->
             
             #Renders to the canvas. Ideally, we'd use events here
             for id, entity of @entities.entitiesIndex['renderer']
-            #for id, entity of @entities.getEntities('renderer')
                 context.save()
                 context.fillStyle = entity.components.renderer.color
                 context.fillRect(

@@ -11,6 +11,7 @@ define(['components/all','events'], (Components, events)->
             @id = null
             #The components are what 'defines' the entity
             @components = {}
+
             return @
         
         remove: ()->
