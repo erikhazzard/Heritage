@@ -12,14 +12,14 @@ define(['entity'], (Entity)->
         )
         it('should add a component', ()->
             a = new Entity()
-            a.addComponent('vector')
-            a.components.vector.should.not.equal(undefined)
-            a.hasComponent('vector').should.be.true
+            a.addComponent('renderer')
+            a.components.renderer.should.not.equal(undefined)
+            a.hasComponent('renderer').should.be.true
         )
         it('should remove a component', ()->
             a = new Entity()
-            a.addComponent('vector')
-            a.removeComponent('vector')
+            a.addComponent('renderer')
+            a.removeComponent('renderer')
             a.components.should.deep.equal({})
         )
     )

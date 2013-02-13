@@ -1,0 +1,15 @@
+Entity Component System
+---
+To keep in mind:
+    -Uses events for communication between Entities and Entity
+        -when entity updates a component, event is triggered
+
+-Questions:
+    -Should coupled components have dependencies?
+        -e.g., Physics requires entity to have a Position component.
+            when adding a physics component, should it error or require a
+            position component to exist already (or add one automaticaly?)
+        -How to manage component <-> component dependencies?
+
+
+

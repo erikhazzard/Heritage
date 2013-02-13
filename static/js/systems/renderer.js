@@ -20,10 +20,9 @@
         _ref = this.entities.entitiesIndex['renderer'];
         for (id in _ref) {
           entity = _ref[id];
-          entity.components.vector.set(Math.random() * 200, Math.random() * 200);
           context.save();
           context.fillStyle = entity.components.renderer.color;
-          context.fillRect(entity.components.vector.x, entity.components.vector.y, entity.components.renderer.size, entity.components.renderer.size);
+          context.fillRect(entity.components.position.x, entity.components.position.y, entity.components.renderer.size, entity.components.renderer.size);
           context.restore();
         }
         return this;

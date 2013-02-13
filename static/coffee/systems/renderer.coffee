@@ -21,14 +21,11 @@ define([], ()->
             #Renders to the canvas. Ideally, we'd use events here
             for id, entity of @entities.entitiesIndex['renderer']
             #for id, entity of @entities.getEntities('renderer')
-                entity.components.vector.set(
-                    Math.random() * 200, Math.random() * 200
-                )
                 context.save()
                 context.fillStyle = entity.components.renderer.color
                 context.fillRect(
-                    entity.components.vector.x,
-                    entity.components.vector.y,
+                    entity.components.position.x,
+                    entity.components.position.y,
                     entity.components.renderer.size,
                     entity.components.renderer.size
                 )

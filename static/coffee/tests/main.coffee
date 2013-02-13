@@ -29,7 +29,10 @@ require(['require', 'lib/chai', 'lib/mocha'], (require,chai)->
     #Tests go here
     require(['tests/entity',
         'tests/entities',
-        'tests/vector'], ()->
+        'tests/components/vector',
+        'tests/components/position',
+        'tests/components/physics',
+        ], ()->
         #Start runner
         mocha.run()
     )

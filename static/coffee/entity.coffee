@@ -18,11 +18,15 @@ define(['components/all','events'], (Components, events)->
                 if component and component.remove
                     component.remove
             return @
+        
         #--------------------------------
         #Components
         #--------------------------------
         addComponent: (name)->
-            @components[name] = new Components[name]
+            #Create component, pass in this entity object
+            #   NOTE: Interface for components always assume an entity is 
+            #   passed in as first parameter
+            @components[name] = new Components[name](@)
             events.trigger('entity:component:added', {
                 id: @id,
                 componentName: name

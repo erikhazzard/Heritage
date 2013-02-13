@@ -11,15 +11,15 @@
       it('should add a component', function() {
         var a;
         a = new Entity();
-        a.addComponent('vector');
-        a.components.vector.should.not.equal(void 0);
-        return a.hasComponent('vector').should.be["true"];
+        a.addComponent('renderer');
+        a.components.renderer.should.not.equal(void 0);
+        return a.hasComponent('renderer').should.be["true"];
       });
       return it('should remove a component', function() {
         var a;
         a = new Entity();
-        a.addComponent('vector');
-        a.removeComponent('vector');
+        a.addComponent('renderer');
+        a.removeComponent('renderer');
         return a.components.should.deep.equal({});
       });
     });

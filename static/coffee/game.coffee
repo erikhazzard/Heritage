@@ -13,15 +13,16 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
         start: ()->
             #Initialize stuff
             @entities.add( new Entity() )
-                .addComponent('vector')
+                .addComponent('position')
                 .addComponent('renderer')
+                .addComponent('physics')
                 
             @loop()
             
             #For debug / performance
-            setInterval(()=>
-                console.log('Ticks after 1 sec: ' + @numTicks)
-            , 1000)
+            #setInterval(()=>
+                #console.log('Ticks after 1 sec: ' + @numTicks)
+            #, 1000)
 
         #--------------------------------
         #Game Loop stuff

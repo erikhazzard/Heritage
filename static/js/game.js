@@ -14,12 +14,8 @@
       }
 
       Game.prototype.start = function() {
-        var _this = this;
-        this.entities.add(new Entity()).addComponent('vector').addComponent('renderer');
-        this.loop();
-        return setInterval(function() {
-          return console.log('Ticks after 1 sec: ' + _this.numTicks);
-        }, 1000);
+        this.entities.add(new Entity()).addComponent('position').addComponent('renderer').addComponent('physics');
+        return this.loop();
       };
 
       Game.prototype.loop = function() {

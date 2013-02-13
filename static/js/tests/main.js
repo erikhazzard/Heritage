@@ -18,7 +18,7 @@
     should = chai.should();
     expect = chai.expect;
     mocha.setup('bdd');
-    return require(['tests/entity', 'tests/entities', 'tests/vector'], function() {
+    return require(['tests/entity', 'tests/entities', 'tests/components/vector', 'tests/components/position', 'tests/components/physics'], function() {
       return mocha.run();
     });
   });

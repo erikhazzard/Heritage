@@ -3,10 +3,14 @@
 #Components - returns object containing all components
 #
 #============================================================================
-define(['components/vector', 'components/renderer'], (Vector, Renderer)->
+define(['components/position', 'components/renderer', 'components/physics'], (Position, Renderer, Physics)->
     Components = {
-        'vector': Vector
-        'renderer': Renderer
+        renderer: Renderer
+        
+        #World related
+        position: Position
+        physics: Physics
+        
     }
     return Components
 )
