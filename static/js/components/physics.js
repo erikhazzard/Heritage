@@ -49,14 +49,10 @@
         return force;
       };
 
-      Physics.prototype.cosLookup = {};
-
-      Physics.prototype.sinLookup = {};
-
-      Physics.prototype.seekForce = function(target, flee) {
-        var curDistance, desiredVelocity, distance, magnitude, maxDistance, position, scale, steer, steerLine;
-        maxDistance = 80;
-        if (target && target.components.position) {
+      Physics.prototype.seekForce = function(target, maxDistance, flee) {
+        var curDistance, desiredVelocity, distance, magnitude, position, scale, steer, steerLine;
+        maxDistance = maxDistance || 80;
+        if (target && target.components && target.components.position) {
           target = target.components.position;
         }
         position = this.entity.components.position;

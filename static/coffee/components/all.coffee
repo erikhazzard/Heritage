@@ -3,7 +3,14 @@
 #Components - returns object containing all components
 #
 #============================================================================
-define(['components/position', 'components/renderer', 'components/physics'], (Position, Renderer, Physics)->
+define(['components/position',
+    'components/renderer',
+    'components/physics',
+    'components/randomWalker',
+    'components/flocking',
+    ], (
+    Position, Renderer, Physics, RandomWalker, Flocking
+    )->
     Components = {
         renderer: Renderer
         
@@ -11,6 +18,8 @@ define(['components/position', 'components/renderer', 'components/physics'], (Po
         position: Position
         physics: Physics
         
+        randomWalker: RandomWalker
+        flocking: Flocking
     }
     return Components
 )

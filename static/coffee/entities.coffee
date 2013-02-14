@@ -58,13 +58,14 @@ define(['events'], (events)->
             for name, component of entity.components
                 @addToIndex(name, entity.id)
             
-            return entity
+            return @
             
         remove: (id)->
             if @entities[id] and @entities[id].remove
                 @entities[id].remove()
                 
             delete @entities[id]
+            
             return @
         
         #--------------------------------

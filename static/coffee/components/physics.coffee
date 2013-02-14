@@ -91,20 +91,23 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
         #Seek force
         #
         #---------------------------------------
-        #Helper / optimization lookups
-        cosLookup: {}
-        sinLookup: {}
-        
-        seekForce: (target, flee)->
-            #Calculate steering force towards a target
+        seekForce: (target, maxDistance, flee)->
+            #Calculate steering force towards a target and returns the force
+            #  If maxDistance is passed in, specifies how far to check for neighbors
+            #  If flee is passed in, force is multiplied by -1
+            
             #How far to check for neighbors in
-            maxDistance = 80
+            maxDistance = maxDistance || 80
             
             #check if the passed in object has a position property
-            if target and target.components.position
+            if target and target.components and target.components.position
                 target = target.components.position
                 
             #store reference
+            #TODO: Should we reference @entity here? If we do, it requires
+            #  us to pass in a physics component (might not be bad, since we
+            #  limit force and look at other properties of the physics 
+            #  component
             position = @entity.components.position
 
             #seek a target

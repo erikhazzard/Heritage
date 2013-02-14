@@ -49,7 +49,7 @@
           component = _ref[name];
           this.addToIndex(name, entity.id);
         }
-        return entity;
+        return this;
       };
 
       Entities.prototype.remove = function(id) {

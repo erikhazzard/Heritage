@@ -48,7 +48,7 @@
         return entity.components.position.y.should.equal(8);
       });
     });
-    return describe('Physics: seek() tests', function() {
+    describe('Physics: seek() tests', function() {
       return it('should return a proper seek force', function() {
         var a, b, force;
         a = new Entity().addComponent('physics').addComponent('position');
@@ -62,6 +62,9 @@
         force.x.should.equal(2.2627416997969525);
         return force.y.should.equal(2.2627416997969525);
       });
+    });
+    return describe('Physics: applyForce()', function() {
+      return it('should return apply a force', function() {});
     });
   });
 

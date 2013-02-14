@@ -92,4 +92,10 @@ define(['components/vector', 'components/physics', 'entity'], (Vector, Physics, 
 
         )
     )
+    
+    describe('Physics: applyForce()', ()->
+        it('should return apply a force', ()->
+            
+        )
+    )
 )

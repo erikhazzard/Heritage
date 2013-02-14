@@ -13,12 +13,15 @@
       }
 
       Physics.prototype.tick = function(delta) {
-        var entity, id, _ref, _results;
-        _ref = this.entities.entitiesIndex['position'];
+        var entity, id, physics, _ref, _results;
+        _ref = this.entities.entitiesIndex['physics'];
         _results = [];
         for (id in _ref) {
           entity = _ref[id];
-          entity.components.physics.applyForce(entity.components.physics.seekForce(this.entities.entities['0']));
+          physics = entity.components.physics;
+          if (entity.hasComponent('randomWalker')) {
+            physics.applyForce(entity.components.randomWalker.walkForce());
+          }
           _results.push(entity.components.physics.tick(delta));
         }
         return _results;

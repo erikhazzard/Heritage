@@ -16,8 +16,10 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
             while i<2
                 entity = new Entity()
                 entity.addComponent('position')
-                    .addComponent('renderer')
                     .addComponent('physics')
+                    .addComponent('randomWalker')
+                    .addComponent('renderer')
+                    
                 entity.components.position.x = Math.random() * 30 | 0
                 entity.components.position.y = Math.random() * 200 | 0
                 entity.components.physics.velocity.x = Math.random() * 22 | 0
