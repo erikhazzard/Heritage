@@ -87,9 +87,13 @@ define(['components/vector', 'components/physics', 'entity'], (Vector, Physics, 
             
             a.components.position = new Vector(4,4)
             b.components.position = new Vector(8,8)
+            a.components.physics.maxForce = 0.5
+            a.components.physics.maxSpeed = 8
+            #When the maxForce and speed are set to those values, we should get 
+            #  this
             force = a.components.physics.seekForce(b)
-            force.x.should.equal(2.2627416997969525)
-            force.y.should.equal(2.2627416997969525)
+            force.x.should.equal(0.35355339059327373)
+            force.y.should.equal(0.35355339059327373)
 
         )
     )
