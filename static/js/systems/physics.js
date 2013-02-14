@@ -18,6 +18,7 @@
         _results = [];
         for (id in _ref) {
           entity = _ref[id];
+          entity.components.physics.applyForce(entity.components.physics.seekForce(this.entities.entities['0']));
           _results.push(entity.components.physics.tick(delta));
         }
         return _results;

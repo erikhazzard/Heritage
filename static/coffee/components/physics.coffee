@@ -10,7 +10,7 @@
 #   tick() function - should this live here, or in the physics
 #       system?
 #============================================================================
-define(['components/vector'], (Vector)->
+define(['components/vector', 'lib/d3'], (Vector, d3)->
     class Physics
         constructor: (entity, params)->
             params = params || {}
@@ -103,17 +103,20 @@ define(['components/vector'], (Vector)->
             #check if the passed in object has a position property
             if target and target.components.position
                 target = target.components.position
+                
+            #store reference
+            position = @entity.components.position
 
             #seek a target
             desiredVelocity = Vector.prototype.subtract(
                 target,
-                @position)
+                position)
 
             #-----------------------------------
             #get distance threshold
             #-----------------------------------
             if @maxSeekForceDistance
-                curDistance = @position.distance(target)
+                curDistance = position.distance(target)
                 #Make sure entity is within range of other entities
                 if curDistance <= 0 or curDistance > @maxSeekForceDistance
                     return new Vector(0,0)
@@ -143,7 +146,7 @@ define(['components/vector'], (Vector)->
 
             #draw the line (optional)
             #-----------------------------------
-            steerLine = Vector.prototype.add(@position, steer)
+            steerLine = Vector.prototype.add(position, steer)
             #GAME.util.drawLine(@position, steerLine)
             #GAME.util.drawLine(
                 #@position, 
@@ -156,7 +159,7 @@ define(['components/vector'], (Vector)->
 
             if flee
                 steer.multiply(-1)
-            
+                
             return steer
 
     return Physics

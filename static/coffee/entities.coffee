@@ -29,7 +29,7 @@ define(['events'], (events)->
                 @entitiesIndex[componentName] = {}
             #Store the entity object
             #  TODO: store only the ID?
-            if entityId
+            if entityId != undefined and entityId != null
                 #Make sure ID exists
                 @entitiesIndex[componentName][entityId] = @entities[entityId]
             return @entitiesIndex
@@ -38,7 +38,7 @@ define(['events'], (events)->
             if not @entitiesIndex[componentName]
                 @entitiesIndex[componentName] = {}
                 
-            if entityId
+            if entityId != undefined and entityId != null
                 delete @entitiesIndex[componentName][entityId]
             
             return @entitiesIndex

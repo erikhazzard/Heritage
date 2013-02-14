@@ -5,6 +5,9 @@
     baseUrl: '/static/js',
     urlArgs: "v=" + (new Date()).getTime(),
     shim: {
+      'lib/d3': {
+        exports: 'd3'
+      },
       'lib/backbone': {
         deps: ['lib/underscore', 'lib/jquery'],
         exports: 'Backbone'

@@ -16,7 +16,7 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        while (i < 10) {
+        while (i < 2) {
           entity = new Entity();
           entity.addComponent('position').addComponent('renderer').addComponent('physics');
           entity.components.position.x = Math.random() * 30 | 0;

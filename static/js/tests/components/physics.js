@@ -8,7 +8,7 @@
         return physics = new Physics();
       });
     });
-    return describe('Physics: tick() update tests', function() {
+    describe('Physics: tick() update tests', function() {
       it('tick() should properly update position', function() {
         var entity, physics;
         entity = new Entity();
@@ -46,6 +46,21 @@
         physics.tick();
         entity.components.position.x.should.equal(8);
         return entity.components.position.y.should.equal(8);
+      });
+    });
+    return describe('Physics: seek() tests', function() {
+      return it('should return a proper seek force', function() {
+        var a, b, force;
+        a = new Entity().addComponent('physics').addComponent('position');
+        b = new Entity().addComponent('physics').addComponent('position');
+        force = a.components.physics.seekForce(b);
+        force.x.should.equal(0);
+        force.y.should.equal(0);
+        a.components.position = new Vector(4, 4);
+        b.components.position = new Vector(8, 8);
+        force = a.components.physics.seekForce(b);
+        force.x.should.equal(2.2627416997969525);
+        return force.y.should.equal(2.2627416997969525);
       });
     });
   });

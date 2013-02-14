@@ -12,7 +12,7 @@ define(['components/vector', 'components/physics', 'entity'], (Vector, Physics, 
     )
 
     #--------------------------------
-    #Physics tests
+    #tick update
     #--------------------------------
     describe('Physics: tick() update tests', ()->
         it('tick() should properly update position', ()->
@@ -64,6 +64,32 @@ define(['components/vector', 'components/physics', 'entity'], (Vector, Physics, 
             physics.tick()
             entity.components.position.x.should.equal(8)
             entity.components.position.y.should.equal(8)
+        )
+    )
+
+    #--------------------------------
+    #Physics force functions
+    #--------------------------------
+    describe('Physics: seek() tests', ()->
+        it('should return a proper seek force', ()->
+            a = new Entity()
+                .addComponent('physics')
+                .addComponent('position')
+            b = new Entity()
+                .addComponent('physics')
+                .addComponent('position')
+                
+            #a seeking b, both with position of 0,0 should return 0,0
+            force = a.components.physics.seekForce(b)
+            force.x.should.equal(0)
+            force.y.should.equal(0)
+            
+            a.components.position = new Vector(4,4)
+            b.components.position = new Vector(8,8)
+            force = a.components.physics.seekForce(b)
+            force.x.should.equal(2.2627416997969525)
+            force.y.should.equal(2.2627416997969525)
+
         )
     )
 )

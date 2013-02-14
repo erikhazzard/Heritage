@@ -18,6 +18,9 @@ define([], ()->
             for id, entity of @entities.entitiesIndex['position']
                 #Call the physics component's tick function, which will
                 #  update the entity's position component
+                entity.components.physics.applyForce(
+                    entity.components.physics.seekForce(@entities.entities['0'])
+                )
                 entity.components.physics.tick(delta)
             
     return Physics
