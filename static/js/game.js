@@ -16,13 +16,11 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        while (i < 2) {
+        while (i < 29) {
           entity = new Entity();
-          entity.addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('renderer');
-          entity.components.position.x = Math.random() * 30 | 0;
-          entity.components.position.y = Math.random() * 200 | 0;
-          entity.components.physics.velocity.x = Math.random() * 22 | 0;
-          entity.components.physics.velocity.y = Math.random() * 22 | 0;
+          entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
+          entity.components.position.x = Math.random() * 400 | 0;
+          entity.components.position.y = Math.random() * 400 | 0;
           this.entities.add(entity);
           i++;
         }

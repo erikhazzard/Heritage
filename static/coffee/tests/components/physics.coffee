@@ -18,6 +18,7 @@ define(['components/vector', 'components/physics', 'entity'], (Vector, Physics, 
         it('tick() should properly update position', ()->
             #setup entity
             entity = new Entity()
+            entity.addComponent('world')
             entity.addComponent('physics')
             entity.addComponent('position')
             physics = entity.components.physics

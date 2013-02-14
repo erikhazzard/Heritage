@@ -12,4 +12,6 @@ To keep in mind:
         -How to manage component <-> component dependencies?
 
 
-
+TODO
+=========================================
+Place world wrapping functionality in world component instead of physics?

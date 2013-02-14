@@ -14,8 +14,12 @@
         this.maxForce = params.maxForce || 5;
         this.maxSeekForceDistance = params.maxSeekForceDistance || 150;
         this.mass = params.mass || 10;
-        this.maxX = 200;
-        this.maxY = 200;
+        this.maxX = 500;
+        this.maxY = 500;
+        if (this.entity && this.entity.components.world) {
+          this.maxX = this.entity.components.world.width;
+          this.maxY = this.entity.components.world.height;
+        }
         return this;
       }
 

@@ -32,6 +32,7 @@ require(['require', 'lib/chai', 'lib/mocha'], (require,chai)->
     #Tests go here
     require(['tests/entity',
         'tests/entities',
+        'tests/components/world',
         'tests/components/vector',
         'tests/components/position',
         'tests/components/physics',

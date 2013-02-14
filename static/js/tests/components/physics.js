@@ -12,6 +12,7 @@
       it('tick() should properly update position', function() {
         var entity, physics;
         entity = new Entity();
+        entity.addComponent('world');
         entity.addComponent('physics');
         entity.addComponent('position');
         physics = entity.components.physics;

@@ -8,9 +8,9 @@
       function Flocking(entity, params) {
         params = params || {};
         this.rules = {};
-        this.rules.separate = params.separate || 1;
-        this.rules.align = params.align || 1;
-        this.rules.cohesion = params.cohesion || 1;
+        this.rules.separate = params.separate || 0.8;
+        this.rules.align = params.align || 0.7;
+        this.rules.cohesion = params.cohesion || 0.7;
         this.flockDistance = params.flockDistance || 40;
         this.separationDistance = params.separationDistance || null;
         this.entity = entity;
@@ -34,7 +34,6 @@
           if (this.entity === targetEntity) {
             continue;
           }
-          console.log(targetEntity);
           curDistance = position.distance(targetEntity.components.position);
           if (curDistance > 0 && curDistance < separationDistance && (targetEntity !== this)) {
             diffVector = Vector.prototype.subtract(position, targetEntity.components.position);

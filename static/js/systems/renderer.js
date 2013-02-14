@@ -2,36 +2,37 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define([], function() {
-    var Renderer, canvas, context;
-    canvas = document.getElementById('canvas');
-    context = canvas.getContext('2d');
-    Renderer = (function() {
+  define(['components/world'], function(World) {
+    var canvas, context;
+    canvas = World.canvas;
+    context = World.context;
+    World = (function() {
 
-      function Renderer(entities) {
+      function World(entities) {
         this.tick = __bind(this.tick, this);
         this.entities = entities;
         return this;
       }
 
-      Renderer.prototype.tick = function(delta) {
-        var entity, id, _ref;
+      World.prototype.tick = function(delta) {
+        var entity, id, renderPosition, _ref;
         canvas.width = canvas.width;
         _ref = this.entities.entitiesIndex['renderer'];
         for (id in _ref) {
           entity = _ref[id];
           context.save();
+          renderPosition = entity.components.renderer.getPosition();
           context.fillStyle = entity.components.renderer.color;
-          context.fillRect(entity.components.position.x, entity.components.position.y, entity.components.renderer.size, entity.components.renderer.size);
+          context.fillRect(renderPosition.x, renderPosition.y, entity.components.renderer.size, entity.components.renderer.size);
           context.restore();
         }
         return this;
       };
 
-      return Renderer;
+      return World;
 
     })();
-    return Renderer;
+    return World;
   });
 
 }).call(this);

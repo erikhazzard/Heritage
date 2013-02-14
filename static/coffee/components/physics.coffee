@@ -5,6 +5,7 @@
 #
 #   Dependencies / Coupling:
 #       -entity: position
+#       -entitiy: world
 #
 #   NOTES: Physics is tightly coupled to entity. 
 #   tick() function - should this live here, or in the physics
@@ -31,10 +32,15 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             @mass = params.mass || 10
             
             #Max width / height
-            #TODO: THIS SHOULDN'T BE HERE?
-            @maxX = 200
-            @maxY = 200
+            #  Set some defaults (in case there is no entity with a world 
+            #  component passed in)
+            @maxX = 500
+            @maxY = 500
             
+            if @entity and @entity.components.world
+                @maxX = @entity.components.world.width
+                @maxY = @entity.components.world.height
+                
             return @
         
         #Tick function
@@ -66,6 +72,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
         #MOVEMENT
         #--------------------------------
         checkEdges: ()->
+            #TODO: Should this be placed in the world component? Seems like it
             #Wrap around 
             #X
             if @entity.components.position.x >= @maxX

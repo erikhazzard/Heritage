@@ -22,6 +22,9 @@
           if (entity.hasComponent('randomWalker')) {
             physics.applyForce(entity.components.randomWalker.walkForce());
           }
+          if (entity.hasComponent('flocking')) {
+            entity.components.flocking.flock(this.entities.entitiesIndex.flocking);
+          }
           _results.push(entity.components.physics.tick(delta));
         }
         return _results;

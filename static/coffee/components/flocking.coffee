@@ -17,9 +17,9 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             
             #Boids flocking behavior modifiers
             @rules = {}
-            @rules.separate = params.separate || 1
-            @rules.align = params.align || 1
-            @rules.cohesion = params.cohesion || 1
+            @rules.separate = params.separate || 0.8
+            @rules.align = params.align || 0.7
+            @rules.cohesion = params.cohesion || 0.7
             
             #Distance to check for cohesion and alignment rules within
             @flockDistance = params.flockDistance || 40
@@ -55,7 +55,6 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
                 if @entity == targetEntity
                     continue
                     
-                console.log targetEntity
                 curDistance = position.distance(
                     targetEntity.components.position
                 )

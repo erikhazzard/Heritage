@@ -25,8 +25,10 @@ define([], ()->
                 if entity.hasComponent('randomWalker')
                     physics.applyForce( entity.components.randomWalker.walkForce() )
                     
-                #BOIDS / Flocking
+                #BOIDS / Flocking - TODO: PUT THIS IN OWN SYSTEM
                 #------------------------
+                if entity.hasComponent('flocking')
+                    entity.components.flocking.flock(@entities.entitiesIndex.flocking)
                     
                 #UPDATE (tick)
                 #------------------------

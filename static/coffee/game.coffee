@@ -13,17 +13,19 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
         start: ()->
             #Initialize stuff
             i=0
-            while i<2
+            while i<29
                 entity = new Entity()
-                entity.addComponent('position')
+                entity.addComponent('world')
+                    .addComponent('position')
                     .addComponent('physics')
                     .addComponent('randomWalker')
+                    .addComponent('flocking')
                     .addComponent('renderer')
                     
-                entity.components.position.x = Math.random() * 30 | 0
-                entity.components.position.y = Math.random() * 200 | 0
-                entity.components.physics.velocity.x = Math.random() * 22 | 0
-                entity.components.physics.velocity.y = Math.random() * 22 | 0
+                entity.components.position.x = Math.random() * 400 | 0
+                entity.components.position.y = Math.random() * 400 | 0
+                #entity.components.physics.velocity.x = Math.random() * 22 | 0
+                #entity.components.physics.velocity.y = Math.random() * 22 | 0
                 @entities.add( entity )
                 
                 i++

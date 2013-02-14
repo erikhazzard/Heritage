@@ -8,6 +8,7 @@
       function Renderer(entity) {
         this.entity = entity;
         this.color = 'rgba(0,0,0,0.5)';
+        this.x = this.y = 0;
         this.size = 10;
         return this;
       }
@@ -18,6 +19,15 @@
 
       Renderer.prototype.setSize = function(size) {
         return this.size = size;
+      };
+
+      Renderer.prototype.getPosition = function() {
+        this.x = this.entity.components.position.x;
+        this.y = this.entity.components.position.y;
+        return {
+          x: this.x,
+          y: this.y
+        };
       };
 
       return Renderer;
