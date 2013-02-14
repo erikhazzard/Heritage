@@ -11,7 +11,7 @@ define([], ()->
     class Renderer
         constructor: (entity)->
             @entity = entity
-            @color = 'rgba(0,0,0,0.5)'
+            @color = 'rgba(0,0,0,0.7)'
             @x = @y = 0
 
             @size = 10
@@ -25,8 +25,8 @@ define([], ()->
             @size = size
 
         getPosition: ()->
-            @x = @entity.components.position.x
-            @y = @entity.components.position.y
+            @x = Math.round(@entity.components.position.x)
+            @y = Math.round(@entity.components.position.y)
             
             return {x: @x, y: @y}
             

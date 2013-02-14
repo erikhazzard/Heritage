@@ -28,6 +28,7 @@ define(['components/vector', 'components/physics', 'lib/d3'], (Vector, Physics, 
             #  the new target
             futureDistance = futureDistance or 40
             radius = radius or 30
+            seekForce = Physics.prototype.seekForce
 
             futurePosition = @entity.components.position.copy()
             futurePosition.normalize()
@@ -78,7 +79,7 @@ define(['components/vector', 'components/physics', 'lib/d3'], (Vector, Physics, 
             #we have target now, so seek it
             #  seekForce uses this.entity, so pass in this context (which has
             #  a reference to entity)
-            force = Physics.prototype.seekForce.call(
+            force = seekForce.call(
                 #Pass in reference to physics component
                 @entity.components.physics,
                 target

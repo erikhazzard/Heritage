@@ -16,9 +16,10 @@
       RandomWalker.prototype.sinLookup = {};
 
       RandomWalker.prototype.walkForce = function(futureDistance, radius) {
-        var cos, cosLookup, force, futurePosition, randomAngle, scale, sin, sinLookup, target, x, y;
+        var cos, cosLookup, force, futurePosition, randomAngle, scale, seekForce, sin, sinLookup, target, x, y;
         futureDistance = futureDistance || 40;
         radius = radius || 30;
+        seekForce = Physics.prototype.seekForce;
         futurePosition = this.entity.components.position.copy();
         futurePosition.normalize();
         if (futurePosition.magnitude() < 0.1) {
@@ -41,7 +42,7 @@
         y = radius * sin;
         target = new Vector(x, y);
         target.add(this.entity.components.position);
-        force = Physics.prototype.seekForce.call(this.entity.components.physics, target);
+        force = seekForce.call(this.entity.components.physics, target);
         return force;
       };
 

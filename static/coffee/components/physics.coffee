@@ -23,7 +23,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
     
             #limiting variables
             @maxSpeed = params.maxSpeed || 8
-            @maxForce = params.maxForce || 5
+            @maxForce = params.maxForce || 0.5
             
             #furthest away an entity can seek
             @maxSeekForceDistance = params.maxSeekForceDistance || 150
@@ -104,7 +104,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             #  If flee is passed in, force is multiplied by -1
             
             #How far to check for neighbors in
-            maxDistance = maxDistance || 80
+            maxDistance = maxDistance || 100
             
             #check if the passed in object has a position property
             if target and target.components and target.components.position

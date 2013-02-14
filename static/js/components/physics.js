@@ -11,7 +11,7 @@
         this.velocity = new Vector(0, 0);
         this.acceleration = new Vector(0, 0);
         this.maxSpeed = params.maxSpeed || 8;
-        this.maxForce = params.maxForce || 5;
+        this.maxForce = params.maxForce || 0.5;
         this.maxSeekForceDistance = params.maxSeekForceDistance || 150;
         this.mass = params.mass || 10;
         this.maxX = 500;
@@ -55,7 +55,7 @@
 
       Physics.prototype.seekForce = function(target, maxDistance, flee) {
         var curDistance, desiredVelocity, distance, magnitude, position, scale, steer, steerLine;
-        maxDistance = maxDistance || 80;
+        maxDistance = maxDistance || 100;
         if (target && target.components && target.components.position) {
           target = target.components.position;
         }

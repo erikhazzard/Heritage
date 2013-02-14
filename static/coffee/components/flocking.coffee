@@ -17,10 +17,10 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             
             #Boids flocking behavior modifiers
             @rules = {}
-            @rules.separate = params.separate || 0.8
-            @rules.align = params.align || 0.7
-            @rules.cohesion = params.cohesion || 0.7
-            
+            @rules.separate = params.separate || Math.random() * 2
+            @rules.align = params.align || Math.random() * 2
+            @rules.cohesion = params.cohesion || Math.random() * 2
+
             #Distance to check for cohesion and alignment rules within
             @flockDistance = params.flockDistance || 40
             @separationDistance = params.separationDistance || null
@@ -136,7 +136,7 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             #References
             position = @entity.components.position
             physics = @entity.components.physics
-            seekForce = physics.seekForce
+            seekForce = Physics.prototype.seekForce
 
             #add sum of vectors of neighbors
             for key, targetEntity of entities
@@ -155,7 +155,7 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             #Divide the sum and set the seek force
             if count > 0
                 sum.divide(count)
-                #when calling seekForce, pass in the physics context
+                #when calling seekForce, pass in this context
                 steer = seekForce.call(physics, sum)
             
             return steer

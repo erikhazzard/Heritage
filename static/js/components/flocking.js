@@ -8,9 +8,9 @@
       function Flocking(entity, params) {
         params = params || {};
         this.rules = {};
-        this.rules.separate = params.separate || 0.8;
-        this.rules.align = params.align || 0.7;
-        this.rules.cohesion = params.cohesion || 0.7;
+        this.rules.separate = params.separate || Math.random() * 2;
+        this.rules.align = params.align || Math.random() * 2;
+        this.rules.cohesion = params.cohesion || Math.random() * 2;
         this.flockDistance = params.flockDistance || 40;
         this.separationDistance = params.separationDistance || null;
         this.entity = entity;
@@ -97,7 +97,7 @@
         count = 0;
         position = this.entity.components.position;
         physics = this.entity.components.physics;
-        seekForce = physics.seekForce;
+        seekForce = Physics.prototype.seekForce;
         for (key in entities) {
           targetEntity = entities[key];
           if (this.entity === targetEntity) {

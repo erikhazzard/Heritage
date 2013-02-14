@@ -7,7 +7,7 @@
 
       function Renderer(entity) {
         this.entity = entity;
-        this.color = 'rgba(0,0,0,0.5)';
+        this.color = 'rgba(0,0,0,0.7)';
         this.x = this.y = 0;
         this.size = 10;
         return this;
@@ -22,8 +22,8 @@
       };
 
       Renderer.prototype.getPosition = function() {
-        this.x = this.entity.components.position.x;
-        this.y = this.entity.components.position.y;
+        this.x = Math.round(this.entity.components.position.x);
+        this.y = Math.round(this.entity.components.position.y);
         return {
           x: this.x,
           y: this.y
