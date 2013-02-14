@@ -2,7 +2,7 @@
 (function() {
 
   requirejs.config({
-    baseUrl: 'static/js',
+    baseUrl: '/static/js',
     urlArgs: "v=" + (new Date()).getTime(),
     shim: {
       'lib/d3': {

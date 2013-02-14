@@ -2,7 +2,7 @@
 #Require Config (load additional libraries)
 #========================================
 requirejs.config({
-    baseUrl: 'static/js',
+    baseUrl: '/static/js',
     #For dev
     urlArgs: "v="+(new Date()).getTime(),
 
