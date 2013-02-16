@@ -32,6 +32,15 @@
         return this;
       };
 
+      Entity.prototype.addComponents = function(names) {
+        var name, _i, _len;
+        for (_i = 0, _len = names.length; _i < _len; _i++) {
+          name = names[_i];
+          this.addComponent(name);
+        }
+        return this;
+      };
+
       Entity.prototype.removeComponent = function(name) {
         if (this.components[name] && this.components[name].destroy) {
           this.components[name].destroy();
@@ -50,6 +59,17 @@
         } else {
           return false;
         }
+      };
+
+      Entity.prototype.getComponentNames = function() {
+        var component, name, names, _ref;
+        names = [];
+        _ref = this.components;
+        for (name in _ref) {
+          component = _ref[name];
+          names.push(name);
+        }
+        return names;
       };
 
       return Entity;

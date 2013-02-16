@@ -28,12 +28,26 @@
         });
         return entities._currentId.should.equal(2);
       });
-      it('should remove an entity', function() {
+      it('should remove an entity by id', function() {
         var entities, entity;
         entities = new Entities();
         entity = new Entity();
         entities.add(entity);
         entities.remove('0');
+        entities.entities.should.deep.equal({});
+        return entities._currentId.should.equal(1);
+      });
+      it('should remove an entity by object', function() {
+        var entities, entity;
+        entities = new Entities();
+        entity = new Entity();
+        entity.addComponent('position');
+        entities.add(entity);
+        entities.entitiesIndex.position.should.deep.equal({
+          0: entity
+        });
+        entities.remove(entity);
+        entities.entitiesIndex.position.should.deep.equal({});
         entities.entities.should.deep.equal({});
         return entities._currentId.should.equal(1);
       });

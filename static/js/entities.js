@@ -52,7 +52,18 @@
         return this;
       };
 
-      Entities.prototype.remove = function(id) {
+      Entities.prototype.remove = function(target) {
+        var component, id, key, _ref;
+        if (target.id !== void 0) {
+          id = target.id;
+        } else {
+          id = target;
+        }
+        _ref = this.entitiesIndex;
+        for (key in _ref) {
+          component = _ref[key];
+          delete component[id];
+        }
         if (this.entities[id] && this.entities[id].remove) {
           this.entities[id].remove();
         }

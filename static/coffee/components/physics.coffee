@@ -42,26 +42,6 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
                 @maxY = @entity.components.world.height
                 
             return @
-        
-        #Tick function
-        #--------------------------------
-        tick: (delta)->
-            #Update velocity
-            @velocity.add(@acceleration)
-            @velocity.limit(@maxSpeed)
-
-            #Wrap around the world if need be
-            #TODO: Should this live here, or some where else?
-            @checkEdges()
-            
-            #update the entity's position
-            if @entity
-                @entity.components.position.add(@velocity)
-            
-            #reset acceleration to 0
-            @acceleration.multiply(0)
-            
-            return @
             
         #--------------------------------
         #
@@ -71,23 +51,6 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
         #--------------------------------
         #MOVEMENT
         #--------------------------------
-        checkEdges: ()->
-            #TODO: Should this be placed in the world component? Seems like it
-            #Wrap around 
-            #X
-            if @entity.components.position.x >= @maxX
-                @entity.components.position.x = @entity.components.position.x % (@maxX)
-            else if @entity.components.position.x < 0
-                @entity.components.position.x = @maxX - 1
-                
-            #Y
-            if @entity.components.position.y >= @maxY
-                @entity.components.position.y = @entity.components.position.y % (@maxY)
-            else if @entity.components.position.y < 0
-                @entity.components.position.y = @maxY - 1
-                
-            return @
-
         applyForce: (force)->
             #Add the passed in force to the acceleration
             @acceleration.add( force.copy() )

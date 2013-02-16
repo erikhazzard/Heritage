@@ -9,8 +9,14 @@ define(['components/position',
     'components/physics',
     'components/randomWalker',
     'components/flocking',
+
+    #Creature related
+    'components/spawner',
+    'components/creature',
+    'components/human',
     ], (
-    Position, World, Renderer, Physics, RandomWalker, Flocking
+    Position, World, Renderer, Physics, RandomWalker, Flocking,
+    Spawner, Creature, Human
     )->
     Components = {
         renderer: Renderer
@@ -18,10 +24,15 @@ define(['components/position',
         #World related
         world: World
         position: Position
-        physics: Physics
         
+        physics: Physics
         randomWalker: RandomWalker
         flocking: Flocking
+        
+        #Creature related
+        spawner: Spawner
+        creature: Creature
+        human: Human
     }
     return Components
 )

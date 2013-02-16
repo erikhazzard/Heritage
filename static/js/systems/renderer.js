@@ -3,36 +3,45 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   define(['components/world'], function(World) {
-    var canvas, context;
+    var Renderer, canvas, context;
     canvas = World.canvas;
     context = World.context;
-    World = (function() {
+    Renderer = (function() {
 
-      function World(entities) {
+      function Renderer(entities) {
         this.tick = __bind(this.tick, this);
         this.entities = entities;
         return this;
       }
 
-      World.prototype.tick = function(delta) {
-        var entity, id, renderPosition, _ref;
+      Renderer.prototype.tick = function(delta) {
+        var alpha, entity, id, renderPosition, size, _ref;
         canvas.width = canvas.width;
         _ref = this.entities.entitiesIndex['renderer'];
         for (id in _ref) {
           entity = _ref[id];
+          size = entity.components.renderer.size;
           context.save();
           renderPosition = entity.components.renderer.getPosition();
           context.fillStyle = entity.components.renderer.color;
-          context.fillRect(renderPosition.x, renderPosition.y, entity.components.renderer.size, entity.components.renderer.size);
+          if (entity.components.human) {
+            alpha = Math.round((1 - (entity.components.human.age / 110)) * 10) / 10;
+            if (entity.components.human.sex === 'female') {
+              context.fillStyle = 'rgba(255,100,255,' + alpha + ')';
+            } else {
+              context.fillStyle = 'rgba(100,150,200,' + alpha + ')';
+            }
+          }
+          context.fillRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
           context.restore();
         }
         return this;
       };
 
-      return World;
+      return Renderer;
 
     })();
-    return World;
+    return Renderer;
   });
 
 }).call(this);

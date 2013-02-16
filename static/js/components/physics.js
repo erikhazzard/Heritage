@@ -23,31 +23,6 @@
         return this;
       }
 
-      Physics.prototype.tick = function(delta) {
-        this.velocity.add(this.acceleration);
-        this.velocity.limit(this.maxSpeed);
-        this.checkEdges();
-        if (this.entity) {
-          this.entity.components.position.add(this.velocity);
-        }
-        this.acceleration.multiply(0);
-        return this;
-      };
-
-      Physics.prototype.checkEdges = function() {
-        if (this.entity.components.position.x >= this.maxX) {
-          this.entity.components.position.x = this.entity.components.position.x % this.maxX;
-        } else if (this.entity.components.position.x < 0) {
-          this.entity.components.position.x = this.maxX - 1;
-        }
-        if (this.entity.components.position.y >= this.maxY) {
-          this.entity.components.position.y = this.entity.components.position.y % this.maxY;
-        } else if (this.entity.components.position.y < 0) {
-          this.entity.components.position.y = this.maxY - 1;
-        }
-        return this;
-      };
-
       Physics.prototype.applyForce = function(force) {
         this.acceleration.add(force.copy());
         return force;

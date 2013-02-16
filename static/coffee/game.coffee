@@ -13,7 +13,7 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
         start: ()->
             #Initialize stuff
             i=0
-            while i<29
+            while i < 35
                 entity = new Entity()
                 entity.addComponent('world')
                     .addComponent('position')
@@ -21,9 +21,13 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                     .addComponent('randomWalker')
                     .addComponent('flocking')
                     .addComponent('renderer')
+                    .addComponent('human')
+                    .addComponent('spawner')
                     
-                entity.components.position.x = Math.random() * 400 | 0
-                entity.components.position.y = Math.random() * 400 | 0
+                entity.components.human.age = Math.random() * 100 | 0
+                entity.components.position.x = Math.random() * 500 | 0
+                entity.components.position.y = Math.random() * 500 | 0
+                
                 #entity.components.physics.velocity.x = Math.random() * 22 | 0
                 #entity.components.physics.velocity.y = Math.random() * 22 | 0
                 @entities.add( entity )
@@ -45,7 +49,7 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
             requestAnimFrame(@loop)
             
             #Go through all systems and call tick if it has it
-            for systemName, system of @systems
+            for system in @systems
                 if system.tick
                     system.tick(@numTicks)
                     

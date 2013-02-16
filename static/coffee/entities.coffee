@@ -60,7 +60,17 @@ define(['events'], (events)->
             
             return @
             
-        remove: (id)->
+        remove: (target)->
+            #Target can be either an ID or entity object
+            if target.id != undefined
+                id = target.id
+            else
+                id = target
+
+            #Remove the entity from each index
+            for key, component of @entitiesIndex
+                delete component[id]
+
             if @entities[id] and @entities[id].remove
                 @entities[id].remove()
                 

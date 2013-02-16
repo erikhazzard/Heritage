@@ -21,7 +21,9 @@ define(['components/all','events'], (Components, events)->
             return @
         
         #--------------------------------
+        #
         #Components
+        #
         #--------------------------------
         addComponent: (name)->
             #Create component, pass in this entity object
@@ -32,6 +34,12 @@ define(['components/all','events'], (Components, events)->
                 id: @id,
                 componentName: name
             })
+            return @
+        addComponents: (names)->
+            #Expects an array of component names and adds each one
+            for name in names
+                @addComponent(name)
+                
             return @
         
         removeComponent: (name)->
@@ -51,10 +59,21 @@ define(['components/all','events'], (Components, events)->
             return @
         
         hasComponent: (name)->
+            #Takes in a component name {String} and returns either
+            #  true or false if the entity has the component
             if @components[name]
                 return true
             else
                 return false
+            
+        getComponentNames: ()->
+            #Returns a list of component names
+            names = []
+            
+            for name, component of @components
+                names.push(name)
+                
+            return names
 
     return Entity
 )

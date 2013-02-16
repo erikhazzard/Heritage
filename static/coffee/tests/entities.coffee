@@ -33,7 +33,7 @@ define(['entities', 'entity'], (Entities, Entity)->
             entities._currentId.should.equal(2)
         )
         
-        it('should remove an entity', ()->
+        it('should remove an entity by id', ()->
             entities = new Entities()
             
             #Add entity
@@ -44,6 +44,21 @@ define(['entities', 'entity'], (Entities, Entity)->
             entities._currentId.should.equal(1)
         )
 
+        it('should remove an entity by object', ()->
+            entities = new Entities()
+            
+            #Add entity
+            entity = new Entity()
+            entity.addComponent('position')
+            entities.add(entity)
+            entities.entitiesIndex.position.should.deep.equal({0: entity})
+            
+            entities.remove(entity)
+            entities.entitiesIndex.position.should.deep.equal({})
+            entities.entities.should.deep.equal({})
+
+            entities._currentId.should.equal(1)
+        )
         #--------------------------------
         #Component related
         #--------------------------------

@@ -2,7 +2,7 @@
 (function() {
 
   define(['entity'], function(Entity) {
-    return describe('Entity: Setup', function() {
+    return describe('Entity: Base Tests', function() {
       it('should successfully create an entity', function() {
         var a;
         a = new Entity();
@@ -15,12 +15,33 @@
         a.components.renderer.should.not.equal(void 0);
         return a.hasComponent('renderer').should.be["true"];
       });
-      return it('should remove a component', function() {
+      it('should add an array of component', function() {
+        var a;
+        a = new Entity();
+        a.addComponents(['renderer', 'position']);
+        a.hasComponent('renderer').should.be["true"];
+        a.hasComponent('position').should.be["true"];
+        return a.getComponentNames().should.deep.equal(['renderer', 'position']);
+      });
+      it('should remove a component', function() {
         var a;
         a = new Entity();
         a.addComponent('renderer');
         a.removeComponent('renderer');
         return a.components.should.deep.equal({});
+      });
+      it('should return proper values for hasComponent()', function() {
+        var a;
+        a = new Entity();
+        a.addComponent('renderer');
+        return a.hasComponent('renderer').should.be["true"];
+      });
+      return it('should list of components', function() {
+        var a;
+        a = new Entity();
+        a.addComponent('renderer');
+        a.addComponent('position');
+        return a.getComponentNames().should.deep.equal(['renderer', 'position']);
       });
     });
   });

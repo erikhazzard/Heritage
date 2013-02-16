@@ -38,6 +38,8 @@ require(['require', 'lib/chai', 'lib/mocha'], (require,chai)->
         'tests/components/physics',
         'tests/components/randomWalker',
         'tests/components/flocking',
+        
+        'tests/systems/spawner',
         ], ()->
         #Start runner
         mocha.run()

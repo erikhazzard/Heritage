@@ -16,11 +16,12 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        while (i < 29) {
+        while (i < 35) {
           entity = new Entity();
-          entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
-          entity.components.position.x = Math.random() * 400 | 0;
-          entity.components.position.y = Math.random() * 400 | 0;
+          entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('flocking').addComponent('renderer').addComponent('human').addComponent('spawner');
+          entity.components.human.age = Math.random() * 100 | 0;
+          entity.components.position.x = Math.random() * 500 | 0;
+          entity.components.position.y = Math.random() * 500 | 0;
           this.entities.add(entity);
           i++;
         }
@@ -28,11 +29,11 @@
       };
 
       Game.prototype.loop = function() {
-        var system, systemName, _ref;
+        var system, _i, _len, _ref;
         requestAnimFrame(this.loop);
         _ref = this.systems;
-        for (systemName in _ref) {
-          system = _ref[systemName];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          system = _ref[_i];
           if (system.tick) {
             system.tick(this.numTicks);
           }
