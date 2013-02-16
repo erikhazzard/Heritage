@@ -1,5 +1,12 @@
 Entity Component System
 ---
+UPDATE 2/15: After reading more about entity component system, I realize I'm not
+doing it very extensible..works fine for now, but will be too complex later.
+Good analogy is a key - entity is key, teeth are components. Systems are locks
+that components fit into. (http://gamedev.stackexchange.com/questions/31473/role-of-systems-in-entity-systems-architecture/31491#31491)
+
+
+
 To keep in mind:
     -Uses events for communication between Entities and Entity
         -when entity updates a component, event is triggered
@@ -11,6 +18,26 @@ To keep in mind:
             position component to exist already (or add one automaticaly?)
         -How to manage component <-> component dependencies?
 
+    -Let's say I want to do something like grouping components by a type. 
+    For instance, I have a Human and Zombie component which I consider to be
+    'creatures', but I want my system to be a bit simplier and be able to 
+    access any type of creature without modifying the system code everytime
+    I add a new creature component.
+        I could have a system for each Human and Zombie component, OR could
+        I have a system for 'creatures' which Human and Zombie components
+        will tap into
+    Human and Zombie components assume the entity has a 'creature' component
+    (or, is it ok to make these components add the creature component if it 
+    doesn't have one already?).  They modify behavior but expose the same 
+    interface - in other words, both components do all their checking for
+    health / isDead state in the tick() function, which they extend the
+    creature component tick().
+    
+    The system calls the tick() function for the creature component, which 
+    in turn is really accessing the zombie or human component's tick function
+
+
+    Problem - if an entity is a zombie AND a human
 
 TODO
 =========================================
