@@ -5,10 +5,6 @@
 #
 #============================================================================
 define([], ()->
-    #Nasty, hardcoded canvas for now    
-    canvas = document.getElementById('canvas')
-    context = canvas.getContext('2d')
-    
     class Physics
         constructor: (entities)->
             @entities = entities
@@ -61,6 +57,76 @@ define([], ()->
         
         #--------------------------------
         #
+        #HUAMN - Helpers
+        #
+        #--------------------------------
+        humanZombieBehavior: (entity)->
+            #There are two possibilities here - a human will either flee 
+            #   or chase a zombie if it finds one
+            #
+            #   Generally, if there are more humans than zombies in the 
+            #   entity's neighborhood, the human will want to chase the 
+            #   zombie
+            #       -Chase / flee behavior is also modified by the entity's
+            #       health
+            physics = entity.components.physics
+            
+            if entity.hasComponent('human') and @entities.entitiesIndex.zombie
+                #If this is a human and there are zombies in the world
+                numHumans = numZombies = 0
+                
+                #Go through all neighbor cells and flee from any zombies 
+                #quicker to loop through neighboring cells than ALL entities
+                #  4 is the radius we want to look for neighbors with
+                #
+                #First we need to count number of zombies and human neighbors
+                neighbors = []
+                for neighbor in entity.components.world.getNeighbors(4)
+                    if neighbor.hasComponent('zombie')
+                        numZombies += 1
+                    if neighbor.hasComponent('human')
+                        numHumans += 1
+                    #keep track of neighbors so we don't need to call function
+                    #  again
+                    neighbors.push(neighbor)
+                    
+                #Let's calculate some number based off the entity's health and
+                # other attribtues to add to the pursuit calculation
+                pursuitDesire = 0
+                
+                #if low health or young / old age, very strongly wants to flee
+                #TODO: put health as its own component
+                if entity.components.human.health < 20
+                    pursuitDesire -= 2
+                if entity.components.human.age < 10 or entity.components.human.age > 80
+                    pursuitDesire -= 4
+                   
+                #Now check to see if the entity should flee or pursue a zombie
+                for neighbor in neighbors
+                    #if it's a zombie
+                    if neighbor.hasComponent('zombie')
+                        zombie = neighbor
+                        scale = (numHumans / 2.5) - numZombies
+                        
+                        #don't go too crazy pursuing zombies
+                        if scale > 1
+                            scale = 1
+                        #or too crazy gettings away
+                        else if scale < -5
+                            scale = -5
+
+                        #Apply the force. If it's positive, the human chases
+                        #  zombie. If negative, human flees
+                        physics.applyForce(
+                            physics.seekForce(
+                                zombie
+                            ).multiply(scale)
+                        )
+                        
+                return true
+        
+        #--------------------------------
+        #
         #Main tick funciton
         #
         #--------------------------------
@@ -69,49 +135,40 @@ define([], ()->
                 #Store ref
                 physics = entity.components.physics
                 
-                #WALKING BEHAVIOR
-                #------------------------
                 #If entity has a randomWalker component, make it walk
                 if entity.hasComponent('randomWalker')
                     physics.applyForce( entity.components.randomWalker.walkForce() )
                     
-                #BOIDS / Flocking - TODO: PUT THIS IN OWN SYSTEM
+                #BOIDS / Flocking 
                 #------------------------
                 if entity.hasComponent('flocking')
                     #Only flock with same type of creature
                     if entity.hasComponent('human')
-                        entity.components.flocking.flock(@entities.entitiesIndex.human)
+                        entity.components.flocking.flock(
+                            @entities.entitiesIndex.human
+                        )
                         
                     #Zombies try to flock together
                     if entity.hasComponent('zombie')
-                        entity.components.flocking.flock(@entities.entitiesIndex.zombie)
+                        entity.components.flocking.flock(
+                            @entities.entitiesIndex.zombie,
+                            #make the multiplier for flocking a bit smaller
+                            0.7
+                        )
                         
                 #------------------------
-                #Human - Flee from zombies
+                #Human - Flee or Pusue zombies
                 #------------------------
-                #If this is a human and there are zombies in the world
-                if entity.hasComponent('human') and @entities.entitiesIndex.zombie
-                    
-                    #Go through all neighbor cells and flee from any zombies 
-                    #quicker to loop through neighboring cells than ALL entities
-                    #  4 is the radius we want to look for neighbors with
-                    for neighbor in entity.components.world.getNeighbors(4)
-                        if neighbor.hasComponent('zombie')
-                            zombie = neighbor
+                if entity.hasComponent('human')
+                    @humanZombieBehavior(entity)
 
-                            #multiply by -1 to make it flee
-                            physics.applyForce(
-                                physics.seekForce(
-                                    zombie,20
-                                ).multiply(-8)
-                            )
-                    
-
-                #Human - Seek out mate
+                #Human - Seek out mate and children
                 #------------------------
                 #if entity has a mate, seek it out
                 if entity.hasComponent('human')
-                    mateId = entity.components.human.mateId
+                    human = entity.components.human
+                    #MATE
+                    mateId = human.mateId
                     if mateId != null
                         #make sure entity is still alive
                         if @entities.entities[mateId]
@@ -120,6 +177,18 @@ define([], ()->
                                     @entities.entities[mateId]
                                 ).multiply(2)
                             )
+                            
+                    #CHILDREN
+                    if human.children.length > 0
+                        for childId in human.children
+                            child = @entities.entities[childId]
+                            #Stay near the child if the child isn't too old
+                            if child and child.components.human.age < 18
+                                physics.applyForce(
+                                    physics.seekForce(
+                                        child
+                                    ).multiply(2.5)
+                                )
         
                 #UPDATE (tick)
                 #------------------------

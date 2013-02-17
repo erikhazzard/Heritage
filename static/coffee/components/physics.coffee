@@ -7,9 +7,6 @@
 #       -entity: position
 #       -entitiy: world
 #
-#   NOTES: Physics is tightly coupled to entity. 
-#   tick() function - should this live here, or in the physics
-#       system?
 #============================================================================
 define(['components/vector', 'lib/d3'], (Vector, d3)->
     class Physics
@@ -42,10 +39,10 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
                 @maxY = @entity.components.world.height
                 
             return @
-            
+        
         #--------------------------------
         #
-        #Helper functions
+        #Helpers
         #
         #--------------------------------
         #--------------------------------
@@ -134,6 +131,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
                 steer.multiply(-1)
                 
             return steer
+            
 
     return Physics
 )

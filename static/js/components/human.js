@@ -57,14 +57,19 @@
         return resources;
       };
 
-      Human.prototype.tick = function(delta) {
-        this.age += 0.1;
-        this.resources = this.calculateResources();
-        this.health = this.calculateHealth();
-        if (this.health < 0) {
-          this.isDead = true;
+      Human.prototype.getMaxSpeed = function() {
+        var maxSpeed;
+        maxSpeed = 0;
+        if (this.age < 2) {
+          maxSpeed = 2;
+        } else if (this.age < 10) {
+          maxSpeed = 4;
+        } else if (this.age < 60) {
+          maxSpeed = 6 + (Math.random() * 4 | 0);
+        } else {
+          maxSpeed = 4;
         }
-        return this;
+        return maxSpeed;
       };
 
       return Human;

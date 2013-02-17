@@ -22,10 +22,7 @@
         entities.add(b);
         a.components.flocking.flock(entities.entitiesIndex.flocking);
         a.components.position.x.should.equal(4);
-        a.components.position.y.should.equal(4);
-        a.components.physics.tick();
-        a.components.position.x.should.not.equal(4);
-        return a.components.position.y.should.not.equal(4);
+        return a.components.position.y.should.equal(4);
       });
     });
     return describe('Flocking: separate() tests', function() {

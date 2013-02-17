@@ -92,22 +92,22 @@ define([], ()->
                     resources -= 0.10
 
             return resources
+        
+        getMaxSpeed: ()->
+            #Returns the max speed for the entity. Used in the system
+            #TODO: base this off agility and injuries and whatnot
+            maxSpeed = 0
             
-        tick: (delta)->
-            #During each tick, update properties based on current properties
-            #Update age
-            @age += 0.1
+            if @age < 2
+                maxSpeed = 2
+            else if @age < 10
+                maxSpeed = 4
+            else if @age < 60
+                maxSpeed = 6 + (Math.random() * 4 | 0)
+            else
+                maxSpeed = 4
+                
+            return maxSpeed
 
-            #update resources
-            @resources = @calculateResources()
-            
-            #Update health
-            @health = @calculateHealth()
-            
-            if @health < 0
-                @isDead = true
-            
-            return @
-            
     return Human
 )

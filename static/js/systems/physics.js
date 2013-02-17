@@ -2,9 +2,7 @@
 (function() {
 
   define([], function() {
-    var Physics, canvas, context;
-    canvas = document.getElementById('canvas');
-    context = canvas.getContext('2d');
+    var Physics;
     Physics = (function() {
 
       function Physics(entities) {
@@ -42,8 +40,49 @@
         return entity;
       };
 
+      Physics.prototype.humanZombieBehavior = function(entity) {
+        var neighbor, neighbors, numHumans, numZombies, physics, pursuitDesire, scale, zombie, _i, _j, _len, _len1, _ref;
+        physics = entity.components.physics;
+        if (entity.hasComponent('human') && this.entities.entitiesIndex.zombie) {
+          numHumans = numZombies = 0;
+          neighbors = [];
+          _ref = entity.components.world.getNeighbors(4);
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            neighbor = _ref[_i];
+            if (neighbor.hasComponent('zombie')) {
+              numZombies += 1;
+            }
+            if (neighbor.hasComponent('human')) {
+              numHumans += 1;
+            }
+            neighbors.push(neighbor);
+          }
+          pursuitDesire = 0;
+          if (entity.components.human.health < 20) {
+            pursuitDesire -= 2;
+          }
+          if (entity.components.human.age < 10 || entity.components.human.age > 80) {
+            pursuitDesire -= 4;
+          }
+          for (_j = 0, _len1 = neighbors.length; _j < _len1; _j++) {
+            neighbor = neighbors[_j];
+            if (neighbor.hasComponent('zombie')) {
+              zombie = neighbor;
+              scale = (numHumans / 2.5) - numZombies;
+              if (scale > 1) {
+                scale = 1;
+              } else if (scale < -5) {
+                scale = -5;
+              }
+              physics.applyForce(physics.seekForce(zombie).multiply(scale));
+            }
+          }
+          return true;
+        }
+      };
+
       Physics.prototype.tick = function(delta) {
-        var entity, id, mateId, neighbor, physics, zombie, _i, _len, _ref, _ref1, _results;
+        var child, childId, entity, human, id, mateId, physics, _i, _len, _ref, _ref1, _results;
         _ref = this.entities.entitiesIndex['physics'];
         _results = [];
         for (id in _ref) {
@@ -57,24 +96,28 @@
               entity.components.flocking.flock(this.entities.entitiesIndex.human);
             }
             if (entity.hasComponent('zombie')) {
-              entity.components.flocking.flock(this.entities.entitiesIndex.zombie);
-            }
-          }
-          if (entity.hasComponent('human') && this.entities.entitiesIndex.zombie) {
-            _ref1 = entity.components.world.getNeighbors(4);
-            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-              neighbor = _ref1[_i];
-              if (neighbor.hasComponent('zombie')) {
-                zombie = neighbor;
-                physics.applyForce(physics.seekForce(zombie, 20).multiply(-8));
-              }
+              entity.components.flocking.flock(this.entities.entitiesIndex.zombie, 0.7);
             }
           }
           if (entity.hasComponent('human')) {
-            mateId = entity.components.human.mateId;
+            this.humanZombieBehavior(entity);
+          }
+          if (entity.hasComponent('human')) {
+            human = entity.components.human;
+            mateId = human.mateId;
             if (mateId !== null) {
               if (this.entities.entities[mateId]) {
                 physics.applyForce(physics.seekForce(this.entities.entities[mateId]).multiply(2));
+              }
+            }
+            if (human.children.length > 0) {
+              _ref1 = human.children;
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                childId = _ref1[_i];
+                child = this.entities.entities[childId];
+                if (child && child.components.human.age < 18) {
+                  physics.applyForce(physics.seekForce(child).multiply(2.5));
+                }
               }
             }
           }

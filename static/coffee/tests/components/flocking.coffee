@@ -32,15 +32,6 @@ define(['components/vector', 'components/flocking', 'entities', 'entity'], (
             #Position should not be the same
             a.components.position.x.should.equal(4)
             a.components.position.y.should.equal(4)
-            
-            #this should update the acceleration, but not the position yet until
-            # update is called
-            a.components.physics.tick()
-            
-            #Position should not be the same
-            a.components.position.x.should.not.equal(4)
-            a.components.position.y.should.not.equal(4)
-            
         )
     )
     

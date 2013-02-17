@@ -32,7 +32,7 @@
         while (i < 35) {
           entity = new Entity();
           entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('renderer').addComponent('flocking');
-          if (Math.random() < 0.5) {
+          if (Math.random() < 0.6) {
             entity.addComponent('zombie');
           } else {
             entity.addComponent('spawner');

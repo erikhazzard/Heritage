@@ -117,8 +117,9 @@
         return steer;
       };
 
-      Flocking.prototype.flock = function(entities) {
+      Flocking.prototype.flock = function(entities, multiplier) {
         var align, cohesion, physics, sep;
+        multiplier = multiplier || 1;
         if (!entities) {
           console.log('ERROR: COMPONENT: FLOCKING');
           console.log('must pass in entities object');
@@ -126,9 +127,9 @@
         sep = this.separate(entities);
         align = this.align(entities);
         cohesion = this.cohesion(entities);
-        sep.multiply(this.rules.separate);
-        align.multiply(this.rules.align);
-        cohesion.multiply(this.rules.cohesion);
+        sep.multiply(this.rules.separate).multiply(multiplier);
+        align.multiply(this.rules.align).multiply(multiplier);
+        cohesion.multiply(this.rules.cohesion).multiply(multiplier);
         physics = this.entity.components.physics;
         physics.applyForce(sep);
         physics.applyForce(align);

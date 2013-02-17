@@ -165,9 +165,11 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
         #Boids - Flock behavior
         #
         #--------------------------------
-        flock: (entities)->
+        flock: (entities, multiplier)->
             #Performs flocking behavior with a group of passed in
             #entities. Should pass in an entitiesIndex object
+            multiplier = multiplier || 1
+            
             if not entities
                 console.log('ERROR: COMPONENT: FLOCKING')
                 console.log('must pass in entities object')
@@ -178,10 +180,10 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             align = @align(entities)
             cohesion = @cohesion(entities)
 
-            #Mutliply the values
-            sep.multiply(@rules.separate)
-            align.multiply(@rules.align)
-            cohesion.multiply(@rules.cohesion)
+            #Mutliply the values by the comopnent values AND multiplier if passed 
+            sep.multiply(@rules.separate).multiply(multiplier)
+            align.multiply(@rules.align).multiply(multiplier)
+            cohesion.multiply(@rules.cohesion).multiply(multiplier)
             
             #Apply the force
             physics = @entity.components.physics

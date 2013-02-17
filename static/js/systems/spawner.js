@@ -12,7 +12,7 @@
       }
 
       Spawner.prototype.canBirth = function(entity, neighbors) {
-        var human, neighbor, neighborHuman, _i, _len, _ref, _ref1;
+        var human, neighbor, neighborHuman, parentIndex, _i, _len, _ref;
         human = entity.components.human;
         if (human.sex === 'male') {
           return false;
@@ -38,10 +38,11 @@
             }
             neighborHuman = neighbor.components.human;
             if (neighborHuman.sex === 'male') {
-              if (_ref = entity.id, __indexOf.call(neighborHuman.family, _ref) >= 0) {
+              parentIndex = neighborHuman.family.indexOf(entity.id);
+              if (parentIndex > -1 && parentIndex < 6) {
                 return false;
               }
-              if (_ref1 = entity.id, __indexOf.call(neighborHuman.children, _ref1) >= 0) {
+              if (_ref = entity.id, __indexOf.call(neighborHuman.children, _ref) >= 0) {
                 return false;
               }
               if (human.mateId !== null && human.mateId !== neighbor.id) {

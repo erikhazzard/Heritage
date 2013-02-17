@@ -61,7 +61,9 @@ define(['entity'], (Entity)->
                     #must be male
                     if neighborHuman.sex == 'male'
                         #cannot be parent
-                        if entity.id in neighborHuman.family
+                        #  but can be distantly related
+                        parentIndex = neighborHuman.family.indexOf(entity.id)
+                        if parentIndex > -1 and parentIndex < 6
                             return false
                         #or a child
                         if entity.id in neighborHuman.children
