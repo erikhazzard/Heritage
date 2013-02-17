@@ -59,8 +59,8 @@ define([], ()->
             #Loop through neighboring cells to get entities
             #  We do this because it's more efficient to loop through only
             #  25 cells for each entity as opposed to each entity
-            for i in [-1..1] by 1
-                for j in [-1..1] by 1
+            for i in [-radius..radius] by 1
+                for j in [-radius..radius] by 1
                     targetI = @i + i
                     targetJ = @j + j
                     
@@ -86,23 +86,28 @@ define([], ()->
             @neighbors = neighbors
             return neighbors
 
+        getCellFromPosition: (position)->
+            i = Math.floor(position.y / World.cellSize)
+            j = Math.floor(position.x / World.cellSize)
+            return {i: i, j:j}
+
         tick: (delta)->
             #On each game tick, update the game world
             position = @entity.components.position
-            i = Math.floor(position.y / World.cellSize)
-            j = Math.floor(position.x / World.cellSize)
+            cell = @getCellFromPosition(position)
             
-            @i = i
-            @j = j
+            #Update this cell's position
+            @i = cell.i
+            @j = cell.j
             
             #Add entity to the corresponding cell. NOTE: The grid is cleared 
             #  tick in the system.  TODO: Should this live in the system too?
-            if World.grid[i] == undefined
-                World.grid[i] = {}
-            if World.grid[i][j] == undefined
-                World.grid[i][j] = []
+            if World.grid[@i] == undefined
+                World.grid[@i] = {}
+            if World.grid[@i][@j] == undefined
+                World.grid[@i][@j] = []
             
-            World.grid[i][j].push(@entity)
+            World.grid[@i][@j].push(@entity)
     
     return World
 )

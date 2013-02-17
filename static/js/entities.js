@@ -39,6 +39,19 @@
         return this.entitiesIndex;
       };
 
+      Entities.prototype.getRandomEntityByComponent = function(componentName) {
+        var entity, key, _ref;
+        while (true) {
+          _ref = this.entitiesIndex[componentName];
+          for (key in _ref) {
+            entity = _ref[key];
+            if (Math.random() < 0.1) {
+              return entity;
+            }
+          }
+        }
+      };
+
       Entities.prototype.add = function(entity) {
         var component, name, _ref;
         this.entities[this._currentId] = entity;

@@ -22,7 +22,10 @@ define(['components/world'], (WorldComponent)->
                 entity.components.world.tick()
                 
                 #If the entity is dead, remove it
-                if entity.components.human.isDead
+                human = entity.components.human
+                zombie = entity.components.zombie
+                #TODO: do this better, maybe a "living" component?
+                if (human and human.isDead) or (zombie and zombie.isDead)
                     @entities.remove(entity)
     
             for id, entity of @entities.entitiesIndex['world']

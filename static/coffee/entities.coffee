@@ -43,6 +43,14 @@ define(['events'], (events)->
             
             return @entitiesIndex
 
+        getRandomEntityByComponent: (componentName)->
+            #Returns an entity at random
+            while true
+                for key, entity of @entitiesIndex[componentName]
+                    if Math.random() < 0.1
+                        return entity
+
+
         #--------------------------------
         #Entities - add / remove
         #--------------------------------

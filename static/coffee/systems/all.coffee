@@ -19,7 +19,8 @@ define(['systems/renderer',
     'systems/living',
     'systems/world',
     'systems/spawner',
-    ], (Renderer, Physics, Living, World, Spawner)->
+    'systems/userInterface',
+    ], (Renderer, Physics, Living, World, Spawner, UserInterface)->
     class Systems
         constructor: (entities)->
             @entities = entities
@@ -37,6 +38,9 @@ define(['systems/renderer',
                 #And then the grid / get its neighbors
                 new World(@entities)
                 
+                #Add a UI layer
+                new UserInterface(@entities)
+
                 #Finally render it
                 new Renderer(@entities)
             ]

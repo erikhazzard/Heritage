@@ -40,8 +40,8 @@
         var entity, i, j, neighbors, targetEntities, targetI, targetJ, _i, _j, _k, _len;
         radius = radius || 1;
         neighbors = [];
-        for (i = _i = -1; _i <= 1; i = _i += 1) {
-          for (j = _j = -1; _j <= 1; j = _j += 1) {
+        for (i = _i = -radius; _i <= radius; i = _i += 1) {
+          for (j = _j = -radius; _j <= radius; j = _j += 1) {
             targetI = this.i + i;
             targetJ = this.j + j;
             if (targetI > World.rows) {
@@ -71,20 +71,29 @@
         return neighbors;
       };
 
-      World.prototype.tick = function(delta) {
-        var i, j, position;
-        position = this.entity.components.position;
+      World.prototype.getCellFromPosition = function(position) {
+        var i, j;
         i = Math.floor(position.y / World.cellSize);
         j = Math.floor(position.x / World.cellSize);
-        this.i = i;
-        this.j = j;
-        if (World.grid[i] === void 0) {
-          World.grid[i] = {};
+        return {
+          i: i,
+          j: j
+        };
+      };
+
+      World.prototype.tick = function(delta) {
+        var cell, position;
+        position = this.entity.components.position;
+        cell = this.getCellFromPosition(position);
+        this.i = cell.i;
+        this.j = cell.j;
+        if (World.grid[this.i] === void 0) {
+          World.grid[this.i] = {};
         }
-        if (World.grid[i][j] === void 0) {
-          World.grid[i][j] = [];
+        if (World.grid[this.i][this.j] === void 0) {
+          World.grid[this.i][this.j] = [];
         }
-        return World.grid[i][j].push(this.entity);
+        return World.grid[this.i][this.j].push(this.entity);
       };
 
       return World;

@@ -78,9 +78,36 @@ define([], ()->
                 #BOIDS / Flocking - TODO: PUT THIS IN OWN SYSTEM
                 #------------------------
                 if entity.hasComponent('flocking')
-                    entity.components.flocking.flock(@entities.entitiesIndex.flocking)
+                    #Only flock with same type of creature
+                    if entity.hasComponent('human')
+                        entity.components.flocking.flock(@entities.entitiesIndex.human)
+                        
+                    #Zombies try to flock together
+                    if entity.hasComponent('zombie')
+                        entity.components.flocking.flock(@entities.entitiesIndex.zombie)
+                        
+                #------------------------
+                #Human - Flee from zombies
+                #------------------------
+                #If this is a human and there are zombies in the world
+                if entity.hasComponent('human') and @entities.entitiesIndex.zombie
                     
-                #Seek out mate
+                    #Go through all neighbor cells and flee from any zombies 
+                    #quicker to loop through neighboring cells than ALL entities
+                    #  4 is the radius we want to look for neighbors with
+                    for neighbor in entity.components.world.getNeighbors(4)
+                        if neighbor.hasComponent('zombie')
+                            zombie = neighbor
+
+                            #multiply by -1 to make it flee
+                            physics.applyForce(
+                                physics.seekForce(
+                                    zombie,20
+                                ).multiply(-8)
+                            )
+                    
+
+                #Human - Seek out mate
                 #------------------------
                 #if entity has a mate, seek it out
                 if entity.hasComponent('human')
@@ -91,8 +118,8 @@ define([], ()->
                             physics.applyForce(
                                 physics.seekForce(
                                     @entities.entities[mateId]
-                                )
-                            ).multiply(2.5)
+                                ).multiply(2)
+                            )
         
                 #UPDATE (tick)
                 #------------------------

@@ -9,6 +9,19 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
             @entities = new Entities()
             @systems = new Systems(@entities).systems
             @numTicks = 0
+            @paused = false
+        
+            #add ability to pause - todo: put this somewhere else?
+            document.addEventListener('keydown', (e)=>
+                if e.keyCode == 32
+                    #toggle paused
+                    @paused = !@paused
+                    #continue game loop if game is not paused
+                    if !@paused
+                        @gameLoop()
+                else
+                    @paused = false
+            )
             
         start: ()->
             #Initialize stuff
@@ -19,12 +32,16 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                     .addComponent('position')
                     .addComponent('physics')
                     .addComponent('randomWalker')
-                    .addComponent('flocking')
                     .addComponent('renderer')
-                    .addComponent('human')
-                    .addComponent('spawner')
+                    .addComponent('flocking')
+
+                if Math.random() < 0.5
+                    entity.addComponent('zombie')
+                else
+                    entity.addComponent('spawner')
+                    entity.addComponent('human')
+                    entity.components.human.age = Math.random() * 100 | 0
                     
-                entity.components.human.age = Math.random() * 100 | 0
                 entity.components.position.x = Math.random() * 500 | 0
                 entity.components.position.y = Math.random() * 500 | 0
                 
@@ -34,7 +51,7 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                 
                 i++
                 
-            @loop()
+            @gameLoop()
             
             #For debug / performance
             #setInterval(()=>
@@ -44,9 +61,15 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
         #--------------------------------
         #Game Loop stuff
         #--------------------------------
-        loop: ()=>
+        gameLoop: ()=>
+            if @paused
+                return true
+            
             #This is the main game loop
-            requestAnimFrame(@loop)
+            requestAnimFrame(@gameLoop)
+            #setTimeout(()=>
+                #requestAnimFrame(@gameLoop)
+            #, 200)
             
             #Go through all systems and call tick if it has it
             for system in @systems

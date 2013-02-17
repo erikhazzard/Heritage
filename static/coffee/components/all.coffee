@@ -14,9 +14,10 @@ define(['components/position',
     'components/spawner',
     'components/creature',
     'components/human',
+    'components/zombie',
     ], (
     Position, World, Renderer, Physics, RandomWalker, Flocking,
-    Spawner, Creature, Human
+    Spawner, Creature, Human, Zombie
     )->
     Components = {
         renderer: Renderer
@@ -33,6 +34,7 @@ define(['components/position',
         spawner: Spawner
         creature: Creature
         human: Human
+        zombie: Zombie
     }
     return Components
 )

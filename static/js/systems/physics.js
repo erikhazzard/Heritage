@@ -43,7 +43,7 @@
       };
 
       Physics.prototype.tick = function(delta) {
-        var entity, id, mateId, physics, _ref, _results;
+        var entity, id, mateId, neighbor, physics, zombie, _i, _len, _ref, _ref1, _results;
         _ref = this.entities.entitiesIndex['physics'];
         _results = [];
         for (id in _ref) {
@@ -53,13 +53,28 @@
             physics.applyForce(entity.components.randomWalker.walkForce());
           }
           if (entity.hasComponent('flocking')) {
-            entity.components.flocking.flock(this.entities.entitiesIndex.flocking);
+            if (entity.hasComponent('human')) {
+              entity.components.flocking.flock(this.entities.entitiesIndex.human);
+            }
+            if (entity.hasComponent('zombie')) {
+              entity.components.flocking.flock(this.entities.entitiesIndex.zombie);
+            }
+          }
+          if (entity.hasComponent('human') && this.entities.entitiesIndex.zombie) {
+            _ref1 = entity.components.world.getNeighbors(4);
+            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+              neighbor = _ref1[_i];
+              if (neighbor.hasComponent('zombie')) {
+                zombie = neighbor;
+                physics.applyForce(physics.seekForce(zombie, 20).multiply(-8));
+              }
+            }
           }
           if (entity.hasComponent('human')) {
             mateId = entity.components.human.mateId;
             if (mateId !== null) {
               if (this.entities.entities[mateId]) {
-                physics.applyForce(physics.seekForce(this.entities.entities[mateId])).multiply(2.5);
+                physics.applyForce(physics.seekForce(this.entities.entities[mateId]).multiply(2));
               }
             }
           }

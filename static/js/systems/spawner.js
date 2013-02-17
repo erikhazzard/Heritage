@@ -33,6 +33,9 @@
         } else {
           for (_i = 0, _len = neighbors.length; _i < _len; _i++) {
             neighbor = neighbors[_i];
+            if (neighbor.hasComponent('human') !== true) {
+              continue;
+            }
             neighborHuman = neighbor.components.human;
             if (neighborHuman.sex === 'male') {
               if (_ref = entity.id, __indexOf.call(neighborHuman.family, _ref) >= 0) {
@@ -85,7 +88,7 @@
         _results = [];
         for (id in _ref) {
           entity = _ref[id];
-          if (!entity.hasComponent('human')) {
+          if (entity.hasComponent('human') !== true) {
             continue;
           }
           spawner = entity.components.spawner;

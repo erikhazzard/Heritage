@@ -26,14 +26,28 @@
           context.fillStyle = entity.components.renderer.color;
           if (entity.components.human) {
             alpha = Math.round((1 - (entity.components.human.age / 110)) * 10) / 10;
-            if (entity.components.human.sex === 'female') {
-              context.fillStyle = 'rgba(255,100,255,' + alpha + ')';
-            } else {
-              context.fillStyle = 'rgba(100,150,200,' + alpha + ')';
+            if (entity.components.human.age < 20) {
+              context.fillStyle = 'rgba(0,0,0,0.9)';
+            } else if (entity.components.human.age > 64) {
+              context.fillStyle = 'rgba(190,190,190,0.9)';
+            }
+            if (entity.components.human.age > 19 && entity.components.human.age < 65) {
+              if (entity.components.human.sex === 'female') {
+                context.fillStyle = 'rgba(255,100,255,' + alpha + ')';
+              } else {
+                context.fillStyle = 'rgba(100,150,200,' + alpha + ')';
+              }
             }
           }
+          if (entity.hasComponent('zombie')) {
+            context.fillStyle = 'rgba(255,100,100,1)';
+          }
           context.fillRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+          if (entity.components.renderer.isSelected) {
+            context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+          }
           context.restore();
+          entity.components.renderer.isSelected = false;
         }
         return this;
       };

@@ -51,6 +51,10 @@ define(['entity'], (Entity)->
                 return false
             else
                 for neighbor in neighbors
+                    #Only humans can give birth (for now)
+                    if neighbor.hasComponent('human') != true
+                        continue
+                    
                     neighborHuman = neighbor.components.human
                     
                     #Rules for impregnanting - neighbor:
@@ -131,7 +135,7 @@ define(['entity'], (Entity)->
             #  other creates (vampires, werewolves, etc)
             for id, entity of @entities.entitiesIndex['spawner']
                 #Needs to be a human
-                if not entity.hasComponent('human')
+                if entity.hasComponent('human') != true
                     continue
                 
                 #store ref

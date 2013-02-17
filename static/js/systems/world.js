@@ -11,13 +11,15 @@
       }
 
       World.prototype.tick = function(delta) {
-        var entity, id, _ref, _ref1, _results;
+        var entity, human, id, zombie, _ref, _ref1, _results;
         WorldComponent.grid = {};
         _ref = this.entities.entitiesIndex['world'];
         for (id in _ref) {
           entity = _ref[id];
           entity.components.world.tick();
-          if (entity.components.human.isDead) {
+          human = entity.components.human;
+          zombie = entity.components.zombie;
+          if ((human && human.isDead) || (zombie && zombie.isDead)) {
             this.entities.remove(entity);
           }
         }
