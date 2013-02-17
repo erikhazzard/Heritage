@@ -8,47 +8,6 @@
         return physics = new Physics();
       });
     });
-    describe('Physics: tick() update tests', function() {
-      it('tick() should properly update position', function() {
-        var entity, physics;
-        entity = new Entity();
-        entity.addComponent('world');
-        entity.addComponent('physics');
-        entity.addComponent('position');
-        physics = entity.components.physics;
-        entity.components.position.x.should.equal(0);
-        entity.components.position.y.should.equal(0);
-        physics.tick();
-        entity.components.position.x.should.equal(0);
-        entity.components.position.y.should.equal(0);
-        physics.velocity = new Vector(2, 2);
-        physics.tick();
-        entity.components.position.x.should.equal(2);
-        return entity.components.position.y.should.equal(2);
-      });
-      return it('tick() should properly update velocity and acceleration', function() {
-        var entity, physics;
-        entity = new Entity();
-        entity.addComponent('physics');
-        entity.addComponent('position');
-        physics = entity.components.physics;
-        physics.velocity = new Vector(2, 2);
-        physics.tick();
-        entity.components.position.x.should.equal(2);
-        entity.components.position.y.should.equal(2);
-        physics.acceleration = new Vector(1, 1);
-        physics.tick();
-        entity.components.position.x.should.equal(5);
-        entity.components.position.y.should.equal(5);
-        entity.components.physics.acceleration.x.should.equal(0);
-        entity.components.physics.acceleration.y.should.equal(0);
-        entity.components.physics.velocity.x.should.equal(3);
-        entity.components.physics.velocity.y.should.equal(3);
-        physics.tick();
-        entity.components.position.x.should.equal(8);
-        return entity.components.position.y.should.equal(8);
-      });
-    });
     describe('Physics: seek() tests', function() {
       return it('should return a proper seek force', function() {
         var a, b, force;
