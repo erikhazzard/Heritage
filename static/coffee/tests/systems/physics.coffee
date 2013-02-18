@@ -50,16 +50,18 @@ define(['components/vector', 'components/physics',
             entity.addComponent('physics')
             entity.addComponent('position')
             
-            physics = entity.components.physics
-            physics.velocity = new Vector(2,2)
-            physics.tick()
+            physicsComponent = entity.components.physics
+            physicsComponent.velocity = new Vector(2,2)
+            
+            physicsSystem = new PhysicsSystem(entities)
+            physicsSystem.tick()
             entity.components.position.x.should.equal(2)
             entity.components.position.y.should.equal(2)
             
             #Now with acceleration
-            physics.acceleration = new Vector(1,1)
+            physicsComponent.acceleration = new Vector(1,1)
             
-            physics.tick()
+            physicsSystem.tick()
             entity.components.position.x.should.equal(5)
             entity.components.position.y.should.equal(5)
             #acceleration should reset to 0
@@ -70,7 +72,7 @@ define(['components/vector', 'components/physics',
             entity.components.physics.velocity.y.should.equal(3)
 
             #check again now
-            physics.tick()
+            physicsSystem.tick()
             entity.components.position.x.should.equal(8)
             entity.components.position.y.should.equal(8)
         )

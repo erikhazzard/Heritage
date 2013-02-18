@@ -15,8 +15,8 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             @entity = entity
             
             #State variables 
-            @velocity = new Vector(0,0)
-            @acceleration = new Vector(0,0)
+            @velocity = params.velocity || new Vector(0,0)
+            @acceleration = params.acceleration || new Vector(0,0)
     
             #limiting variables
             @maxSpeed = params.maxSpeed || 8

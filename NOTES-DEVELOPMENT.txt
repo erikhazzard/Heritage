@@ -42,3 +42,9 @@ To keep in mind:
 TODO
 =========================================
 Place world wrapping functionality in world component instead of physics?
+
+LOGGING System
+    -send data to node, node saves in mongo. allows for reviewing data at an entity level
+
+WORLD
+    -should this just be a system and NOT an entity?

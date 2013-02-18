@@ -31,6 +31,8 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                 entity.addComponent('world')
                     .addComponent('position')
                     .addComponent('physics')
+                    .addComponent('health')
+                    .addComponent('combat')
                     .addComponent('randomWalker')
                     .addComponent('renderer')
                     .addComponent('flocking')
@@ -38,7 +40,6 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                 if Math.random() < 0.6
                     entity.addComponent('zombie')
                 else
-                    entity.addComponent('spawner')
                     entity.addComponent('human')
                     entity.components.human.age = Math.random() * 100 | 0
                     

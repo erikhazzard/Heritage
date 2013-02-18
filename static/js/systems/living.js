@@ -11,35 +11,55 @@
       }
 
       Living.prototype.updateHuman = function(entity) {
-        var human, newZombie, physics;
+        var health, human, newZombie, physics;
         human = entity.components.human;
         physics = entity.components.physics;
+        health = entity.components.health;
         human.age += 0.1;
         physics.maxSpeed = human.getMaxSpeed();
         human.resources = human.calculateResources();
-        human.health = human.calculateHealth();
-        if (human.health < 0) {
-          human.isDead = true;
-        }
-        if (human.isDead && human.hassZombieInfection) {
-          newZombie = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('renderer').addComponent('flocking').addComponent('zombie');
+        health.health = human.calculateHealth(health.health);
+        human.isDead = human.getIsDead(health.health);
+        if (human.isDead && human.hasZombieInfection) {
+          newZombie = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('renderer').addComponent('flocking').addComponent('zombie').addComponent('health');
           newZombie.components.position = entity.components.position.copy();
           this.entities.add(newZombie);
         }
         if (human.isDead) {
-          return this.entities.remove(entity);
+          this.entities.remove(entity);
         }
+        return true;
+      };
+
+      Living.prototype.updateZombie = function(entity) {
+        var health, physics, zombie;
+        zombie = entity.components.zombie;
+        physics = entity.components.physics;
+        health = entity.components.health;
+        zombie.age += 0.1;
+        physics.maxSpeed = zombie.getMaxSpeed();
+        zombie.resources = zombie.calculateResources();
+        health.health = zombie.calculateHealth(health.health);
+        zombie.isDead = zombie.getIsDead(health.health);
+        if (zombie.isDead) {
+          this.entities.remove(entity);
+        }
+        return true;
       };
 
       Living.prototype.tick = function(delta) {
-        var entity, id, _ref, _results;
+        var entity, id, _ref, _ref1;
         _ref = this.entities.entitiesIndex['human'];
-        _results = [];
         for (id in _ref) {
           entity = _ref[id];
-          _results.push(this.updateHuman(entity));
+          this.updateHuman(entity);
         }
-        return _results;
+        _ref1 = this.entities.entitiesIndex['zombie'];
+        for (id in _ref1) {
+          entity = _ref1[id];
+          this.updateZombie(entity);
+        }
+        return this;
       };
 
       return Living;

@@ -28,6 +28,7 @@ define(['components/world'], (WorldComponent)->
                 if (human and human.isDead) or (zombie and zombie.isDead)
                     @entities.remove(entity)
     
+            #Get each entity's neighbors
             for id, entity of @entities.entitiesIndex['world']
                 entity.components.world.getNeighbors()
             

@@ -15,10 +15,11 @@ define([], ()->
             params = params || {}
             @entity = entity
 
-            #When health < 0, entity dies
-            @health = params.health || 100
             #Age increases by 0.1 each tick
             @age = params.age || 0.1
+            #Keep track if human is dead - other components might
+            # have different requirement for death
+            @isDead = false
             
             #Resources is an abstraction to represent food
             @resources = params.resources || 100
@@ -41,9 +42,11 @@ define([], ()->
             #Keep track of children this entity has birthed
             @children = []
             @family = []
-
-            #When health falls below 0, it's dead
-            @isDead = false
+            
+            #----------------------------
+            #effects
+            #----------------------------
+            @hasZombieInfection = false
             
             #----------------------------
             #Stats
@@ -52,9 +55,9 @@ define([], ()->
             #Dodge chance? Max Speed?
             @agility = Math.random() * 20 | 0
             
-        calculateHealth: ()->
-            #Calculate current health based on age / resources
-            health = @health
+        calculateHealth: (health)->
+            #Calculate health based on passed in health and
+            #NOTE: uses the health component, called from the system
 
             #Subtract health if resources are scarce
             if @resources < 0
@@ -70,6 +73,11 @@ define([], ()->
                     health = -1
                 
             return health
+        
+        getIsDead: (health)->
+            if health <=0
+                @isDead = true
+            return @isDead
 
         calculateResources: ()->
             #Base resource consumption on age and other factors

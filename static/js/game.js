@@ -31,11 +31,10 @@
         i = 0;
         while (i < 35) {
           entity = new Entity();
-          entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('renderer').addComponent('flocking');
+          entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('combat').addComponent('randomWalker').addComponent('renderer').addComponent('flocking');
           if (Math.random() < 0.6) {
             entity.addComponent('zombie');
           } else {
-            entity.addComponent('spawner');
             entity.addComponent('human');
             entity.components.human.age = Math.random() * 100 | 0;
           }

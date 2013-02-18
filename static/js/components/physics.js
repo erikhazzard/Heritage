@@ -8,8 +8,8 @@
       function Physics(entity, params) {
         params = params || {};
         this.entity = entity;
-        this.velocity = new Vector(0, 0);
-        this.acceleration = new Vector(0, 0);
+        this.velocity = params.velocity || new Vector(0, 0);
+        this.acceleration = params.acceleration || new Vector(0, 0);
         this.maxSpeed = params.maxSpeed || 8;
         this.maxForce = params.maxForce || 0.5;
         this.maxSeekForceDistance = params.maxSeekForceDistance || 150;

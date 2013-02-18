@@ -84,16 +84,15 @@
       };
 
       Spawner.prototype.tick = function(delta) {
-        var canBirth, entity, id, neighbors, spawner, _ref, _results;
-        _ref = this.entities.entitiesIndex['spawner'];
+        var canBirth, entity, id, neighbors, _ref, _results;
+        _ref = this.entities.entitiesIndex['human'];
         _results = [];
         for (id in _ref) {
           entity = _ref[id];
           if (entity.hasComponent('human') !== true) {
             continue;
           }
-          spawner = entity.components.spawner;
-          neighbors = spawner.getNeighbors();
+          neighbors = entity.components.world.neighbors;
           canBirth = this.canBirth(entity, neighbors);
           if (canBirth) {
             _results.push(this.makeBaby(entity));

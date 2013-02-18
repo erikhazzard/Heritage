@@ -19,17 +19,14 @@ define(['systems/renderer',
     'systems/living',
     'systems/world',
     'systems/spawner',
-    'systems/fighting',
+    'systems/combat',
     'systems/userInterface',
-    ], (Renderer, Physics, Living, World, Spawner, Fighting, UserInterface)->
+    ], (Renderer, Physics, Living, World, Spawner, Combat, UserInterface)->
     class Systems
         constructor: (entities)->
             @entities = entities
             
             @systems =  [
-                #First, check if entity is alive
-                new Living(@entities)
-
                 #Then check if a new entity is born
                 new Spawner(@entities)
 
@@ -40,8 +37,13 @@ define(['systems/renderer',
                 new World(@entities)
                 
                 #Perform any fights
-                new Fighting(@entities)
+                new Combat(@entities)
                 
+                #------------------------
+                #Check for living / dead state
+                #------------------------
+                new Living(@entities)
+
                 #Add a UI layer
                 new UserInterface(@entities)
 

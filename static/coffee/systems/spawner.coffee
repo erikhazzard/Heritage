@@ -135,20 +135,16 @@ define(['entity'], (Entity)->
             #Go through all spawners 
             #  For now, only humans can be spawners, but later we may have
             #  other creates (vampires, werewolves, etc)
-            for id, entity of @entities.entitiesIndex['spawner']
+            for id, entity of @entities.entitiesIndex['human']
                 #Needs to be a human
                 if entity.hasComponent('human') != true
                     continue
-                
-                #store ref
-                #------------------------
-                spawner = entity.components.spawner
 
                 #Birth?
                 #   1. Can entity become pregnant
                 #   2. Can entity give birth
                 #------------------------
-                neighbors = spawner.getNeighbors()
+                neighbors = entity.components.world.neighbors
                 canBirth = @canBirth(entity, neighbors)
                 
                 #Make a baby

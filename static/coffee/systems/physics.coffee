@@ -4,7 +4,7 @@
 #   Handles entity physics
 #
 #============================================================================
-define([], ()->
+define(['components/Vector'], (Vector)->
     class Physics
         constructor: (entities)->
             @entities = entities
@@ -70,6 +70,7 @@ define([], ()->
             #       -Chase / flee behavior is also modified by the entity's
             #       health
             physics = entity.components.physics
+            behvaiorForce = new Vector(0,0)
             
             if entity.hasComponent('human') and @entities.entitiesIndex.zombie
                 #If this is a human and there are zombies in the world
@@ -88,7 +89,8 @@ define([], ()->
                         numHumans += 1
                     #keep track of neighbors so we don't need to call function
                     #  again
-                    neighbors.push(neighbor)
+                    if neighbor != entity
+                        neighbors.push(neighbor)
                     
                 #Let's calculate some number based off the entity's health and
                 # other attribtues to add to the pursuit calculation
@@ -96,7 +98,7 @@ define([], ()->
                 
                 #if low health or young / old age, very strongly wants to flee
                 #TODO: put health as its own component
-                if entity.components.human.health < 20
+                if entity.components.health.health < 20
                     pursuitDesire -= 2
                 if entity.components.human.age < 10 or entity.components.human.age > 80
                     pursuitDesire -= 4
@@ -117,13 +119,15 @@ define([], ()->
 
                         #Apply the force. If it's positive, the human chases
                         #  zombie. If negative, human flees
+                        behaviorForce = physics.seekForce(
+                            zombie
+                        ).multiply(scale)
+                        #add it
                         physics.applyForce(
-                            physics.seekForce(
-                                zombie
-                            ).multiply(scale)
+                            behaviorForce
                         )
                         
-                return true
+                return behaviorForce
         
         #--------------------------------
         #

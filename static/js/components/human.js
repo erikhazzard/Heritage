@@ -8,8 +8,8 @@
       function Human(entity, params) {
         params = params || {};
         this.entity = entity;
-        this.health = params.health || 100;
         this.age = params.age || 0.1;
+        this.isDead = false;
         this.resources = params.resources || 100;
         this.sex = ['male', 'female'][Math.random() * 2 | 0];
         this.isPregnant = false;
@@ -19,14 +19,12 @@
         this.mateId = null;
         this.children = [];
         this.family = [];
-        this.isDead = false;
+        this.hasZombieInfection = false;
         this.strength = Math.random() * 20 | 0;
         this.agility = Math.random() * 20 | 0;
       }
 
-      Human.prototype.calculateHealth = function() {
-        var health;
-        health = this.health;
+      Human.prototype.calculateHealth = function(health) {
         if (this.resources < 0) {
           health -= 0.1 + Math.abs(this.resources * 0.02);
         }
@@ -39,6 +37,13 @@
           }
         }
         return health;
+      };
+
+      Human.prototype.getIsDead = function(health) {
+        if (health <= 0) {
+          this.isDead = true;
+        }
+        return this.isDead;
       };
 
       Human.prototype.calculateResources = function() {

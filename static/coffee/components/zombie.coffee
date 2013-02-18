@@ -9,14 +9,12 @@
 #   Dependencies / Coupling:
 #
 #============================================================================
-define([], ()->
+define(['lib/d3'], (d3)->
     class Zombie
         constructor: (entity, params)->
             params = params || {}
             @entity = entity
 
-            #When health < 0, entity dies
-            @health = params.health || 100
             #Age doesn't affect anything - zombies are undead
             @age = params.age || 0.1
 
@@ -26,6 +24,8 @@ define([], ()->
             #If the zombie is killed / dead
             @isDead = false
             
+            @decayRate = params.decayRate || Math.abs(d3.random.normal(1,1)())
+            
             #----------------------------
             #Stats
             #----------------------------
@@ -34,10 +34,9 @@ define([], ()->
             #Dodge chance? Max Speed?
             @agility = Math.random() * 20 | 0
             
-        calculateHealth: ()->
+        calculateHealth: (health)->
             #Calculate current health based on age / resources
-            health = @health
-
+            
             #Subtract health if resources are scarce
             #slow, natural decay
             if @resources < 20
@@ -48,10 +47,25 @@ define([], ()->
                 health -= (0.2 + Math.abs(@resources * 0.04) )
                 
             #if resources are high, more life
-            if resources > 50
+            if @resources > 50
                 health += (0.01 + Math.abs(@resources * 0.005) )
 
             return health
+        
+        getIsDead: (health)->
+            #If zombie has too low resources OR health < 0, it's dead
+            if @resources <= 0 or health <= 0
+                @isDead = true
+                
+            return @isDead
+        
+        getMaxSpeed: ()->
+            #Returns max speed based on various factors
+            maxSpeed = 8
+            if @resources < 20
+                maxSpeed = 4
+                
+            return maxSpeed
         
         calculateResources: ()->
             #Base resource consumption on age and other factors
@@ -60,7 +74,7 @@ define([], ()->
             resources = @resources
             
             #Resources decay naturally
-            resources -= (0.05)
+            resources -= (@decayRate)
             return resources
             
     return Zombie
