@@ -44,8 +44,24 @@
         return entities;
       };
 
+      UserInterface.prototype.showUserMovableInfo = function() {
+        var entities, entity, html, key;
+        html = '';
+        entities = this.entities.entitiesIndex.userMovable;
+        for (key in entities) {
+          entity = entities[key];
+          html = 'ID: ' + entity.id;
+          html += '<br />' + entity.components.health.health;
+          if (entity.hasComponent('human')) {
+            html += '<br />' + entity.components.human.hasZombieInfection;
+          }
+        }
+        this.$debug.innerHTML = html;
+        return entities;
+      };
+
       UserInterface.prototype.tick = function(delta) {
-        this.getEntitiesUnderMouse();
+        this.showUserMovableInfo();
         return this;
       };
 

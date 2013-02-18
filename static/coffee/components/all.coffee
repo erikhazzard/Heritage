@@ -10,6 +10,9 @@ define(['components/position',
     'components/randomWalker',
     'components/flocking',
 
+
+    'components/userMovable',
+
     #Creature related
     'components/health',
     'components/combat',
@@ -17,6 +20,7 @@ define(['components/position',
     'components/zombie',
     ], (
     Position, World, Renderer, Physics, RandomWalker, Flocking,
+    UserMovable,
     Health, Combat,
     Human, Zombie
     )->
@@ -30,6 +34,8 @@ define(['components/position',
         physics: Physics
         randomWalker: RandomWalker
         flocking: Flocking
+        
+        userMovable: UserMovable
         
         #Creature related
         health: Health

@@ -22,6 +22,9 @@
         human.isDead = human.getIsDead(health.health);
         if (human.isDead && human.hasZombieInfection) {
           newZombie = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('randomWalker').addComponent('renderer').addComponent('flocking').addComponent('zombie').addComponent('health');
+          if (entity.hasComponent('userMovable')) {
+            newZombie.addComponent('userMovable');
+          }
           newZombie.components.position = entity.components.position.copy();
           this.entities.add(newZombie);
         }

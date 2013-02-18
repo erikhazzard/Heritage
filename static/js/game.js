@@ -29,10 +29,13 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        while (i < 35) {
+        entity = new Entity();
+        entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('human').addComponent('health').addComponent('combat').addComponent('renderer').addComponent('userMovable');
+        this.entities.add(entity);
+        while (i < 55) {
           entity = new Entity();
           entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('combat').addComponent('randomWalker').addComponent('renderer').addComponent('flocking');
-          if (Math.random() < 0.6) {
+          if (Math.random() < 0.1) {
             entity.addComponent('zombie');
           } else {
             entity.addComponent('human');

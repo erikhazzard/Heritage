@@ -24,7 +24,7 @@ define(['lib/d3'], (d3)->
             #If the zombie is killed / dead
             @isDead = false
             
-            @decayRate = params.decayRate || Math.abs(d3.random.normal(1,1)())
+            @decayRate = params.decayRate || Math.abs(d3.random.normal(1,0.4)())
             
             #----------------------------
             #Stats

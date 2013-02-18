@@ -51,8 +51,24 @@ define(['components/vector', 'components/world'], (Vector, World)->
                 
             return entities
         
+        showUserMovableInfo: ()->
+            html = ''
+            entities = @entities.entitiesIndex.userMovable
+            
+            for key, entity of entities
+                html = 'ID: ' + entity.id
+                html += '<br />' + entity.components.health.health
+                if entity.hasComponent('human')
+                    html += '<br />' + entity.components.human.hasZombieInfection
+                
+            @$debug.innerHTML = html
+                    
+            return entities
+        
         tick: (delta)->
-            @getEntitiesUnderMouse()
+            #@getEntitiesUnderMouse()
+            #Show info for user movable entity
+            @showUserMovableInfo()
             return @
         
     return UserInterface

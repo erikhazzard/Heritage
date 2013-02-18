@@ -26,7 +26,19 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
         start: ()->
             #Initialize stuff
             i=0
-            while i < 35
+
+            entity = new Entity()
+            entity.addComponent('world')
+                .addComponent('position')
+                .addComponent('physics')
+                .addComponent('human')
+                .addComponent('health')
+                .addComponent('combat')
+                .addComponent('renderer')
+                .addComponent('userMovable')
+            @entities.add(entity)
+            
+            while i < 55
                 entity = new Entity()
                 entity.addComponent('world')
                     .addComponent('position')
@@ -37,7 +49,7 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                     .addComponent('renderer')
                     .addComponent('flocking')
 
-                if Math.random() < 0.6
+                if Math.random() < 0.1
                     entity.addComponent('zombie')
                 else
                     entity.addComponent('human')
@@ -46,8 +58,6 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                 entity.components.position.x = Math.random() * 500 | 0
                 entity.components.position.y = Math.random() * 500 | 0
                 
-                #entity.components.physics.velocity.x = Math.random() * 22 | 0
-                #entity.components.physics.velocity.y = Math.random() * 22 | 0
                 @entities.add( entity )
                 
                 i++

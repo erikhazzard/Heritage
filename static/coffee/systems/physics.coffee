@@ -139,60 +139,83 @@ define(['components/Vector'], (Vector)->
                 #Store ref
                 physics = entity.components.physics
                 
-                #If entity has a randomWalker component, make it walk
-                if entity.hasComponent('randomWalker')
-                    physics.applyForce( entity.components.randomWalker.walkForce() )
-                    
-                #BOIDS / Flocking 
-                #------------------------
-                if entity.hasComponent('flocking')
-                    #Only flock with same type of creature
-                    if entity.hasComponent('human')
-                        entity.components.flocking.flock(
-                            @entities.entitiesIndex.human
-                        )
+                #Don't do any AI movement if entity is userMovable
+                #  NOTE: TODO: Should this be allowed? Maybe a property of
+                #  the component
+                if entity.hasComponent('userMovable') == false
+                    #If entity has a randomWalker component, make it walk
+                    if entity.hasComponent('randomWalker')
+                        physics.applyForce( entity.components.randomWalker.walkForce() )
                         
-                    #Zombies try to flock together
-                    if entity.hasComponent('zombie')
-                        entity.components.flocking.flock(
-                            @entities.entitiesIndex.zombie,
-                            #make the multiplier for flocking a bit smaller
-                            0.7
-                        )
-                        
-                #------------------------
-                #Human - Flee or Pusue zombies
-                #------------------------
-                if entity.hasComponent('human')
-                    @humanZombieBehavior(entity)
-
-                #Human - Seek out mate and children
-                #------------------------
-                #if entity has a mate, seek it out
-                if entity.hasComponent('human')
-                    human = entity.components.human
-                    #MATE
-                    mateId = human.mateId
-                    if mateId != null
-                        #make sure entity is still alive
-                        if @entities.entities[mateId]
-                            physics.applyForce(
-                                physics.seekForce(
-                                    @entities.entities[mateId]
-                                ).multiply(2)
+                    #BOIDS / Flocking  - TODO: own system?
+                    #------------------------
+                    if entity.hasComponent('flocking')
+                        #Only flock with same type of creature
+                        if entity.hasComponent('human')
+                            entity.components.flocking.flock(
+                                @entities.entitiesIndex.human
                             )
                             
-                    #CHILDREN
-                    if human.children.length > 0
-                        for childId in human.children
-                            child = @entities.entities[childId]
-                            #Stay near the child if the child isn't too old
-                            if child and child.components.human.age < 18
+                        #Zombies try to flock together
+                        if entity.hasComponent('zombie')
+                            entity.components.flocking.flock(
+                                @entities.entitiesIndex.zombie,
+                                #make the multiplier for flocking a bit smaller
+                                0.7
+                            )
+                            
+                    #------------------------
+                    #Human movement - TODO: own system?
+                    #------------------------
+                    if entity.hasComponent('human') and not entity.hasComponent('userMovable')
+                        # Flee or Pusue zombies
+                        @humanZombieBehavior(entity)
+
+                        #Human - Seek out mate and children
+                        #------------------------
+                        #if entity has a mate, seek it out
+                        human = entity.components.human
+                        #MATE
+                        mateId = human.mateId
+                        if mateId != null
+                            #make sure entity is still alive
+                            if @entities.entities[mateId]
                                 physics.applyForce(
                                     physics.seekForce(
-                                        child
-                                    ).multiply(2.5)
+                                        @entities.entities[mateId]
+                                    ).multiply(2)
                                 )
+                                
+                        #CHILDREN
+                        if human.children.length > 0
+                            for childId in human.children
+                                child = @entities.entities[childId]
+                                #Stay near the child if the child isn't too old
+                                if child and child.components.human.age < 18
+                                    physics.applyForce(
+                                        physics.seekForce(
+                                            child
+                                        ).multiply(2.5)
+                                    )
+                    #------------------------
+                    #ZOMBIE movement - TODO: own system?
+                    #------------------------
+                    if entity.hasComponent('zombie') and not entity.hasComponent('userMovable')
+                        #Zombies just want brains
+                        #  go after first human in it's neighborhood
+                        for neighbor in entity.components.world.getNeighbors(14)
+                            if neighbor.hasComponent('human')
+                                #Chase human
+                                behaviorForce = physics.seekForce(
+                                    neighbor
+                                ).multiply(4)
+                                entity.components.physics.applyForce(
+                                    behaviorForce
+                                )
+                                
+                                #we found a human, so we're done with loop
+                                break
+                            
         
                 #UPDATE (tick)
                 #------------------------

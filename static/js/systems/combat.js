@@ -24,7 +24,7 @@
           } else if (neighbor.hasComponent('human')) {
             creatureType = 'human';
           }
-          if (neighbor !== entity) {
+          if (neighbor !== entity && creatureType) {
             neighbors[creatureType].push(neighbor);
           }
         }

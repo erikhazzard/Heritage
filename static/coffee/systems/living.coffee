@@ -48,6 +48,10 @@ define(['entity'], (Entity)->
                     .addComponent('zombie')
                     .addComponent('health')
                     
+                #NOTE: WHY DOES THIS BREAK SHIT
+                if entity.hasComponent('userMovable')
+                    newZombie.addComponent('userMovable')
+                    
                 newZombie.components.position = entity.components.position.copy()
                 @entities.add(newZombie)
                 

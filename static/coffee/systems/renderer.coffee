@@ -50,6 +50,16 @@ define(['components/world'], (World)->
                     
                 if entity.hasComponent('zombie')
                     context.fillStyle = 'rgba(255,100,100,1)'
+                    
+                if entity.hasComponent('userMovable')
+                    context.strokeStyle = 'rgba(100,150,200,1)'
+                    context.lineWidth = 8
+                    context.strokeRect(
+                        renderPosition.x - (size / 2),
+                        renderPosition.y - (size / 2),
+                        size,
+                        size
+                    )
 
                 #Draw square for entity
                 #TODO: if there is an image, draw the image

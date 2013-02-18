@@ -42,6 +42,11 @@
           if (entity.hasComponent('zombie')) {
             context.fillStyle = 'rgba(255,100,100,1)';
           }
+          if (entity.hasComponent('userMovable')) {
+            context.strokeStyle = 'rgba(100,150,200,1)';
+            context.lineWidth = 8;
+            context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+          }
           context.fillRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
           if (entity.components.renderer.isSelected) {
             context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);

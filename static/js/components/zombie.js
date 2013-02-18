@@ -11,7 +11,7 @@
         this.age = params.age || 0.1;
         this.resources = params.resources || 100;
         this.isDead = false;
-        this.decayRate = params.decayRate || Math.abs(d3.random.normal(1, 1)());
+        this.decayRate = params.decayRate || Math.abs(d3.random.normal(1, 0.4)());
         this.strength = Math.random() * 20 | 0;
         this.agility = Math.random() * 20 | 0;
       }

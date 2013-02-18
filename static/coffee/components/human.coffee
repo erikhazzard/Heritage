@@ -75,7 +75,7 @@ define([], ()->
             return health
         
         getIsDead: (health)->
-            if health <=0
+            if health <= 0
                 @isDead = true
             return @isDead
 

@@ -23,7 +23,7 @@ define([], ()->
                 else if neighbor.hasComponent('human')
                     creatureType = 'human'
                     
-                if neighbor != entity
+                if neighbor != entity and creatureType
                     neighbors[creatureType].push(neighbor)
                 
             return neighbors

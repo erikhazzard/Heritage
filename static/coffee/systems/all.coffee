@@ -14,19 +14,25 @@
 #   -Each system must provide a tick() method if it wishes to be called inside
 #       the game loop, and can may accept a delta argument
 #============================================================================
-define(['systems/renderer',
+define([
+    'systems/userInput',
+    'systems/renderer',
     'systems/physics',
     'systems/living',
     'systems/world',
     'systems/spawner',
     'systems/combat',
     'systems/userInterface',
-    ], (Renderer, Physics, Living, World, Spawner, Combat, UserInterface)->
+    ], (UserInput, Renderer, Physics, Living,
+    World, Spawner, Combat, UserInterface)->
     class Systems
         constructor: (entities)->
             @entities = entities
             
             @systems =  [
+                #Check for user input
+                new UserInput(@entities)
+
                 #Then check if a new entity is born
                 new Spawner(@entities)
 
