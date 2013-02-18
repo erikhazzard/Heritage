@@ -4,7 +4,7 @@
 #   Handles entity physics
 #
 #============================================================================
-define(['components/Vector'], (Vector)->
+define(['components/vector'], (Vector)->
     class Physics
         constructor: (entities)->
             @entities = entities

@@ -48,7 +48,7 @@ define(['entity'], (Entity)->
                     .addComponent('zombie')
                     .addComponent('health')
                     
-                #NOTE: WHY DOES THIS BREAK SHIT
+                #Turn entity to a zombie
                 if entity.hasComponent('userMovable')
                     newZombie.addComponent('userMovable')
                     
