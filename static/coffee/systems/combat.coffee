@@ -17,6 +17,10 @@ define([], ()->
             
             #Get neighbors
             for neighbor in entity.components.world.getNeighbors(entity.components.combat.range)
+                #Don't add it to the neighbors if it doesn't have a combat component
+                if not neighbor.hasComponent('combat')
+                    continue
+                
                 #Get all zombies around human, all humans around zombie
                 if neighbor.hasComponent('zombie')
                     creatureType = 'zombie'
@@ -28,6 +32,24 @@ define([], ()->
                 
             return neighbors
                 
+        calculateDamage: (entity, enemyEntity)->
+            #Calculate damage to take based on the passed in combat
+            #  components of the target entity and enemy entity
+            damageTaken = 0
+            
+            #get the attack value for the enemy entity
+            enemyDamage = enemyEntity.attack
+            damageTaken += enemyDamage
+
+            #Subtract the enemy attack damage with the entity's defense
+            damageTaken -= entity.defense
+            
+            #Never return a negative number
+            if damageTaken < 0
+                damageTaken = 0
+            
+            return damageTaken
+            
         #--------------------------------
         #
         #Tick
@@ -53,6 +75,8 @@ define([], ()->
             for id, entity of @entities.entitiesIndex['combat']
                 isHuman = entity.hasComponent('human')
                 isZombie = entity.hasComponent('zombie')
+                #store ref to combat component
+                combat = entity.components.combat
                 
                 if isHuman or isZombie
                     neighbors = @getNeighbors(entity)
@@ -64,15 +88,38 @@ define([], ()->
                     #--------------------
                     #Small bits of logic - go after the weakest enemy
                     if isHuman and neighbors.zombie.length > 0
-                        entity.components.health.health = 10
-                        entity.components.human.resources = 0
-                        entity.components.human.hasZombieInfection = true
+                        #should slow down when in fight
+                        entity.components.physics.velocity.multiply(0.05)
+                        #store refs
+                        health = entity.components.health
+                        human = entity.components.human
+                        
+                        #For each enemy in range, calculate how much damage the
+                        #   enemy will do to the entity
+                        for zombie in neighbors.zombie
+                            #------------
+                            #figure out how much damage to take
+                            #------------
+                            damageTaken = @calculateDamage(combat, zombie.components.combat)
+
+                            #Decrease entity's health
+                            health.health -= damageTaken
+                            
+                            #Chance for human to get infected
+                            if damageTaken > 0
+                                if Math.random() < human.getInfectionChance(health.health, damageTaken)
+                                    human.hasZombieInfection = true
                         
                     #ZOMBIE vs Human
                     #--------------------
                     else if isZombie and neighbors.human.length > 0
-                        entity.components.health.health = 10
-                        entity.components.zombie.resources += 20
+                        entity.components.health.health -= 10
+
+                        #should slow down when in fight
+                        entity.components.physics.velocity.multiply(0.01)
+
+            
+            #TODO: RESOLVE DAMAGE ON STACK
 
             return @
             

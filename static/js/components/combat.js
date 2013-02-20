@@ -9,6 +9,9 @@
         params = params || {};
         this.entity = entity;
         this.range = params.range || 1;
+        this.defense = params.defense || 0;
+        this.attack = params.attack || 1;
+        this.dodge = params.dodge || 0;
       }
 
       return Combat;

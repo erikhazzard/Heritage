@@ -17,13 +17,16 @@ define(['lib/d3'], (d3)->
 
             #Age doesn't affect anything - zombies are undead
             @age = params.age || 0.1
+            @maxSpeed = 4
+            
+            #How far zombie will look for enemies with
+            @seekRange = Math.random() * 18 | 0
 
             #Resources is an abstraction to represent food
             @resources = params.resources || 100
             
             #If the zombie is killed / dead
             @isDead = false
-            
             @decayRate = params.decayRate || Math.abs(d3.random.normal(1,0.4)())
             
             #----------------------------
@@ -61,10 +64,11 @@ define(['lib/d3'], (d3)->
         
         getMaxSpeed: ()->
             #Returns max speed based on various factors
-            maxSpeed = 8
+            maxSpeed = @maxSpeed
             if @resources < 20
-                maxSpeed = 4
+                maxSpeed = 2
                 
+            @maxSpeed = maxSpeed
             return maxSpeed
         
         calculateResources: ()->

@@ -48,3 +48,15 @@ LOGGING System
 
 WORLD
     -should this just be a system and NOT an entity?
+
+
+=========================================
+COMBAT
+-Defense, Attack, Dodge
+
+=========================================
+INPUT - Use mouse instead of keyboard
+
+like that you can control babies
+    -win state: if your original guy is genes are in rest of population
+    -of if you a zombie and others become zombie

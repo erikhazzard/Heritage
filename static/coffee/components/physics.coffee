@@ -67,6 +67,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             maxDistance = maxDistance || 100
             
             #check if the passed in object has a position property
+            #  if this doesn't check, it assumes a vector is passed in
             if target and target.components and target.components.position
                 target = target.components.position
                 

@@ -19,6 +19,9 @@
         _ref = entity.components.world.getNeighbors(entity.components.combat.range);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           neighbor = _ref[_i];
+          if (!neighbor.hasComponent('combat')) {
+            continue;
+          }
           if (neighbor.hasComponent('zombie')) {
             creatureType = 'zombie';
           } else if (neighbor.hasComponent('human')) {
@@ -31,23 +34,47 @@
         return neighbors;
       };
 
+      Combat.prototype.calculateDamage = function(entity, enemyEntity) {
+        var damageTaken, enemyDamage;
+        damageTaken = 0;
+        enemyDamage = enemyEntity.attack;
+        damageTaken += enemyDamage;
+        damageTaken -= entity.defense;
+        if (damageTaken < 0) {
+          damageTaken = 0;
+        }
+        return damageTaken;
+      };
+
       Combat.prototype.tick = function(delta) {
-        var damageStack, entity, id, isHuman, isZombie, neighbors, _ref;
+        var combat, damageStack, damageTaken, entity, health, human, id, isHuman, isZombie, neighbors, zombie, _i, _len, _ref, _ref1;
         damageStack = [];
         _ref = this.entities.entitiesIndex['combat'];
         for (id in _ref) {
           entity = _ref[id];
           isHuman = entity.hasComponent('human');
           isZombie = entity.hasComponent('zombie');
+          combat = entity.components.combat;
           if (isHuman || isZombie) {
             neighbors = this.getNeighbors(entity);
             if (isHuman && neighbors.zombie.length > 0) {
-              entity.components.health.health = 10;
-              entity.components.human.resources = 0;
-              entity.components.human.hasZombieInfection = true;
+              entity.components.physics.velocity.multiply(0.05);
+              health = entity.components.health;
+              human = entity.components.human;
+              _ref1 = neighbors.zombie;
+              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                zombie = _ref1[_i];
+                damageTaken = this.calculateDamage(combat, zombie.components.combat);
+                health.health -= damageTaken;
+                if (damageTaken > 0) {
+                  if (Math.random() < human.getInfectionChance(health.health, damageTaken)) {
+                    human.hasZombieInfection = true;
+                  }
+                }
+              }
             } else if (isZombie && neighbors.human.length > 0) {
-              entity.components.health.health = 10;
-              entity.components.zombie.resources += 20;
+              entity.components.health.health -= 10;
+              entity.components.physics.velocity.multiply(0.01);
             }
           }
         }

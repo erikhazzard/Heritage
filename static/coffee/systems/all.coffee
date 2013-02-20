@@ -15,7 +15,7 @@
 #       the game loop, and can may accept a delta argument
 #============================================================================
 define([
-    'systems/userInput',
+    'systems/userMovable',
     'systems/renderer',
     'systems/physics',
     'systems/living',
@@ -23,18 +23,18 @@ define([
     'systems/spawner',
     'systems/combat',
     'systems/userInterface',
-    ], (UserInput, Renderer, Physics, Living,
+    ], (UserMovable, Renderer, Physics, Living,
     World, Spawner, Combat, UserInterface)->
     class Systems
         constructor: (entities)->
             @entities = entities
             
             @systems =  [
-                #Check for user input
-                new UserInput(@entities)
-
                 #Then check if a new entity is born
                 new Spawner(@entities)
+                
+                #Check for user input
+                new UserMovable(@entities)
 
                 #Then update its position based on physics
                 new Physics(@entities)

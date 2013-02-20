@@ -64,27 +64,35 @@ define(['entity'], (Entity)->
                         #  but can be distantly related
                         parentIndex = neighborHuman.family.indexOf(entity.id)
                         if parentIndex > -1 and parentIndex < 6
-                            return false
+                            continue
                         #or a child
                         if entity.id in neighborHuman.children
-                            return false
-                       
+                            continue
+
+                        #TODO: If mate dies, allow them to mate with another
                         #Monogamus female 
                         if human.mateId != null and human.mateId != neighbor.id
-                            #If the mateid doesn't exist, remove it
-                            return false
+                            continue
                     
                         #Monogamus male
                         if neighborHuman.mateId == null
-                            neighborHuman.mateId = entity.id
+                            #Some chance that they become mates
+                            if Math.random() < 0.06
+                                neighborHuman.mateId = entity.id
+                                human.mateId = neighbor.id
+                            else
+                                continue
                         else if neighborHuman.mateId != entity.id
-                            return false
-                            
+                            continue
+                        
+                        #Neighbor age has to be above 18
+                        if neighborHuman.age < 19
+                            continue
+
                         #We got a potenial baby daddy
                         if Math.random() < human.pregnancyChance
                             #initiate coitus 
                             human.isPregnant = true
-                            human.mateId = neighbor.id
                             
                             #well, that was quick
                             break
@@ -144,7 +152,10 @@ define(['entity'], (Entity)->
                 #   1. Can entity become pregnant
                 #   2. Can entity give birth
                 #------------------------
-                neighbors = entity.components.world.neighbors
+                #NOTE: not far enough
+                #neighbors = entity.components.world.neighbors
+                
+                neighbors = entity.components.world.getNeighbors(4)
                 canBirth = @canBirth(entity, neighbors)
                 
                 #Make a baby

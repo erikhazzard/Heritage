@@ -82,7 +82,7 @@ define(['components/vector'], (Vector)->
                 #
                 #First we need to count number of zombies and human neighbors
                 neighbors = []
-                for neighbor in entity.components.world.getNeighbors(4)
+                for neighbor in entity.components.world.getNeighbors(5)
                     if neighbor.hasComponent('zombie')
                         numZombies += 1
                     if neighbor.hasComponent('human')
@@ -101,7 +101,7 @@ define(['components/vector'], (Vector)->
                 if entity.components.health.health < 20
                     pursuitDesire -= 2
                 if entity.components.human.age < 10 or entity.components.human.age > 80
-                    pursuitDesire -= 4
+                    pursuitDesire -= 3
                    
                 #Now check to see if the entity should flee or pursue a zombie
                 for neighbor in neighbors
@@ -109,6 +109,7 @@ define(['components/vector'], (Vector)->
                     if neighbor.hasComponent('zombie')
                         zombie = neighbor
                         scale = (numHumans / 2.5) - numZombies
+                        scale += pursuitDesire
                         
                         #don't go too crazy pursuing zombies
                         if scale > 1
@@ -203,14 +204,15 @@ define(['components/vector'], (Vector)->
                     if entity.hasComponent('zombie') and not entity.hasComponent('userMovable')
                         #Zombies just want brains
                         #  go after first human in it's neighborhood
-                        for neighbor in entity.components.world.getNeighbors(14)
+                        zombie = entity.components.zombie
+                        for neighbor in entity.components.world.getNeighbors(zombie.seekRange)
                             if neighbor.hasComponent('human')
                                 #Chase human
-                                behaviorForce = physics.seekForce(
+                                chaseForce = physics.seekForce(
                                     neighbor
-                                ).multiply(4)
+                                ).multiply(6)
                                 entity.components.physics.applyForce(
-                                    behaviorForce
+                                    chaseForce
                                 )
                                 
                                 #we found a human, so we're done with loop

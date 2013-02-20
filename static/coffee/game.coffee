@@ -38,7 +38,7 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                 .addComponent('userMovable')
             @entities.add(entity)
             
-            while i < 55
+            while i < 45
                 entity = new Entity()
                 entity.addComponent('world')
                     .addComponent('position')
@@ -49,7 +49,7 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
                     .addComponent('renderer')
                     .addComponent('flocking')
 
-                if Math.random() < 0.1
+                if Math.random() < 0.5
                     entity.addComponent('zombie')
                 else
                     entity.addComponent('human')

@@ -40,22 +40,29 @@
             if (neighborHuman.sex === 'male') {
               parentIndex = neighborHuman.family.indexOf(entity.id);
               if (parentIndex > -1 && parentIndex < 6) {
-                return false;
+                continue;
               }
               if (_ref = entity.id, __indexOf.call(neighborHuman.children, _ref) >= 0) {
-                return false;
+                continue;
               }
               if (human.mateId !== null && human.mateId !== neighbor.id) {
-                return false;
+                continue;
               }
               if (neighborHuman.mateId === null) {
-                neighborHuman.mateId = entity.id;
+                if (Math.random() < 0.06) {
+                  neighborHuman.mateId = entity.id;
+                  human.mateId = neighbor.id;
+                } else {
+                  continue;
+                }
               } else if (neighborHuman.mateId !== entity.id) {
-                return false;
+                continue;
+              }
+              if (neighborHuman.age < 19) {
+                continue;
               }
               if (Math.random() < human.pregnancyChance) {
                 human.isPregnant = true;
-                human.mateId = neighbor.id;
                 break;
               }
             }
@@ -92,7 +99,7 @@
           if (entity.hasComponent('human') !== true) {
             continue;
           }
-          neighbors = entity.components.world.neighbors;
+          neighbors = entity.components.world.getNeighbors(4);
           canBirth = this.canBirth(entity, neighbors);
           if (canBirth) {
             _results.push(this.makeBaby(entity));

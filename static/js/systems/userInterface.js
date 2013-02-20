@@ -51,9 +51,11 @@
         for (key in entities) {
           entity = entities[key];
           html = 'ID: ' + entity.id;
-          html += '<br />' + entity.components.health.health;
+          html += '<br />Health: ' + entity.components.health.health;
           if (entity.hasComponent('human')) {
-            html += '<br />' + entity.components.human.hasZombieInfection;
+            html += '<br />Age: ' + entity.components.human.age;
+            html += '<br />Mate: ' + entity.components.human.mateId;
+            html += '<br />Infected:' + entity.components.human.hasZombieInfection;
           }
         }
         this.$debug.innerHTML = html;

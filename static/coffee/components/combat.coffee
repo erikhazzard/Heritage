@@ -14,6 +14,10 @@ define([], ()->
             @entity = entity
 
             @range = params.range || 1
-            
+            @defense = params.defense || 0
+            @attack = params.attack || 1
+            #percent chance to dodge attack (0 to 100)
+            @dodge = params.dodge || 0
+
     return Combat
 )

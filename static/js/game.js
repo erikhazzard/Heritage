@@ -32,10 +32,10 @@
         entity = new Entity();
         entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('human').addComponent('health').addComponent('combat').addComponent('renderer').addComponent('userMovable');
         this.entities.add(entity);
-        while (i < 55) {
+        while (i < 45) {
           entity = new Entity();
           entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('combat').addComponent('randomWalker').addComponent('renderer').addComponent('flocking');
-          if (Math.random() < 0.1) {
+          if (Math.random() < 0.5) {
             entity.addComponent('zombie');
           } else {
             entity.addComponent('human');

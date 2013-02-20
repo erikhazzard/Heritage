@@ -31,7 +31,7 @@
       });
     });
     return describe('Combat System: Tick() should update properly', function() {
-      return it('should properly fight one human vs one zombie', function() {
+      it('should properly fight one human vs one zombie', function() {
         var combat, entities, entityHuman, entityZombie;
         entityHuman = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('human').addComponent('combat');
         entityZombie = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('zombie').addComponent('combat');
@@ -41,6 +41,29 @@
         entityZombie.components.position.y = 11;
         entities = new Entities().add(entityHuman).add(entityZombie);
         return combat = new Combat(entities);
+      });
+      return describe('Combat System: calculateDamageTaken() should return proper value', function() {
+        return it('should return proper values for two entities fighting', function() {
+          var combat, damageDealt, entities, entityHuman, entityZombie, humanCombat, zombieCombat;
+          entityHuman = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('human').addComponent('combat');
+          entityZombie = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('zombie').addComponent('combat');
+          entityHuman.components.position.x = 10;
+          entityHuman.components.position.y = 10;
+          entityZombie.components.position.x = 10;
+          entityZombie.components.position.y = 11;
+          entities = new Entities().add(entityHuman).add(entityZombie);
+          combat = new Combat(entities);
+          humanCombat = entityHuman.components.combat;
+          zombieCombat = entityZombie.components.combat;
+          damageDealt = combat.calculateDamage(humanCombat, zombieCombat);
+          damageDealt.should.equal(1);
+          humanCombat.defense = 1;
+          damageDealt = combat.calculateDamage(humanCombat, zombieCombat);
+          damageDealt.should.equal(0);
+          humanCombat.defense = 8;
+          damageDealt = combat.calculateDamage(humanCombat, zombieCombat);
+          return damageDealt.should.equal(0);
+        });
       });
     });
   });

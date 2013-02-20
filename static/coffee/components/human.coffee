@@ -9,7 +9,7 @@
 #   Dependencies / Coupling:
 #
 #============================================================================
-define([], ()->
+define(['lib/d3'], (d3)->
     class Human
         constructor: (entity, params)->
             params = params || {}
@@ -47,6 +47,10 @@ define([], ()->
             #effects
             #----------------------------
             @hasZombieInfection = false
+            @infectionScale = d3.scale.linear()
+                .domain([0, 100])
+                .range([0.3,0.001])
+                .clamp(true)
             
             #----------------------------
             #Stats
@@ -71,6 +75,10 @@ define([], ()->
                 #much greater chance of death older entity is
                 if Math.random() < 0.1
                     health = -1
+
+            #If it has an infection, decrease health
+            if @hasZombieInfection
+                health -= 5
                 
             return health
         
@@ -78,6 +86,16 @@ define([], ()->
             if health <= 0
                 @isDead = true
             return @isDead
+        
+        getInfectionChance: (health, damageTaken)->
+            #Lower health is, higher chance for infection
+            #Older age, higher infection chance
+            chance = @infectionScale(health)
+            if @age > 70
+                chance += 0.2
+                
+            chance += (damageTaken * 0.001)
+            return chance
 
         calculateResources: ()->
             #Base resource consumption on age and other factors
@@ -110,10 +128,15 @@ define([], ()->
                 maxSpeed = 2
             else if @age < 10
                 maxSpeed = 4
+                
             else if @age < 60
-                maxSpeed = 6 + (Math.random() * 4 | 0)
+                #In it's prime, normal max speed
+                maxSpeed = 8
+                
+            else if @age < 70
+                maxSpeed = 3
             else
-                maxSpeed = 4
+                maxSpeed = 2
                 
             return maxSpeed
 

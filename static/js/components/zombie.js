@@ -9,6 +9,8 @@
         params = params || {};
         this.entity = entity;
         this.age = params.age || 0.1;
+        this.maxSpeed = 4;
+        this.seekRange = Math.random() * 18 | 0;
         this.resources = params.resources || 100;
         this.isDead = false;
         this.decayRate = params.decayRate || Math.abs(d3.random.normal(1, 0.4)());
@@ -38,10 +40,11 @@
 
       Zombie.prototype.getMaxSpeed = function() {
         var maxSpeed;
-        maxSpeed = 8;
+        maxSpeed = this.maxSpeed;
         if (this.resources < 20) {
-          maxSpeed = 4;
+          maxSpeed = 2;
         }
+        this.maxSpeed = maxSpeed;
         return maxSpeed;
       };
 

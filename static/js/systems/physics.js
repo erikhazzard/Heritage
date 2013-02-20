@@ -47,7 +47,7 @@
         if (entity.hasComponent('human') && this.entities.entitiesIndex.zombie) {
           numHumans = numZombies = 0;
           neighbors = [];
-          _ref = entity.components.world.getNeighbors(4);
+          _ref = entity.components.world.getNeighbors(5);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             neighbor = _ref[_i];
             if (neighbor.hasComponent('zombie')) {
@@ -65,13 +65,14 @@
             pursuitDesire -= 2;
           }
           if (entity.components.human.age < 10 || entity.components.human.age > 80) {
-            pursuitDesire -= 4;
+            pursuitDesire -= 3;
           }
           for (_j = 0, _len1 = neighbors.length; _j < _len1; _j++) {
             neighbor = neighbors[_j];
             if (neighbor.hasComponent('zombie')) {
               zombie = neighbor;
               scale = (numHumans / 2.5) - numZombies;
+              scale += pursuitDesire;
               if (scale > 1) {
                 scale = 1;
               } else if (scale < -5) {
@@ -86,7 +87,7 @@
       };
 
       Physics.prototype.tick = function(delta) {
-        var behaviorForce, child, childId, entity, human, id, mateId, neighbor, physics, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
+        var chaseForce, child, childId, entity, human, id, mateId, neighbor, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
         _ref = this.entities.entitiesIndex['physics'];
         _results = [];
         for (id in _ref) {
@@ -125,12 +126,13 @@
               }
             }
             if (entity.hasComponent('zombie') && !entity.hasComponent('userMovable')) {
-              _ref2 = entity.components.world.getNeighbors(14);
+              zombie = entity.components.zombie;
+              _ref2 = entity.components.world.getNeighbors(zombie.seekRange);
               for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
                 neighbor = _ref2[_j];
                 if (neighbor.hasComponent('human')) {
-                  behaviorForce = physics.seekForce(neighbor).multiply(4);
-                  entity.components.physics.applyForce(behaviorForce);
+                  chaseForce = physics.seekForce(neighbor).multiply(6);
+                  entity.components.physics.applyForce(chaseForce);
                   break;
                 }
               }
