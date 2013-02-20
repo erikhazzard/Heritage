@@ -20,7 +20,7 @@ define(['lib/d3'], (d3)->
             @maxSpeed = 4
             
             #How far zombie will look for enemies with
-            @seekRange = Math.random() * 18 | 0
+            @seekRange = 1 + (Math.random() * 17 | 0)
 
             #Resources is an abstraction to represent food
             @resources = params.resources || 100

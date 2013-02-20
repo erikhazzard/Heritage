@@ -201,6 +201,12 @@ define(['systems/combat', 'systems/world', 'entity', 'entities'], (Combat, World
                 combat.checkCanAttack(zombieCombat)
                 zombieCombat.attackTicksRemaining.should.equal(zombieCombat.attackDelay)
                 zombieCombat.canAttack.should.be.true
+                
+                #if it didn't attack, ticks remaning should not change and it 
+                #should still be able to attack
+                combat.checkCanAttack(zombieCombat)
+                zombieCombat.attackTicksRemaining.should.equal(zombieCombat.attackDelay)
+                zombieCombat.canAttack.should.be.true
             )
         )
     )

@@ -2,7 +2,7 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['entity', 'entities', 'components/all', 'systems/all'], function(Entity, Entities, Components, Systems) {
+  define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/assemblages'], function(Entity, Entities, Components, Systems, Assemblages) {
     var Game;
     Game = (function() {
 
@@ -29,18 +29,16 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        entity = new Entity();
-        entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('human').addComponent('health').addComponent('combat').addComponent('renderer').addComponent('userMovable');
+        entity = Assemblages.human();
+        entity.addComponent('userMovable');
         this.entities.add(entity);
         while (i < 45) {
-          entity = new Entity();
-          entity.addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('combat').addComponent('randomWalker').addComponent('renderer').addComponent('flocking');
           if (Math.random() < 0.5) {
-            entity.addComponent('zombie');
+            entity = Assemblages.zombie();
             entity.components.combat.attack = Math.random() * 10 | 0;
             entity.components.combat.defense = Math.random() * 5 | 0;
           } else {
-            entity.addComponent('human');
+            entity = Assemblages.human();
             entity.components.human.age = Math.random() * 100 | 0;
           }
           entity.components.position.x = Math.random() * 500 | 0;

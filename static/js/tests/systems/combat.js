@@ -93,6 +93,9 @@
           zombieCombat.canAttack.should.be["true"];
           combat.checkCanAttack(zombieCombat);
           zombieCombat.attackTicksRemaining.should.equal(zombieCombat.attackDelay);
+          zombieCombat.canAttack.should.be["true"];
+          combat.checkCanAttack(zombieCombat);
+          zombieCombat.attackTicksRemaining.should.equal(zombieCombat.attackDelay);
           return zombieCombat.canAttack.should.be["true"];
         });
       });

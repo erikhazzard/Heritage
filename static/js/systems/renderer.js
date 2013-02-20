@@ -48,6 +48,20 @@
             context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
           }
           context.fillRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+          if (entity.hasComponent('combat')) {
+            if (entity.components.combat.canAttack) {
+              context.strokeStyle = 'rgba(0,0,0,0.1)';
+              context.lineWidth = 8;
+              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+            }
+          }
+          if (entity.hasComponent('human')) {
+            if (entity.components.human.isPregnant) {
+              context.strokeStyle = 'rgba(0,255,0,0.5)';
+              context.lineWidth = 8;
+              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+            }
+          }
           if (entity.components.renderer.isSelected) {
             context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
           }

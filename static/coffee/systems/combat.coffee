@@ -105,7 +105,8 @@ define([], ()->
                     #Small bits of logic - go after the weakest enemy
                     if isHuman and neighbors.zombie.length > 0
                         #should slow down when in fight
-                        entity.components.physics.velocity.multiply(0.05)
+                        if entity.hasComponent('physics')
+                            entity.components.physics.velocity.multiply(0.05)
                         #store refs
                         health = entity.components.health
                         human = entity.components.human
@@ -134,7 +135,8 @@ define([], ()->
                         entity.components.health.health -= 10
 
                         #should slow down when in fight
-                        entity.components.physics.velocity.multiply(0.01)
+                        if entity.hasComponent('physics')
+                            entity.components.physics.velocity.multiply(0.01)
 
             
             #TODO: RESOLVE DAMAGE ON STACK

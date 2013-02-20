@@ -72,7 +72,9 @@
           if (isHuman || isZombie) {
             neighbors = this.getNeighbors(entity);
             if (isHuman && neighbors.zombie.length > 0) {
-              entity.components.physics.velocity.multiply(0.05);
+              if (entity.hasComponent('physics')) {
+                entity.components.physics.velocity.multiply(0.05);
+              }
               health = entity.components.health;
               human = entity.components.human;
               _ref1 = neighbors.zombie;
@@ -88,7 +90,9 @@
               }
             } else if (isZombie && neighbors.human.length > 0) {
               entity.components.health.health -= 10;
-              entity.components.physics.velocity.multiply(0.01);
+              if (entity.hasComponent('physics')) {
+                entity.components.physics.velocity.multiply(0.01);
+              }
             }
           }
         }
