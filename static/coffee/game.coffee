@@ -51,6 +51,8 @@ define(['entity', 'entities', 'components/all', 'systems/all'], (Entity, Entitie
 
                 if Math.random() < 0.5
                     entity.addComponent('zombie')
+                    entity.components.combat.attack = Math.random() * 10 | 0
+                    entity.components.combat.defense = Math.random() * 5 | 0
                 else
                     entity.addComponent('human')
                     entity.components.human.age = Math.random() * 100 | 0

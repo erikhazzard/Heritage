@@ -50,7 +50,6 @@ define(['components/vector'], (Vector)->
                     physics.applyForce(
                         @mouseVector.copy().subtract(entity.components.position)
                     )
-            
 
     return UserMovable
 )

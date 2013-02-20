@@ -42,7 +42,7 @@
         entities = new Entities().add(entityHuman).add(entityZombie);
         return combat = new Combat(entities);
       });
-      return describe('Combat System: calculateDamageTaken() should return proper value', function() {
+      describe('Combat System: calculateDamageTaken() should return proper value', function() {
         return it('should return proper values for two entities fighting', function() {
           var combat, damageDealt, entities, entityHuman, entityZombie, humanCombat, zombieCombat;
           entityHuman = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('human').addComponent('combat');
@@ -62,7 +62,38 @@
           damageDealt.should.equal(0);
           humanCombat.defense = 8;
           damageDealt = combat.calculateDamage(humanCombat, zombieCombat);
-          return damageDealt.should.equal(0);
+          damageDealt.should.equal(0);
+          zombieCombat.attack = 16;
+          damageDealt = combat.calculateDamage(humanCombat, zombieCombat);
+          return damageDealt.should.equal(8);
+        });
+      });
+      return describe('Combat System: can attack', function() {
+        return it('should properly keep track of attack speed / can attack', function() {
+          var combat, damageDealt, entities, entityHuman, entityZombie, humanCombat, zombieCombat;
+          entityHuman = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('human').addComponent('combat');
+          entityZombie = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('zombie').addComponent('combat');
+          entityHuman.components.position.x = 10;
+          entityHuman.components.position.y = 10;
+          entityZombie.components.position.x = 10;
+          entityZombie.components.position.y = 11;
+          entities = new Entities().add(entityHuman).add(entityZombie);
+          combat = new Combat(entities);
+          humanCombat = entityHuman.components.combat;
+          zombieCombat = entityZombie.components.combat;
+          zombieCombat.attackDelay = 2;
+          damageDealt = combat.calculateDamage(humanCombat, zombieCombat);
+          zombieCombat.canAttack.should.be["false"];
+          zombieCombat.attackTicksRemaining.should.equal(2);
+          combat.checkCanAttack(zombieCombat);
+          zombieCombat.attackTicksRemaining.should.equal(1);
+          zombieCombat.canAttack.should.be["false"];
+          combat.checkCanAttack(zombieCombat);
+          zombieCombat.attackTicksRemaining.should.equal(zombieCombat.attackDelay);
+          zombieCombat.canAttack.should.be["true"];
+          combat.checkCanAttack(zombieCombat);
+          zombieCombat.attackTicksRemaining.should.equal(zombieCombat.attackDelay);
+          return zombieCombat.canAttack.should.be["true"];
         });
       });
     });

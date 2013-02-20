@@ -12,6 +12,9 @@
         this.defense = params.defense || 0;
         this.attack = params.attack || 1;
         this.dodge = params.dodge || 0;
+        this.attackDelay = 10;
+        this.attackTicksRemaining = 0;
+        this.canAttack = true;
       }
 
       return Combat;

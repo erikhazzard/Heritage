@@ -31,7 +31,17 @@ define([], ()->
                     neighbors[creatureType].push(neighbor)
                 
             return neighbors
-                
+        
+        checkCanAttack: (combat)->
+            #First, update the attack speed counter
+            if not combat.canAttack
+                combat.attackTicksRemaining -= 1
+                if combat.attackTicksRemaining <= 0
+                    combat.canAttack = true
+                    combat.attackTicksRemaining = combat.attackDelay
+
+            return combat.canAttack
+        
         calculateDamage: (entity, enemyEntity)->
             #Calculate damage to take based on the passed in combat
             #  components of the target entity and enemy entity
@@ -47,6 +57,11 @@ define([], ()->
             #Never return a negative number
             if damageTaken < 0
                 damageTaken = 0
+                
+            #Enemey attacked, so don't let them attack again until timer is 
+            #   reached
+            enemyEntity.canAttack = false
+            enemyEntity.attackTicksRemaining = enemyEntity.attackDelay
             
             return damageTaken
             
@@ -77,6 +92,7 @@ define([], ()->
                 isZombie = entity.hasComponent('zombie')
                 #store ref to combat component
                 combat = entity.components.combat
+                @checkCanAttack(combat)
                 
                 if isHuman or isZombie
                     neighbors = @getNeighbors(entity)
@@ -100,6 +116,8 @@ define([], ()->
                             #------------
                             #figure out how much damage to take
                             #------------
+
+                            #Calculate damage taken
                             damageTaken = @calculateDamage(combat, zombie.components.combat)
 
                             #Decrease entity's health

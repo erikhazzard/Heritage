@@ -18,6 +18,12 @@ define([], ()->
             @attack = params.attack || 1
             #percent chance to dodge attack (0 to 100)
             @dodge = params.dodge || 0
+            
+            #must wait n rounds before attacking again
+            @attackDelay = 10
+            #how many ticks before entity can attack again
+            @attackTicksRemaining = 0
+            @canAttack = true
 
     return Combat
 )

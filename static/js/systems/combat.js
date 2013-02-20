@@ -34,6 +34,17 @@
         return neighbors;
       };
 
+      Combat.prototype.checkCanAttack = function(combat) {
+        if (!combat.canAttack) {
+          combat.attackTicksRemaining -= 1;
+          if (combat.attackTicksRemaining <= 0) {
+            combat.canAttack = true;
+            combat.attackTicksRemaining = combat.attackDelay;
+          }
+        }
+        return combat.canAttack;
+      };
+
       Combat.prototype.calculateDamage = function(entity, enemyEntity) {
         var damageTaken, enemyDamage;
         damageTaken = 0;
@@ -43,6 +54,8 @@
         if (damageTaken < 0) {
           damageTaken = 0;
         }
+        enemyEntity.canAttack = false;
+        enemyEntity.attackTicksRemaining = enemyEntity.attackDelay;
         return damageTaken;
       };
 
@@ -55,6 +68,7 @@
           isHuman = entity.hasComponent('human');
           isZombie = entity.hasComponent('zombie');
           combat = entity.components.combat;
+          this.checkCanAttack(combat);
           if (isHuman || isZombie) {
             neighbors = this.getNeighbors(entity);
             if (isHuman && neighbors.zombie.length > 0) {
