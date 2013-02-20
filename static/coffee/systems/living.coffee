@@ -7,7 +7,7 @@
 #       human
 #       physics
 #============================================================================
-define(['entity'], (Entity)->
+define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
     class Living
         constructor: (entities)->
             @entities = entities
@@ -38,15 +38,7 @@ define(['entity'], (Entity)->
             #------------------------
             if human.isDead and human.hasZombieInfection
                 #TODO: Use some sort of factory to create this
-                newZombie = new Entity()
-                    .addComponent('world')
-                    .addComponent('position')
-                    .addComponent('physics')
-                    .addComponent('randomWalker')
-                    .addComponent('renderer')
-                    .addComponent('flocking')
-                    .addComponent('zombie')
-                    .addComponent('health')
+                newZombie = Assemblages.zombie()
                     
                 #Turn entity to a zombie
                 if entity.hasComponent('userMovable')

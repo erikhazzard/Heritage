@@ -41,23 +41,21 @@ define(['lib/d3'], (d3)->
             #Calculate current health based on age / resources
             
             #Subtract health if resources are scarce
-            #slow, natural decay
-            if @resources < 20
-                health -= (0.01 + Math.abs(@resources * 0.01) )
-                
             #happens faster if negative resources
             if @resources < 0
-                health -= (0.2 + Math.abs(@resources * 0.04) )
-                
+                health -= (0.4 + Math.abs(@resources * 0.04) )
+            #slow, natural decay
+            else if @resources < 20
+                health -= (0.2 + Math.abs(@resources * 0.01) )
             #if resources are high, more life
-            if @resources > 50
-                health += (0.01 + Math.abs(@resources * 0.005) )
+            else if @resources > 50
+                health += (0.005 + Math.abs(@resources * 0.005) )
 
             return health
         
         getIsDead: (health)->
             #If zombie has too low resources OR health < 0, it's dead
-            if @resources <= 0 or health <= 0
+            if health <= 0
                 @isDead = true
                 
             return @isDead

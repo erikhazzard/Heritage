@@ -19,20 +19,18 @@
       }
 
       Zombie.prototype.calculateHealth = function(health) {
-        if (this.resources < 20) {
-          health -= 0.01 + Math.abs(this.resources * 0.01);
-        }
         if (this.resources < 0) {
-          health -= 0.2 + Math.abs(this.resources * 0.04);
-        }
-        if (this.resources > 50) {
-          health += 0.01 + Math.abs(this.resources * 0.005);
+          health -= 0.4 + Math.abs(this.resources * 0.04);
+        } else if (this.resources < 20) {
+          health -= 0.2 + Math.abs(this.resources * 0.01);
+        } else if (this.resources > 50) {
+          health += 0.005 + Math.abs(this.resources * 0.005);
         }
         return health;
       };
 
       Zombie.prototype.getIsDead = function(health) {
-        if (this.resources <= 0 || health <= 0) {
+        if (health <= 0) {
           this.isDead = true;
         }
         return this.isDead;
