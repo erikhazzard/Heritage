@@ -114,10 +114,12 @@ define(['entity', 'systems/Human'], (Entity, Human)->
             
             #Make a baby
             newEntity = new Entity()
+            #Inherit parent components
             newEntity.addComponents(entity.getComponentNames())
+            if newEntity.hasComponent('userMovable')
+                newEntity.removeComponent('userMovable')
             
             #Derive position from current entity position
-            newEntity.components.position = entity.components.position.copy()
             newEntity.components.position = entity.components.position.copy()
 
             #Keep track of a family tree - entities can't inbreed

@@ -56,7 +56,7 @@
       };
 
       Living.prototype.updateHuman = function(entity) {
-        var health, human, newZombie, physics, resources;
+        var child, health, human, i, len, newZombie, physics, resources;
         human = entity.components.human;
         physics = entity.components.physics;
         health = entity.components.health;
@@ -80,6 +80,19 @@
           this.entities.add(newZombie);
         }
         if (human.isDead) {
+          if (entity.hasComponent('userMovable') && human.children) {
+            i = 0;
+            len = human.children.length;
+            while (i < len) {
+              if (human.children[i]) {
+                child = game.entities.entities[human.children[i]];
+                if (child && !child.components.human.isDead) {
+                  child.addComponent('userMovable');
+                }
+                break;
+              }
+            }
+          }
           this.entities.remove(entity);
         }
         return true;

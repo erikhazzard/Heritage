@@ -79,7 +79,9 @@
         human.gestationTimeLeft = human.gestationLength;
         newEntity = new Entity();
         newEntity.addComponents(entity.getComponentNames());
-        newEntity.components.position = entity.components.position.copy();
+        if (newEntity.hasComponent('userMovable')) {
+          newEntity.removeComponent('userMovable');
+        }
         newEntity.components.position = entity.components.position.copy();
         newEntity.components.human.family.push(entity.id);
         newEntity.components.human.family.push(human.mateId);
