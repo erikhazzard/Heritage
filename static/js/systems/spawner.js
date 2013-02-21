@@ -2,7 +2,7 @@
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(['entity', 'systems/Living'], function(Entity, Living) {
+  define(['entity', 'systems/Human'], function(Entity, Human) {
     var Spawner;
     Spawner = (function() {
 
@@ -12,16 +12,17 @@
       }
 
       Spawner.prototype.canBirth = function(entity, neighbors) {
-        var human, neighbor, neighborHuman, parentIndex, _i, _len, _ref;
+        var human, neighbor, neighborHuman, parentIndex, resources, _i, _len, _ref;
         human = entity.components.human;
+        resources = entity.components.resources.resources;
         if (human.sex === 'male') {
           return false;
         }
-        if (human.age < 20 || human.age > 64 || human.resources < 5) {
+        if (human.age < 20 || human.age > 64 || resources < 15) {
           return false;
         }
         if (human.isPregnant) {
-          human.gestationTimeLeft -= Living.ageSpeed;
+          human.gestationTimeLeft -= Human.ageSpeed;
           if (human.gestationTimeLeft < 0) {
             return true;
           } else {

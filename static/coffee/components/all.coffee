@@ -15,13 +15,16 @@ define(['components/position',
 
     #Creature related
     'components/health',
+    'components/resources',
     'components/combat',
+    
+    #Creature types
     'components/human',
     'components/zombie',
     ], (
     Position, World, Renderer, Physics, RandomWalker, Flocking,
     UserMovable,
-    Health, Combat,
+    Health, Resources, Combat,
     Human, Zombie
     )->
     Components = {
@@ -39,7 +42,9 @@ define(['components/position',
         
         #Creature related
         health: Health
+        resources: Resources
         combat: Combat
+
         human: Human
         zombie: Zombie
     }

@@ -25,24 +25,6 @@
         this.agility = Math.random() * 20 | 0;
       }
 
-      Human.prototype.calculateHealth = function(health) {
-        if (this.resources < 0) {
-          health -= 0.1 + Math.abs(this.resources * 0.02);
-        }
-        if (this.age > 70) {
-          health -= 0.1 + (this.age * 0.005);
-        }
-        if (this.age > 100) {
-          if (Math.random() < 0.1) {
-            health = -1;
-          }
-        }
-        if (this.hasZombieInfection) {
-          health -= 5;
-        }
-        return health;
-      };
-
       Human.prototype.getIsDead = function(health) {
         if (health <= 0) {
           this.isDead = true;
@@ -58,22 +40,6 @@
         }
         chance += damageTaken * 0.001;
         return chance;
-      };
-
-      Human.prototype.calculateResources = function() {
-        var resources;
-        resources = this.resources;
-        if (this.age < 20) {
-          resources -= 0.005 + ((20 - this.age) / 46);
-        } else if (this.age > 60) {
-          resources -= 0.1 + (this.age * 0.0005);
-        } else {
-          resources -= 0.01;
-          if (this.isPregnant) {
-            resources -= 0.05;
-          }
-        }
-        return resources;
       };
 
       Human.prototype.getMaxSpeed = function() {

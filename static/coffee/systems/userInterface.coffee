@@ -58,9 +58,9 @@ define(['components/vector', 'components/world'], (Vector, World)->
             for key, entity of entities
                 html = 'ID: ' + entity.id
                 html += '<br />Health: ' + entity.components.health.health
+                html += '<br />Resources: ' + entity.components.resources.resources
                 if entity.hasComponent('human')
                     html += '<br />Age: ' + entity.components.human.age
-                    html += '<br />Resources: ' + entity.components.human.resources
                     html += '<br />Mate: ' + entity.components.human.mateId
                     html += '<br />Infected:' + entity.components.human.hasZombieInfection
                 

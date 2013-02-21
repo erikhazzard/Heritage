@@ -18,12 +18,18 @@ define([
     'systems/userMovable',
     'systems/renderer',
     'systems/physics',
-    'systems/living',
+    
+    'systems/human',
+    'systems/zombie',
+
     'systems/world',
     'systems/spawner',
     'systems/combat',
+
     'systems/userInterface',
-    ], (UserMovable, Renderer, Physics, Living,
+
+    ], (UserMovable, Renderer, Physics,
+    Human, Zombie,
     World, Spawner, Combat, UserInterface)->
     class Systems
         constructor: (entities)->
@@ -48,7 +54,8 @@ define([
                 #------------------------
                 #Check for living / dead state
                 #------------------------
-                new Living(@entities)
+                new Human(@entities)
+                new Zombie(@entities)
 
                 #Add a UI layer
                 new UserInterface(@entities)

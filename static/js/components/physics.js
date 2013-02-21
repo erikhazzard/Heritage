@@ -28,7 +28,7 @@
         return force;
       };
 
-      Physics.prototype.seekForce = function(target, maxDistance, flee) {
+      Physics.prototype.seekForce = function(target, maxDistance) {
         var curDistance, desiredVelocity, distance, magnitude, position, scale, steer, steerLine;
         maxDistance = maxDistance || 100;
         if (target && target.components && target.components.position) {
@@ -54,9 +54,6 @@
         steer = Vector.prototype.subtract(desiredVelocity, this.velocity);
         steerLine = Vector.prototype.add(position, steer);
         steer.limit(this.maxForce);
-        if (flee) {
-          steer.multiply(-1);
-        }
         return steer;
       };
 

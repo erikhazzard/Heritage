@@ -4,7 +4,7 @@
 #   Handles logic to create new entities
 #
 #============================================================================
-define(['entity', 'systems/Living'], (Entity, Living)->
+define(['entity', 'systems/Human'], (Entity, Human)->
     class Spawner
         constructor: (entities)->
             @entities = entities
@@ -19,6 +19,7 @@ define(['entity', 'systems/Living'], (Entity, Living)->
             #Looks at entity and returns true or false if it can birth
             #  a new entity
             human = entity.components.human
+            resources = entity.components.resources.resources
             
             if human.sex == 'male'
                 #males can't become pregnant or give birth
@@ -26,13 +27,13 @@ define(['entity', 'systems/Living'], (Entity, Living)->
             
             #Need some rules to prevent some entities from making babies
             #----------------------------
-            if human.age < 20 or human.age > 64 or human.resources < 5
+            if human.age < 20 or human.age > 64 or resources < 15
                 return false
             
             #If it's pregnant, we can potentially make a baby!
             #----------------------------
             if human.isPregnant
-                human.gestationTimeLeft -= Living.ageSpeed
+                human.gestationTimeLeft -= Human.ageSpeed
                 
                 #If it's time, a baby can be born
                 #NOTE: This is the only true case

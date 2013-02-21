@@ -58,29 +58,6 @@ define(['lib/d3'], (d3)->
             @strength = Math.random() * 20 | 0
             #Dodge chance? Max Speed?
             @agility = Math.random() * 20 | 0
-            
-        calculateHealth: (health)->
-            #Calculate health based on passed in health and
-            #NOTE: uses the health component, called from the system
-
-            #Subtract health if resources are scarce
-            if @resources < 0
-                health -= (0.1 + Math.abs(@resources * 0.02) )
-                
-            #If entity is old, subtract health
-            if @age > 70
-                health -= (0.1 + (@age * 0.005))
-                
-            if @age > 100
-                #much greater chance of death older entity is
-                if Math.random() < 0.1
-                    health = -1
-
-            #If it has an infection, decrease health
-            if @hasZombieInfection
-                health -= 5
-                
-            return health
         
         getIsDead: (health)->
             if health <= 0
@@ -96,28 +73,6 @@ define(['lib/d3'], (d3)->
                 
             chance += (damageTaken * 0.001)
             return chance
-
-        calculateResources: ()->
-            #Base resource consumption on age and other factors
-            #  TODO: Other factors.  higher strength, higher resource
-            #  comsumption
-            resources = @resources
-            
-            if @age < 20
-                #young
-                resources -= (0.005 + ((20 - @age)/46))
-            else if @age > 60
-                #old
-                resources -= (0.1 + (@age * 0.0005))
-            else
-                #normal resource depletion rate
-                resources -= 0.01
-                
-                #If it's pregnant, use more resources
-                if @isPregnant
-                    resources -= 0.05
-
-            return resources
         
         getMaxSpeed: ()->
             #Returns the max speed for the entity. Used in the system

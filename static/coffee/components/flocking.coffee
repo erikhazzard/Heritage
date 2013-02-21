@@ -10,7 +10,7 @@
 #
 #   NOTES: Used by the physics system
 #============================================================================
-define(['components/vector', 'components/physics'], (Vector, Physics)->
+define(['components/vector', 'components/physics', 'lib/d3'], (Vector, Physics, d3)->
     class Flocking
         constructor: (entity, params)->
             params = params || {}

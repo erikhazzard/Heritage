@@ -4,14 +4,19 @@
   define(['entity'], function(Entity) {
     var Assemblages;
     Assemblages = {
+      baseCreature: function() {
+        var entity;
+        entity = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('resources').addComponent('combat').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
+        return entity;
+      },
       human: function() {
         var entity;
-        entity = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('flocking').addComponent('randomWalker').addComponent('health').addComponent('combat').addComponent('renderer').addComponent('human');
+        entity = this.baseCreature().addComponent('human');
         return entity;
       },
       zombie: function() {
         var entity;
-        entity = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('flocking').addComponent('randomWalker').addComponent('health').addComponent('combat').addComponent('renderer').addComponent('zombie');
+        entity = this.baseCreature().addComponent('zombie');
         return entity;
       }
     };

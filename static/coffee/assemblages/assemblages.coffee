@@ -7,29 +7,27 @@
 define(['entity'], (Entity) ->
     Assemblages = {
         #Each method returns a new entity
-        human: ()->
+        baseCreature: ()->
             entity = new Entity()
                 .addComponent('world')
                 .addComponent('position')
                 .addComponent('physics')
-                .addComponent('flocking')
-                .addComponent('randomWalker')
                 .addComponent('health')
+                .addComponent('resources')
                 .addComponent('combat')
+                .addComponent('randomWalker')
+                .addComponent('flocking')
                 .addComponent('renderer')
+            return entity
+
+        
+        human: ()->
+            entity = @baseCreature()
                 .addComponent('human')
             return entity
         
         zombie: ()->
-            entity = new Entity()
-                .addComponent('world')
-                .addComponent('position')
-                .addComponent('physics')
-                .addComponent('flocking')
-                .addComponent('randomWalker')
-                .addComponent('health')
-                .addComponent('combat')
-                .addComponent('renderer')
+            entity = @baseCreature()
                 .addComponent('zombie')
             return entity
     }

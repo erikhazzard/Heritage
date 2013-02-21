@@ -21,7 +21,7 @@
     should = chai.should();
     expect = chai.expect;
     mocha.setup('bdd');
-    return require(['tests/entity', 'tests/entities', 'tests/components/world', 'tests/components/vector', 'tests/components/position', 'tests/components/physics', 'tests/components/randomWalker', 'tests/components/flocking', 'tests/systems/combat', 'tests/systems/physics', 'tests/systems/spawner'], function() {
+    return require(['tests/entity', 'tests/entities', 'tests/components/world', 'tests/components/vector', 'tests/components/position', 'tests/components/physics', 'tests/components/randomWalker', 'tests/components/flocking', 'tests/systems/combat', 'tests/systems/human', 'tests/systems/zombie', 'tests/systems/physics', 'tests/systems/spawner'], function() {
       return mocha.run();
     });
   });

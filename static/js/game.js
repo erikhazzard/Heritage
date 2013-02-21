@@ -2,7 +2,7 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/assemblages'], function(Entity, Entities, Components, Systems, Assemblages) {
+  define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/assemblages', 'lib/d3'], function(Entity, Entities, Components, Systems, Assemblages, d3) {
     var Game;
     Game = (function() {
 
@@ -33,15 +33,16 @@
         entity.addComponent('userMovable');
         entity.components.position.x = 250;
         entity.components.position.y = 250;
+        entity.components.human.age = 20;
         this.entities.add(entity);
-        while (i < 20) {
+        while (i < 50) {
           if (Math.random() < 0.3) {
             entity = Assemblages.zombie();
             entity.components.combat.attack = Math.random() * 10 | 0;
             entity.components.combat.defense = Math.random() * 5 | 0;
           } else {
             entity = Assemblages.human();
-            entity.components.human.age = Math.random() * 100 | 0;
+            entity.components.human.age = d3.random.normal(20, 10)();
           }
           entity.components.position.x = Math.random() * 500 | 0;
           entity.components.position.y = Math.random() * 500 | 0;

@@ -58,7 +58,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
         #Seek force
         #
         #---------------------------------------
-        seekForce: (target, maxDistance, flee)->
+        seekForce: (target, maxDistance)->
             #Calculate steering force towards a target and returns the force
             #  If maxDistance is passed in, specifies how far to check for neighbors
             #  If flee is passed in, force is multiplied by -1
@@ -127,9 +127,6 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             #limit steer amount
             #-----------------------------------
             steer.limit(@maxForce)
-
-            if flee
-                steer.multiply(-1)
                 
             return steer
             
