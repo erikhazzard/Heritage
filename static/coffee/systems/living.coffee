@@ -9,6 +9,8 @@
 #============================================================================
 define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
     class Living
+        @ageSpeed = 0.05
+
         constructor: (entities)->
             @entities = entities
             return @
@@ -23,7 +25,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             health = entity.components.health
             
             #Update age
-            human.age += 0.1
+            human.age += Living.ageSpeed
             
             physics.maxSpeed = human.getMaxSpeed()
             
@@ -62,7 +64,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             health = entity.components.health
             
             #Update age
-            zombie.age += 0.1
+            zombie.age += Living.ageSpeed
             
             physics.maxSpeed = zombie.getMaxSpeed()
             

@@ -60,6 +60,7 @@ define(['components/vector', 'components/world'], (Vector, World)->
                 html += '<br />Health: ' + entity.components.health.health
                 if entity.hasComponent('human')
                     html += '<br />Age: ' + entity.components.human.age
+                    html += '<br />Resources: ' + entity.components.human.resources
                     html += '<br />Mate: ' + entity.components.human.mateId
                     html += '<br />Infected:' + entity.components.human.hasZombieInfection
                 

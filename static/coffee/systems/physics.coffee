@@ -224,6 +224,8 @@ define(['components/vector'], (Vector)->
                 #Lastly, call the physics component's tick function, which will
                 #  update the entity's position component
                 @updatePhysics(entity)
+
+            return @
             
     return Physics
 )

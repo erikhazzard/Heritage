@@ -87,9 +87,8 @@
       };
 
       Physics.prototype.tick = function(delta) {
-        var chaseForce, child, childId, entity, human, id, mateId, neighbor, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
+        var chaseForce, child, childId, entity, human, id, mateId, neighbor, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2;
         _ref = this.entities.entitiesIndex['physics'];
-        _results = [];
         for (id in _ref) {
           entity = _ref[id];
           physics = entity.components.physics;
@@ -138,9 +137,9 @@
               }
             }
           }
-          _results.push(this.updatePhysics(entity));
+          this.updatePhysics(entity);
         }
-        return _results;
+        return this;
       };
 
       return Physics;

@@ -11,29 +11,39 @@ define(['components/vector'], (Vector)->
             #Note: systems are constructed only once
             @entities = entities
             
-            #Keep track of mouse
-            #   Update mouse position
-            @mouseVector = new Vector(0,0)
-            document.getElementById('canvas').addEventListener('mousemove', (e)=>
-                @mouseVector.x = e.offsetX
-                @mouseVector.y = e.offsetY
-                
+            #keep track of keys pressed - allows multiple keys to be pressed
+            #  for diagonal movement
+            @keysPressed = {
+                #left
+                '37': false
+                #up
+                '38': false
+                #right
+                '39': false
+                #down
+                '40': false
+            }
+            
+            @inputForce = new Vector(0,0)
+            
+            #Keyboard Input
+            document.addEventListener('keydown', (e)=>
+                #keep track of key pressed
+                key = e.keyCode
+                if(key > 36 && key < 41)
+                    @keysPressed[key] = true
+                    
+                return true
             )
-            #OLD: Keyboard
-            #document.addEventListener('keydown', (e)=>
-                #force = new Vector(0,0)
-                #if e.keyCode == 37
-                    #force.add(new Vector(-1,0))
-                #else if e.keyCode == 38
-                    #force.add(new Vector(0,-1))
-                #else if e.keyCode == 39
-                    #force.add(new Vector(1,0))
-                #else if e.keyCode == 40
-                    #force.add(new Vector(0,1))
-                    
-                #@inputForce = force.copy()
-                    
-            #)
+            
+            document.addEventListener('keyup', (e)=>
+                #when keyup is pressed, reset 
+                key = e.keyCode
+                if(key > 36 && key < 41)
+                    @keysPressed[key] = false
+                
+                return true
+            )
             return @
 
         tick: (delta)->
@@ -41,15 +51,30 @@ define(['components/vector'], (Vector)->
                 if entity.hasComponent('physics')
                     physics = entity.components.physics
                     
-                    #OLD: keyboard
-                    #entity.components.physics.applyForce(
-                        #@inputForce
-                    #).multiply(2)
+                    #Reset input force
+                    @inputForce.x = 0
+                    @inputForce.y = 0
                     
-                    #Follow mouse
+                    #Get the direction(s) the user wants to move
+                    if @keysPressed['37'] == true
+                        @inputForce.x -= 1
+                    if @keysPressed['38'] == true
+                        @inputForce.y -= 1
+                    if @keysPressed['39'] == true
+                        @inputForce.x += 1
+                    if @keysPressed['40'] == true
+                        @inputForce.y += 1
+                        
+                    #keyboard
                     physics.applyForce(
-                        @mouseVector.copy().subtract(entity.components.position)
+                        @inputForce.multiply(2)
                     )
+                    
+                    #Set velocity to 0 if inputForce is 0
+                    if @inputForce.x == 0 and @inputForce.y == 0
+                        physics.velocity.multiply(0)
+                        
+            return true
 
     return UserMovable
 )

@@ -11,7 +11,7 @@
       }
 
       World.prototype.tick = function(delta) {
-        var entity, human, id, zombie, _ref, _ref1, _results;
+        var entity, human, id, zombie, _ref, _ref1;
         WorldComponent.grid = {};
         _ref = this.entities.entitiesIndex['world'];
         for (id in _ref) {
@@ -24,12 +24,11 @@
           }
         }
         _ref1 = this.entities.entitiesIndex['world'];
-        _results = [];
         for (id in _ref1) {
           entity = _ref1[id];
-          _results.push(entity.components.world.getNeighbors());
+          entity.components.world.getNeighbors();
         }
-        return _results;
+        return this;
       };
 
       return World;

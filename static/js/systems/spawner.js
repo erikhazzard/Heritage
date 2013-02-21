@@ -2,7 +2,7 @@
 (function() {
   var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  define(['entity'], function(Entity) {
+  define(['entity', 'systems/Living'], function(Entity, Living) {
     var Spawner;
     Spawner = (function() {
 
@@ -21,7 +21,7 @@
           return false;
         }
         if (human.isPregnant) {
-          human.gestationTimeLeft -= 0.1;
+          human.gestationTimeLeft -= Living.ageSpeed;
           if (human.gestationTimeLeft < 0) {
             return true;
           } else {
@@ -91,9 +91,8 @@
       };
 
       Spawner.prototype.tick = function(delta) {
-        var canBirth, entity, id, neighbors, _ref, _results;
+        var canBirth, entity, id, neighbors, _ref;
         _ref = this.entities.entitiesIndex['human'];
-        _results = [];
         for (id in _ref) {
           entity = _ref[id];
           if (entity.hasComponent('human') !== true) {
@@ -102,12 +101,10 @@
           neighbors = entity.components.world.getNeighbors(4);
           canBirth = this.canBirth(entity, neighbors);
           if (canBirth) {
-            _results.push(this.makeBaby(entity));
-          } else {
-            _results.push(void 0);
+            this.makeBaby(entity);
           }
         }
-        return _results;
+        return this;
       };
 
       return Spawner;

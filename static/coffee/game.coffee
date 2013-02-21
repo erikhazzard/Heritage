@@ -30,10 +30,12 @@ define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/asse
 
             entity = Assemblages.human()
             entity.addComponent('userMovable')
+            entity.components.position.x = 250
+            entity.components.position.y = 250
             @entities.add(entity)
             
-            while i < 45
-                if Math.random() < 0.5
+            while i < 20
+                if Math.random() < 0.3
                     entity = Assemblages.zombie()
                     entity.components.combat.attack = Math.random() * 10 | 0
                     entity.components.combat.defense = Math.random() * 5 | 0

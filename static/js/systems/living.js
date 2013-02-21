@@ -5,6 +5,8 @@
     var Living;
     Living = (function() {
 
+      Living.ageSpeed = 0.05;
+
       function Living(entities) {
         this.entities = entities;
         return this;
@@ -15,7 +17,7 @@
         human = entity.components.human;
         physics = entity.components.physics;
         health = entity.components.health;
-        human.age += 0.1;
+        human.age += Living.ageSpeed;
         physics.maxSpeed = human.getMaxSpeed();
         human.resources = human.calculateResources();
         health.health = human.calculateHealth(health.health);
@@ -39,7 +41,7 @@
         zombie = entity.components.zombie;
         physics = entity.components.physics;
         health = entity.components.health;
-        zombie.age += 0.1;
+        zombie.age += Living.ageSpeed;
         physics.maxSpeed = zombie.getMaxSpeed();
         zombie.resources = zombie.calculateResources();
         health.health = zombie.calculateHealth(health.health);

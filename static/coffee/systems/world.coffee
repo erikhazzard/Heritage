@@ -31,6 +31,8 @@ define(['components/world'], (WorldComponent)->
             #Get each entity's neighbors
             for id, entity of @entities.entitiesIndex['world']
                 entity.components.world.getNeighbors()
+                
+            return @
             
     return World
 )

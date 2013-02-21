@@ -4,7 +4,7 @@
 #   Handles logic to create new entities
 #
 #============================================================================
-define(['entity'], (Entity)->
+define(['entity', 'systems/Living'], (Entity, Living)->
     class Spawner
         constructor: (entities)->
             @entities = entities
@@ -32,7 +32,7 @@ define(['entity'], (Entity)->
             #If it's pregnant, we can potentially make a baby!
             #----------------------------
             if human.isPregnant
-                human.gestationTimeLeft -= 0.1
+                human.gestationTimeLeft -= Living.ageSpeed
                 
                 #If it's time, a baby can be born
                 #NOTE: This is the only true case
@@ -162,6 +162,7 @@ define(['entity'], (Entity)->
                 if canBirth
                     @makeBaby(entity)
                     
+            return @
     
     return Spawner
 )

@@ -64,13 +64,13 @@
         var resources;
         resources = this.resources;
         if (this.age < 20) {
-          resources -= 0.05 + ((20 - this.age) / 26);
+          resources -= 0.005 + ((20 - this.age) / 46);
         } else if (this.age > 60) {
-          resources -= 0.2 + (this.age * 0.001);
+          resources -= 0.1 + (this.age * 0.0005);
         } else {
-          resources -= 0.10;
+          resources -= 0.01;
           if (this.isPregnant) {
-            resources -= 0.10;
+            resources -= 0.05;
           }
         }
         return resources;
