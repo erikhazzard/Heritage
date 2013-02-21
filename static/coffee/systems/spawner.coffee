@@ -4,7 +4,7 @@
 #   Handles logic to create new entities
 #
 #============================================================================
-define(['entity', 'systems/Human'], (Entity, Human)->
+define(['entity', 'systems/human'], (Entity, Human)->
     class Spawner
         constructor: (entities)->
             @entities = entities
