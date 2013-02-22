@@ -62,6 +62,13 @@
               context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
             }
           }
+          if (entity.hasComponent('human')) {
+            if (this.entities.entities[0] && entity.id === this.entities.entities[0].components.human.mateId) {
+              context.strokeStyle = 'rgba(0,255,255,0.5)';
+              context.lineWidth = 8;
+              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+            }
+          }
           if (entity.components.renderer.isSelected) {
             context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
           }

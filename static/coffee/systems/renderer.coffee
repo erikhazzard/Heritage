@@ -93,6 +93,19 @@ define(['components/world'], (World)->
                             size,
                             size
                         )
+
+                #Draw outline if mate of userMovable
+                if entity.hasComponent('human')
+                    if @entities.entities[0] and entity.id == @entities.entities[0].components.human.mateId
+                        context.strokeStyle = 'rgba(0,255,255,0.5)'
+                        context.lineWidth = 8
+                        context.strokeRect(
+                            renderPosition.x - (size / 2),
+                            renderPosition.y - (size / 2),
+                            size,
+                            size
+                        )
+
                 
                 
                 #If entity is selected, draw an outline

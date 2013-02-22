@@ -120,15 +120,15 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #If the entity is dead, remove it
             #------------------------
             if human.isDead
-                #FIX THIS
+                
                 #Transfer control a child
-                if entity.hasComponent('userMovable') and human.children
+                if not human.hasZombieInfection and entity.hasComponent('userMovable') and human.children
                     i = 0
                     len = human.children.length
                     while i < len
                         if human.children[i]
-                            child = game.entities.entities[ human.children[i] ]
-                            if child and not child.components.human.isDead
+                            child = @entities.entities[ human.children[i] ]
+                            if child and child.hasComponent('human') and not child.components.human.isDead
                                 child.addComponent('userMovable')
                             break
                     

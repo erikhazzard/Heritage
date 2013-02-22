@@ -183,8 +183,10 @@ define(['components/vector'], (Vector)->
                             if @entities.entities[mateId]
                                 physics.applyForce(
                                     physics.seekForce(
-                                        @entities.entities[mateId]
-                                    ).multiply(2)
+                                        @entities.entities[mateId],
+                                        #override how far to seek out a mate
+                                        700, true
+                                    ).multiply(2.5)
                                 )
                                 
                         #CHILDREN
@@ -192,11 +194,11 @@ define(['components/vector'], (Vector)->
                             for childId in human.children
                                 child = @entities.entities[childId]
                                 #Stay near the child if the child isn't too old
-                                if child and child.components.human.age < 18
+                                if child and child.components.human.age < 10
                                     physics.applyForce(
                                         physics.seekForce(
                                             child
-                                        ).multiply(2.5)
+                                        ).multiply(1.4)
                                     )
                     #------------------------
                     #ZOMBIE movement - TODO: own system?

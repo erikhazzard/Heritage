@@ -58,13 +58,14 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
         #Seek force
         #
         #---------------------------------------
-        seekForce: (target, maxDistance)->
+        seekForce: (target, maxDistance, overrideMaxDistance)->
             #Calculate steering force towards a target and returns the force
             #  If maxDistance is passed in, specifies how far to check for neighbors
             #  If flee is passed in, force is multiplied by -1
             
             #How far to check for neighbors in
             maxDistance = maxDistance || 100
+            overrideMaxDistance = overrideMaxDistance || false
             
             #check if the passed in object has a position property
             #  if this doesn't check, it assumes a vector is passed in
@@ -86,7 +87,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             #-----------------------------------
             #get distance threshold
             #-----------------------------------
-            if @maxSeekForceDistance
+            if @maxSeekForceDistance and not overrideMaxDistance
                 curDistance = position.distance(target)
                 #Make sure entity is within range of other entities
                 if curDistance <= 0 or curDistance > @maxSeekForceDistance

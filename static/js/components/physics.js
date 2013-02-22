@@ -28,15 +28,16 @@
         return force;
       };
 
-      Physics.prototype.seekForce = function(target, maxDistance) {
+      Physics.prototype.seekForce = function(target, maxDistance, overrideMaxDistance) {
         var curDistance, desiredVelocity, distance, magnitude, position, scale, steer, steerLine;
         maxDistance = maxDistance || 100;
+        overrideMaxDistance = overrideMaxDistance || false;
         if (target && target.components && target.components.position) {
           target = target.components.position;
         }
         position = this.entity.components.position;
         desiredVelocity = Vector.prototype.subtract(target, position);
-        if (this.maxSeekForceDistance) {
+        if (this.maxSeekForceDistance && !overrideMaxDistance) {
           curDistance = position.distance(target);
           if (curDistance <= 0 || curDistance > this.maxSeekForceDistance) {
             return new Vector(0, 0);

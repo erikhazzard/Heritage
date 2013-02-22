@@ -80,13 +80,13 @@
           this.entities.add(newZombie);
         }
         if (human.isDead) {
-          if (entity.hasComponent('userMovable') && human.children) {
+          if (!human.hasZombieInfection && entity.hasComponent('userMovable') && human.children) {
             i = 0;
             len = human.children.length;
             while (i < len) {
               if (human.children[i]) {
-                child = game.entities.entities[human.children[i]];
-                if (child && !child.components.human.isDead) {
+                child = this.entities.entities[human.children[i]];
+                if (child && child.hasComponent('human') && !child.components.human.isDead) {
                   child.addComponent('userMovable');
                 }
                 break;

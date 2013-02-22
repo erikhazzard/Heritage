@@ -110,7 +110,7 @@
               mateId = human.mateId;
               if (mateId !== null) {
                 if (this.entities.entities[mateId]) {
-                  physics.applyForce(physics.seekForce(this.entities.entities[mateId]).multiply(2));
+                  physics.applyForce(physics.seekForce(this.entities.entities[mateId], 700, true).multiply(2.5));
                 }
               }
               if (human.children.length > 0) {
@@ -118,8 +118,8 @@
                 for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
                   childId = _ref1[_i];
                   child = this.entities.entities[childId];
-                  if (child && child.components.human.age < 18) {
-                    physics.applyForce(physics.seekForce(child).multiply(2.5));
+                  if (child && child.components.human.age < 10) {
+                    physics.applyForce(physics.seekForce(child).multiply(1.4));
                   }
                 }
               }
