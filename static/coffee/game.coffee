@@ -1,9 +1,13 @@
-define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/assemblages', 'lib/d3'], (
-    Entity, Entities, Components, Systems, Assemblages, d3)->
+define(['entity', 'entities', 'components/all',
+    'systems/all', 'assemblages/assemblages',
+    'socket',
+    'lib/d3'], (
+    Entity, Entities, Components, Systems, Assemblages,
+    Socket,
+    d3)->
     class Game
         constructor: ()->
-            #Set everything up
-            
+            #Set everything up 
             #list of all entities
             #  entities are made up of an ID and collection of
             #  components

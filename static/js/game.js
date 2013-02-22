@@ -2,7 +2,7 @@
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
-  define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/assemblages', 'lib/d3'], function(Entity, Entities, Components, Systems, Assemblages, d3) {
+  define(['entity', 'entities', 'components/all', 'systems/all', 'assemblages/assemblages', 'socket', 'lib/d3'], function(Entity, Entities, Components, Systems, Assemblages, Socket, d3) {
     var Game;
     Game = (function() {
 

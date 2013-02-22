@@ -27,10 +27,13 @@ define([
     'systems/combat',
 
     'systems/userInterface',
+    'systems/logger'
 
     ], (UserMovable, Renderer, Physics,
     Human, Zombie,
-    World, Spawner, Combat, UserInterface)->
+    World, Spawner, Combat, UserInterface,
+    Logger
+    )->
     class Systems
         constructor: (entities)->
             @entities = entities
@@ -62,6 +65,9 @@ define([
 
                 #Finally render it
                 new Renderer(@entities)
+                
+                #And do any logging
+                new Logger(@entities)
             ]
 
             return @
