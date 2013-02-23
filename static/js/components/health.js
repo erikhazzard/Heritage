@@ -9,6 +9,8 @@
         params = params || {};
         this.entity = entity;
         this.health = params.health || 100;
+        this.maxHealth = params.maxHealth || this.health;
+        return this;
       }
 
       return Health;

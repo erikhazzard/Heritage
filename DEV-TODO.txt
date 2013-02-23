@@ -16,6 +16,9 @@
 -Tweak birth parameters
     -Should reach a stable population over time, not taper off.
 
+### Stamina / energy component ? ###
+-Track run speed / energy??
+
 ### RESOURCES ###
 -Put in some sort of resource spawning
     -Randomly spawn resources? When entities go over resource, it depletes 
@@ -33,3 +36,6 @@
 
 ### Analysis ###
 -More robust logging, analysis
+
+## GENERAL ##
+-Clean up code, make sure all functions return proper values

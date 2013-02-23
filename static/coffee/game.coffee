@@ -39,6 +39,7 @@ define(['entity', 'entities', 'components/all',
             entity.components.human.age = 20
             @entities.add(entity)
             
+            #TODO: tweak this for testing
             while i < 150
                 if Math.random() < 0.3
                     entity = Assemblages.zombie()
