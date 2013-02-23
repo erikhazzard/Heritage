@@ -21,6 +21,7 @@
       Renderer.prototype.tick = function(delta) {
         var alpha, entity, id, renderPosition, size, targetX, targetY, _ref, _ref1;
         canvas.width = canvas.width;
+        miniMapCanvas.width = miniMapCanvas.width;
         this.camera = {
           x: 0,
           y: 0,
@@ -78,6 +79,17 @@
             context.strokeRect(targetX, targetY, size, size);
           }
           context.restore();
+          miniMapContext.save();
+          miniMapContext.fillStyle = 'rgba(20,20,20,1)';
+          if (entity.hasComponent('zombie')) {
+            miniMapContext.fillStyle = 'rgba(255,20,20,1)';
+          }
+          if (entity.hasComponent('userMovable')) {
+            miniMapContext.fillStyle = 'rgba(20,255,20,1)';
+            miniMapContext.strokeRect((renderPosition.x / 2) - this.canvasHalfWidth / 4, (renderPosition.y / 2) - this.canvasHalfHeight / 4, this.canvasHalfWidth / 2, this.canvasHalfHeight / 2);
+          }
+          miniMapContext.fillRect(renderPosition.x / 2 - 1, renderPosition.y / 2 - 1, 3, 3);
+          miniMapContext.restore();
         }
         return this;
       };

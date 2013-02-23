@@ -25,6 +25,7 @@ define(['components/world'], (World)->
         tick: (delta)=>
             #Redraw the canvas
             canvas.width = canvas.width
+            miniMapCanvas.width = miniMapCanvas.width
             @camera = {
                 x:0
                 y:0
@@ -103,8 +104,34 @@ define(['components/world'], (World)->
                         size,
                         size
                     )
-
                 context.restore()
+                
+                #------------------------
+                #DRAW MINIMAP
+                #------------------------
+                miniMapContext.save()
+                miniMapContext.fillStyle = 'rgba(20,20,20,1)'
+                if entity.hasComponent('zombie')
+                    miniMapContext.fillStyle= 'rgba(255,20,20,1)'
+                if entity.hasComponent('userMovable')
+                    miniMapContext.fillStyle= 'rgba(20,255,20,1)'
+                    #Draw outline around what entity can see
+                    #NOTE: THIS IS NOT PERFECT YET
+                    miniMapContext.strokeRect(
+                        (renderPosition.x / 2) - @canvasHalfWidth / 4,
+                        (renderPosition.y / 2) - @canvasHalfHeight / 4,
+                        @canvasHalfWidth / 2,
+                        @canvasHalfHeight / 2
+                    )
+                    
+                miniMapContext.fillRect(
+                    renderPosition.x / 2 - 1,
+                    renderPosition.y / 2 - 1,
+                    3,
+                    3
+                )
+                
+                miniMapContext.restore()
                 
             return @
     
