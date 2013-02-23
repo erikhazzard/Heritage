@@ -118,17 +118,17 @@ define(['components/world'], (World)->
                     #Draw outline around what entity can see
                     #NOTE: THIS IS NOT PERFECT YET
                     miniMapContext.strokeRect(
-                        (renderPosition.x / 2) - @canvasHalfWidth / 4,
-                        (renderPosition.y / 2) - @canvasHalfHeight / 4,
+                        (renderPosition.x / 6) - @canvasHalfWidth / 4,
+                        (renderPosition.y / 6) - @canvasHalfHeight / 4,
                         @canvasHalfWidth / 2,
                         @canvasHalfHeight / 2
                     )
                     
                 miniMapContext.fillRect(
-                    renderPosition.x / 2 - 1,
-                    renderPosition.y / 2 - 1,
-                    3,
-                    3
+                    renderPosition.x / 6 - 1,
+                    renderPosition.y / 6 - 1,
+                    2,
+                    2
                 )
                 
                 miniMapContext.restore()

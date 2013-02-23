@@ -39,7 +39,7 @@ define(['entity', 'entities', 'components/all',
             entity.components.human.age = 20
             @entities.add(entity)
             
-            while i < 50
+            while i < 150
                 if Math.random() < 0.3
                     entity = Assemblages.zombie()
                     entity.components.combat.attack = Math.random() * 10 | 0
@@ -48,8 +48,8 @@ define(['entity', 'entities', 'components/all',
                     entity = Assemblages.human()
                     entity.components.human.age = d3.random.normal(20,10)()
                     
-                entity.components.position.x = Math.random() * 500 | 0
-                entity.components.position.y = Math.random() * 500 | 0
+                entity.components.position.x = Math.random() * 1500 | 0
+                entity.components.position.y = Math.random() * 1500 | 0
                 @entities.add( entity )
                 
                 i++

@@ -86,9 +86,9 @@
           }
           if (entity.hasComponent('userMovable')) {
             miniMapContext.fillStyle = 'rgba(20,255,20,1)';
-            miniMapContext.strokeRect((renderPosition.x / 2) - this.canvasHalfWidth / 4, (renderPosition.y / 2) - this.canvasHalfHeight / 4, this.canvasHalfWidth / 2, this.canvasHalfHeight / 2);
+            miniMapContext.strokeRect((renderPosition.x / 6) - this.canvasHalfWidth / 4, (renderPosition.y / 6) - this.canvasHalfHeight / 4, this.canvasHalfWidth / 2, this.canvasHalfHeight / 2);
           }
-          miniMapContext.fillRect(renderPosition.x / 2 - 1, renderPosition.y / 2 - 1, 3, 3);
+          miniMapContext.fillRect(renderPosition.x / 6 - 1, renderPosition.y / 6 - 1, 2, 2);
           miniMapContext.restore();
         }
         return this;

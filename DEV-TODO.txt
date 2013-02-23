@@ -1,0 +1,35 @@
+# TODO #
+### World ###
+-Extract world logic from component to system
+    -Write unit tests for it
+    -Think of better system to config world size. Maybe in game?
+
+### Combat ###
+-Make combat not suck
+    -Maybe shrink / grow entities based on health? 
+        -Some other dimension should show health
+
+### Zombies ###
+-Don't let them die so fast
+
+### Humans ###
+-Tweak birth parameters
+    -Should reach a stable population over time, not taper off.
+
+### RESOURCES ###
+-Put in some sort of resource spawning
+    -Randomly spawn resources? When entities go over resource, it depletes 
+    a little?
+    -Resource decay / resource spawning
+        -For now, let decay by entities consuming and spawn randomly?
+
+### Renderer ###
+-Extract camera to own system?
+    -Camera is a subsystem maybe
+-Fix wrapping. Doesn't work 100% yet
+    -Write unit test for wrapping logic
+-Put back in various strokes for pregnant / can attack
+
+
+### Analysis ###
+-More robust logging, analysis
