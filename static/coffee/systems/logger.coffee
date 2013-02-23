@@ -4,7 +4,7 @@
 #   Handles logging
 #
 #============================================================================
-define(['socket'], (Socket)->
+define(['systems/loggerHelper'], (LoggerHelper)->
     class Logger
         constructor: (entities)->
             @entities = entities
@@ -12,11 +12,22 @@ define(['socket'], (Socket)->
         
         tick: (delta)->
             performance = window.performance || {}
+            entityCounts = {
+                all: 0
+                human: 0
+                zombie: 0
+            }
+            for id, entity of @entities.entities
+                entityCounts.all += 1
+                if entity.hasComponent('human')
+                    entityCounts.human += 1
+                if entity.hasComponent('zombie')
+                    entityCounts.zombie += 1
+
             #Log some data
-            Socket.emit('logData', {
-                numberOfEntitie: @entities.length
-                time: new Date()
-                performance: performance
+            LoggerHelper.log({
+                entityCounts: entityCounts
+                tickNum: delta
             })
             return @
             

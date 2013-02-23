@@ -1,0 +1,11 @@
+{
+    "name": "Legacy", 
+    "version": "0.0.1",
+    "private": true, 
+    "dependencies": {
+        "backbone": "0.9.10",
+        "underscore": "1.4.4",
+        "mongodb": "1.2.13",
+        "socket.io": "0.9.13"
+    }
+}
