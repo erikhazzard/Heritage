@@ -1,28 +1,29 @@
 #========================================
-#TEST - System - Human
+#TEST - System - Zombie
 #========================================
-define(['systems/human', 'assemblages/assemblages', 'entity', 'entities'], (
-    Human, Assemblages, Entity, Entities)->
+define(['systems/zombie', 'assemblages/assemblages', 'entity', 'entities'], (
+    Zombie, Assemblages, Entity, Entities)->
     #--------------------------------
     #Basic tests
     #--------------------------------
-    describe('Human System: Base tests', ()->
-        it('Should setup human system', ()->
-            human = new Human()
+    describe('Zombie System', ()->
+        it('Should setup zombie system', ()->
+            zombie = new Zombie()
+            zombie.tick.should.not.equal(undefined)
         )
-    )
-    
-    #------------------------------------
-    #Update resources
-    #------------------------------------
-    describe('Human System: Resources tests', ()->
-        it('Should update health and whatnot based on resources', ()->
-            human = new Human()
+        
+        #------------------------------------
+        #
+        #Update resources
+        #
+        #------------------------------------
+        it('Should calculate health properly', ()->
+            zombieSystem = new Zombie()
             entities = new Entities()
             #add some entities
-            entities.add(Assemblages.human())
-                .add( Assemblages.human())
-            console.log(entities)
+            entities.add(Assemblages.zombie())
+                .add( Assemblages.zombie())
+            zombieSystem.calculateHealth.should.not.equal(undefined)
             
         )
     )

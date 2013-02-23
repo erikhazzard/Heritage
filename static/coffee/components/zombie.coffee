@@ -36,22 +36,6 @@ define(['lib/d3'], (d3)->
             @strength = Math.random() * 20 | 0
             #Dodge chance? Max Speed?
             @agility = Math.random() * 20 | 0
-            
-        calculateHealth: (health)->
-            #Calculate current health based on age / resources
-            
-            #Subtract health if resources are scarce
-            #happens faster if negative resources
-            if @resources < 0
-                health -= (0.4 + Math.abs(@resources * 0.04) )
-            #slow, natural decay
-            else if @resources < 20
-                health -= (0.2 + Math.abs(@resources * 0.01) )
-            #if resources are high, more life
-            else if @resources > 50
-                health += (0.005 + Math.abs(@resources * 0.005) )
-
-            return health
         
         getIsDead: (health)->
             #If zombie has too low resources OR health < 0, it's dead
@@ -68,16 +52,6 @@ define(['lib/d3'], (d3)->
                 
             @maxSpeed = maxSpeed
             return maxSpeed
-        
-        calculateResources: ()->
-            #Base resource consumption on age and other factors
-            #  TODO: Other factors.  higher strength, higher resource
-            #  comsumption
-            resources = @resources
-            
-            #Resources decay naturally
-            resources -= (@decayRate)
-            return resources
             
     return Zombie
 )

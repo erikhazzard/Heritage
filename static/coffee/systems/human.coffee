@@ -20,7 +20,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
         #Update helpers
         #
         #--------------------------------
-        getResources: (entity)->
+        calculateResources: (entity)->
             #Base resource consumption on age and other factors
             #  TODO: Other factors.  higher strength, higher resource
             #  comsumption
@@ -90,7 +90,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #update properties
             human.age += Living.ageSpeed
             physics.maxSpeed = human.getMaxSpeed()
-            resources.resources = @getResources(entity)
+            resources.resources = @calculateResources(entity)
             
             #If entity is low on resources, make it not flock together so much
             if resources < 10

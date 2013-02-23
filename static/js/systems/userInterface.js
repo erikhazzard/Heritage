@@ -59,11 +59,20 @@
             html += '<br />Infected:' + entity.components.human.hasZombieInfection;
           }
         }
-        this.$debug.innerHTML = html;
+        this.$debug.innerHTML += html;
         return entities;
       };
 
+      UserInterface.prototype.showEntityInfo = function() {
+        this.$debug.innerHTMl += '<br /><br />Entity Info';
+        this.$debug.innerHTML += '<br />Humans: ' + Object.keys(this.entities.entitiesIndex.human).length;
+        this.$debug.innerHTML += '<br />Zombies: ' + Object.keys(this.entities.entitiesIndex.zombie).length + '<br />';
+        return true;
+      };
+
       UserInterface.prototype.tick = function(delta) {
+        this.$debug.innerHTML = '';
+        this.showEntityInfo();
         this.showUserMovableInfo();
         return this;
       };

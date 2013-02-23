@@ -17,13 +17,9 @@ define(['systems/loggerHelper'], (LoggerHelper)->
                 human: 0
                 zombie: 0
             }
-            for id, entity of @entities.entities
-                entityCounts.all += 1
-                if entity.hasComponent('human')
-                    entityCounts.human += 1
-                if entity.hasComponent('zombie')
-                    entityCounts.zombie += 1
-
+            entityCounts.human = Object.keys(@entities.entitiesIndex.human).length
+            entityCounts.zombie = Object.keys(@entities.entitiesIndex.zombie).length
+            
             #Log some data
             LoggerHelper.log({
                 entityCounts: entityCounts

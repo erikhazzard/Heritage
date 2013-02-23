@@ -29,11 +29,10 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        entity = Assemblages.human();
+        entity = Assemblages.zombie();
         entity.addComponent('userMovable');
         entity.components.position.x = 250;
         entity.components.position.y = 250;
-        entity.components.human.age = 20;
         this.entities.add(entity);
         while (i < 150) {
           if (Math.random() < 0.3) {

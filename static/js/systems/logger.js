@@ -11,24 +11,15 @@
       }
 
       Logger.prototype.tick = function(delta) {
-        var entity, entityCounts, id, performance, _ref;
+        var entityCounts, performance;
         performance = window.performance || {};
         entityCounts = {
           all: 0,
           human: 0,
           zombie: 0
         };
-        _ref = this.entities.entities;
-        for (id in _ref) {
-          entity = _ref[id];
-          entityCounts.all += 1;
-          if (entity.hasComponent('human')) {
-            entityCounts.human += 1;
-          }
-          if (entity.hasComponent('zombie')) {
-            entityCounts.zombie += 1;
-          }
-        }
+        entityCounts.human = Object.keys(this.entities.entitiesIndex.human).length;
+        entityCounts.zombie = Object.keys(this.entities.entitiesIndex.zombie).length;
         LoggerHelper.log({
           entityCounts: entityCounts,
           tickNum: delta
