@@ -11,6 +11,9 @@ define([], ()->
             @entity = entity
 
             @health = params.health || 100
+            @maxHealth = params.maxHealth || @health
+            
+            return @
             
     return Health
 )
