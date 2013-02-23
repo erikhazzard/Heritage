@@ -19,7 +19,7 @@
 
       World.grid = {};
 
-      World.cellSize = 10;
+      World.cellSize = 2;
 
       World.rows = canvasHeight / World.cellSize;
 

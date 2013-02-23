@@ -3,26 +3,41 @@
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   define(['components/world'], function(World) {
-    var Renderer, canvas, context;
+    var Renderer, canvas, context, miniMapCanvas, miniMapContext;
     canvas = World.canvas;
     context = World.context;
+    miniMapCanvas = document.getElementById('miniMap');
+    miniMapContext = miniMapCanvas.getContext('2d');
     Renderer = (function() {
 
       function Renderer(entities) {
         this.tick = __bind(this.tick, this);
         this.entities = entities;
+        this.canvasHalfWidth = canvas.width / 2;
+        this.canvasHalfHeight = canvas.height / 2;
         return this;
       }
 
       Renderer.prototype.tick = function(delta) {
-        var alpha, entity, id, renderPosition, size, _ref;
+        var alpha, entity, id, renderPosition, size, targetX, targetY, _ref, _ref1;
         canvas.width = canvas.width;
-        _ref = this.entities.entitiesIndex['renderer'];
+        this.camera = {
+          x: 0,
+          y: 0,
+          radius: 20
+        };
+        _ref = this.entities.entitiesIndex['userMovable'];
         for (id in _ref) {
           entity = _ref[id];
+          this.camera.x = entity.components.position.x;
+          this.camera.y = entity.components.position.y;
+        }
+        _ref1 = this.entities.entitiesIndex['renderer'];
+        for (id in _ref1) {
+          entity = _ref1[id];
           size = entity.components.renderer.size;
           context.save();
-          renderPosition = entity.components.renderer.getPosition();
+          renderPosition = entity.components.position;
           context.fillStyle = entity.components.renderer.color;
           if (entity.components.human) {
             alpha = Math.round((1 - (entity.components.human.age / 110)) * 10) / 10;
@@ -42,46 +57,27 @@
           if (entity.hasComponent('zombie')) {
             context.fillStyle = 'rgba(255,100,100,1)';
           }
+          targetX = renderPosition.x - (size / 2) - this.camera.x + this.canvasHalfWidth;
+          targetY = renderPosition.y - (size / 2) - this.camera.y + this.canvasHalfHeight;
+          if (targetX < 0) {
+            targetX = canvas.width + targetX;
+          }
+          if (targetY < 0) {
+            targetY = canvas.height + targetY;
+          }
+          if (renderPosition.y > this.camera.y + this.canvasHalfHeight) {
+            targetY = renderPosition.y - (size / 2) - this.canvasHalfHeight;
+          }
+          if (renderPosition.x > this.camera.x + this.canvasHalfWidth) {
+            targetX = renderPosition.x - (size / 2) - this.canvasHalfWidth;
+          }
+          context.fillRect(targetX, targetY, size, size);
           if (entity.hasComponent('userMovable')) {
             context.strokeStyle = 'rgba(100,150,200,1)';
-            context.lineWidth = 8;
-            context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
-          }
-          context.fillRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
-          if (entity.hasComponent('combat')) {
-            if (entity.components.combat.canAttack) {
-              context.strokeStyle = 'rgba(0,0,0,0.1)';
-              context.lineWidth = 8;
-              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
-            }
-          }
-          if (entity.hasComponent('human')) {
-            if (entity.components.human.isPregnant) {
-              context.strokeStyle = 'rgba(0,255,0,0.5)';
-              context.lineWidth = 8;
-              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
-            }
-          }
-          if (entity.hasComponent('human')) {
-            if (this.entities.entities[0] && entity.id === this.entities.entities[0].components.human.mateId) {
-              context.save();
-              context.strokeStyle = 'rgba(0,255,255,0.5)';
-              context.lineWidth = 8;
-              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
-              context.restore();
-            }
-            if (entity.components.human.mateId) {
-              context.save();
-              context.strokeStyle = 'rgba(255,100,255,0.5)';
-              context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
-              context.restore();
-            }
-          }
-          if (entity.components.renderer.isSelected) {
-            context.strokeRect(renderPosition.x - (size / 2), renderPosition.y - (size / 2), size, size);
+            context.lineWidth = 2;
+            context.strokeRect(targetX, targetY, size, size);
           }
           context.restore();
-          entity.components.renderer.isSelected = false;
         }
         return this;
       };

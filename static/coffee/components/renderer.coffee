@@ -7,13 +7,13 @@
 #       -entity: position
 #
 #============================================================================
-define([], ()->
+define(['components/world'], (World)->
     class Renderer
         constructor: (entity)->
             @entity = entity
             @color = 'rgba(0,0,0,0.7)'
-            @x = @y = 0
 
+            #@size = World.cellSize
             @size = 10
 
             return @
@@ -23,12 +23,6 @@ define([], ()->
             
         setSize: (size)->
             @size = size
-
-        getPosition: ()->
-            @x = Math.round(@entity.components.position.x)
-            @y = Math.round(@entity.components.position.y)
-            
-            return {x: @x, y: @y}
             
     return Renderer
 )

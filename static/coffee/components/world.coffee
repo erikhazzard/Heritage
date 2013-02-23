@@ -31,7 +31,7 @@ define([], ()->
         #GRID
         #NOTE: grid is reset each tick in the World system
         @grid = {}
-        @cellSize = 10
+        @cellSize = 2
         @rows = canvasHeight / @cellSize
         @columns= canvasWidth / @cellSize
 

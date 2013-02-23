@@ -11,14 +11,31 @@ define(['components/world'], (World)->
     canvas = World.canvas
     context = World.context
     
+    #MiniMap?
+    miniMapCanvas = document.getElementById('miniMap')
+    miniMapContext = miniMapCanvas.getContext('2d')
+    
     class Renderer
         constructor: (entities)->
             @entities = entities
+            @canvasHalfWidth = canvas.width / 2
+            @canvasHalfHeight = canvas.height / 2
             return @
             
         tick: (delta)=>
             #Redraw the canvas
             canvas.width = canvas.width
+            @camera = {
+                x:0
+                y:0
+                radius: 20
+            }
+            
+            #Setup camera
+            #TODO: Should only center camera on one entity...
+            for id, entity of @entities.entitiesIndex['userMovable']
+                @camera.x = entity.components.position.x
+                @camera.y = entity.components.position.y
             
             #Renders to the canvas. Ideally, we'd use events here
             for id, entity of @entities.entitiesIndex['renderer']
@@ -26,7 +43,7 @@ define(['components/world'], (World)->
                 context.save()
                 
                 #Get the position to render to
-                renderPosition = entity.components.renderer.getPosition()
+                renderPosition = entity.components.position
 
                 #Setup the canvas
                 context.fillStyle = entity.components.renderer.color
@@ -51,90 +68,44 @@ define(['components/world'], (World)->
                 if entity.hasComponent('zombie')
                     context.fillStyle = 'rgba(255,100,100,1)'
                     
-                if entity.hasComponent('userMovable')
-                    context.strokeStyle = 'rgba(100,150,200,1)'
-                    context.lineWidth = 8
-                    context.strokeRect(
-                        renderPosition.x - (size / 2),
-                        renderPosition.y - (size / 2),
-                        size,
-                        size
-                    )
-
                 #Draw square for entity
                 #TODO: if there is an image, draw the image
+                
+                #If we can see wrapped around area, draw it
+                targetX = renderPosition.x - (size / 2) - @camera.x + @canvasHalfWidth
+                targetY = renderPosition.y - (size / 2) - @camera.y + @canvasHalfHeight
+                
+                #Draw entities that are in the "next" location (wraped around world)
+                if targetX < 0
+                    targetX = canvas.width + targetX
+                if targetY < 0
+                    targetY = canvas.height + targetY
+                    
+                if renderPosition.y > @camera.y + @canvasHalfHeight
+                    targetY = renderPosition.y - (size / 2) - @canvasHalfHeight
+                if renderPosition.x > @camera.x + @canvasHalfWidth
+                    targetX = renderPosition.x - (size / 2) - @canvasHalfWidth
+                    #targetY = targetY - @camera.y
+                    
                 context.fillRect(
-                    renderPosition.x - (size / 2),
-                    renderPosition.y - (size / 2),
+                    targetX,
+                    targetY,
                     size,
                     size
                 )
-
-                #DRAW ATTACK OUTLINE
-                if entity.hasComponent('combat')
-                    if entity.components.combat.canAttack
-                        context.strokeStyle = 'rgba(0,0,0,0.1)'
-                        context.lineWidth = 8
-                        context.strokeRect(
-                            renderPosition.x - (size / 2),
-                            renderPosition.y - (size / 2),
-                            size,
-                            size
-                        )
-                        
-                #DRAW OUTLINE IF PREGNANT
-                if entity.hasComponent('human')
-                    if entity.components.human.isPregnant
-                        context.strokeStyle = 'rgba(0,255,0,0.5)'
-                        context.lineWidth = 8
-                        context.strokeRect(
-                            renderPosition.x - (size / 2),
-                            renderPosition.y - (size / 2),
-                            size,
-                            size
-                        )
-                        
-                #Draw outline if mate of userMovable
-                if entity.hasComponent('human')
-                    
-                    #Draw the user's mate
-                    if @entities.entities[0] and entity.id == @entities.entities[0].components.human.mateId
-                        context.save()
-                        context.strokeStyle = 'rgba(0,255,255,0.5)'
-                        context.lineWidth = 8
-                        context.strokeRect(
-                            renderPosition.x - (size / 2),
-                            renderPosition.y - (size / 2),
-                            size,
-                            size
-                        )
-                        context.restore()
-
-                    #If entity has a mate, draw outline
-                    if entity.components.human.mateId
-                        context.save()
-                        context.strokeStyle = 'rgba(255,100,255,0.5)'
-                        context.strokeRect(
-                            renderPosition.x - (size / 2),
-                            renderPosition.y - (size / 2),
-                            size,
-                            size
-                        )
-                        context.restore()
-
-                #If entity is selected, draw an outline
-                if entity.components.renderer.isSelected
+                
+                if entity.hasComponent('userMovable')
+                    context.strokeStyle = 'rgba(100,150,200,1)'
+                    context.lineWidth = 2
                     context.strokeRect(
-                        renderPosition.x - (size / 2),
-                        renderPosition.y - (size / 2),
+                        targetX,
+                        targetY,
                         size,
                         size
                     )
+
                 context.restore()
                 
-                #Clear out selection
-                entity.components.renderer.isSelected = false
-            
             return @
     
     return Renderer
