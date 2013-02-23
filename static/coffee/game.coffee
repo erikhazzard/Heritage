@@ -32,11 +32,12 @@ define(['entity', 'entities', 'components/all',
             #Initialize stuff
             i=0
 
-            entity = Assemblages.human()
+            #Create the PC's entity
+            entity = Assemblages.zombie()
+            #entity.components.human.age = 20
             entity.addComponent('userMovable')
             entity.components.position.x = 250
             entity.components.position.y = 250
-            entity.components.human.age = 20
             @entities.add(entity)
             
             #TODO: tweak this for testing

@@ -2,23 +2,23 @@
 (function() {
 
   define(['systems/human', 'assemblages/assemblages', 'entity', 'entities'], function(Human, Assemblages, Entity, Entities) {
-    describe('Human System: Base tests', function() {
-      return it('Should setup human system', function() {
+    return describe('Human System: Base tests', function() {
+      it('Should setup human system', function() {
         var human;
         return human = new Human();
       });
-    });
-    return describe('Human System: Resources tests', function() {
-      return it('Should update health and whatnot based on resources', function() {
-        var entities, entity1, entity2, human, resources;
-        entities = new Entities();
-        human = new Human(entities);
-        entity1 = Assemblages.human();
-        entity1.components.resources.resources = 100;
-        entity2 = Assemblages.human();
-        entities.add(entity1).add(entity2);
-        resources = human.getResources(entity1) < 100;
-        return resources.should.be["true"];
+      return describe('Human System: Resources tests', function() {
+        return it('Should calculate health properly', function() {
+          var entities, entity1, entity2, human, resources;
+          entities = new Entities();
+          human = new Human(entities);
+          entity1 = Assemblages.human();
+          entity1.components.resources.resources = 100;
+          entity2 = Assemblages.human();
+          entities.add(entity1).add(entity2);
+          resources = human.calculateResources(entity1) < 100;
+          return resources.should.be["true"];
+        });
       });
     });
   });

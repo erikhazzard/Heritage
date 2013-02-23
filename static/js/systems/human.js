@@ -12,7 +12,7 @@
         return this;
       }
 
-      Living.prototype.getResources = function(entity) {
+      Living.prototype.calculateResources = function(entity) {
         var human, neighbors, resources;
         resources = entity.components.resources.resources;
         human = entity.components.human;
@@ -63,7 +63,7 @@
         resources = entity.components.resources;
         human.age += Living.ageSpeed;
         physics.maxSpeed = human.getMaxSpeed();
-        resources.resources = this.getResources(entity);
+        resources.resources = this.calculateResources(entity);
         if (resources < 10) {
           entity.components.flocking.rules.cohesion = -1;
           entity.components.flocking.rules.align = -1;

@@ -12,15 +12,37 @@
         return this;
       }
 
+      Zombie.prototype.calculateResources = function(entity) {
+        var resources;
+        resources = entity.components.resources.resources;
+        resources -= entity.components.zombie.decayRate;
+        return resources;
+      };
+
+      Zombie.prototype.calculateHealth = function(entity) {
+        var health, resources;
+        resources = entity.components.resources.resources;
+        health = entity.components.health.health;
+        if (resources < 0) {
+          health -= 0.4 + Math.abs(resources * 0.04);
+        } else if (resources < 20) {
+          health -= 0.2 + Math.abs(resources * 0.01);
+        } else if (resources > 50) {
+          health += 0.005 + Math.abs(resources * 0.005);
+        }
+        return health;
+      };
+
       Zombie.prototype.updateZombie = function(entity) {
-        var health, physics, zombie;
+        var health, physics, resources, zombie;
         zombie = entity.components.zombie;
         physics = entity.components.physics;
         health = entity.components.health;
+        resources = entity.components.resources;
         zombie.age += Zombie.ageSpeed;
         physics.maxSpeed = zombie.getMaxSpeed();
-        zombie.resources = zombie.calculateResources();
-        health.health = zombie.calculateHealth(health.health);
+        resources.resources = this.calculateResources(entity);
+        health.health = this.calculateHealth(entity);
         zombie.isDead = zombie.getIsDead(health.health);
         if (zombie.isDead) {
           this.entities.remove(entity);
@@ -30,7 +52,7 @@
 
       Zombie.prototype.tick = function(delta) {
         var entity, id, _ref;
-        _ref = this.entities.entitiesIndex['zombie'];
+        _ref = this.entities.entitiesIndex.zombie;
         for (id in _ref) {
           entity = _ref[id];
           this.updateZombie(entity);
