@@ -31,6 +31,8 @@ define(['components/world'], (WorldComponent)->
         #-------------------------------- 
         tick: (delta)->
             #Reset the world grid
+            WorldComponent.grid = {}
+
             #TODO: This way restricts us to only one world object 
             for id, entity of @entities.entitiesIndex['world']
                 #Update the grid with this entity's position
@@ -53,11 +55,12 @@ define(['components/world'], (WorldComponent)->
                 if WorldComponent.grid[i][j] == undefined
                     WorldComponent.grid[i][j] = []
                 
-                WorldComponent.grid[i][j].push(entity)
+                if entity.id not in WorldComponent.grid[i][j]
+                    WorldComponent.grid[i][j].push(entity.id)
 
             #Get each entity's neighbors
-            for id, entity of @entities.entitiesIndex['world']
-                entity.components.world.getNeighbors()
+            #for id, entity of @entities.entitiesIndex['world']
+                #entity.components.world.getNeighbors()
                 
             return @
             

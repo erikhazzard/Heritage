@@ -45,7 +45,7 @@ define([], ()->
             @height = params.height || World.width
             @canvas = params.canvas || World.canvas
             @context = params.context || World.context
-            @neighbors = []
+            @neighborsByRadius = {}
             
             #World config
             return @
@@ -53,37 +53,54 @@ define([], ()->
         getNeighbors: (radius)->
             #TODO: This probably shouldn't live here
             #Gets the cells in a radius around this cell
-            radius = radius || 1
+            if radius?
+                radius = radius
+            else
+                radius = 1
+
             neighbors = []
-            
-            #Loop through neighboring cells to get entities
-            #  We do this because it's more efficient to loop through only
-            #  25 cells for each entity as opposed to each entity
-            for i in [-radius..radius] by 1
-                for j in [-radius..radius] by 1
-                    targetI = @i + i
-                    targetJ = @j + j
-                    
-                    #Wrap around, make sure it's in range
-                    #I
-                    if targetI > World.rows
-                        targetI = targetI % World.rows
-                    if targetI < 0
-                        targetI = World.rows + targetI
-                    #J
-                    if targetJ > World.columns
-                        targetJ = targetJ % World.columns
-                    if targetJ < 0
-                        targetJ = World.columns + targetJ
-                        
-                    if World.grid[targetI] and World.grid[targetI][targetJ]
-                        targetEntities = World.grid[targetI][targetJ]
-                        #Target
-                        for entity in targetEntities
-                            if entity.id != @entity.id
-                                neighbors.push(entity)
                 
-            @neighbors = neighbors
+            #If radius is less than 1, only check for entities
+            #  in the same cell as this entity
+            if radius < 1
+                if World.grid[@i] and World.grid[@i][@j]
+                    targetEntities = World.grid[@i][@j]
+                    #Target
+                    for entityId in targetEntities
+                        if entityId != @entity.id
+                            neighbors.push(entityId)
+            
+            else
+                #Loop through neighboring cells to get entities
+                #  We do this because it's more efficient to loop through only
+                #  25 cells for each entity as opposed to each entity
+                for i in [-radius..radius] by 1
+                    for j in [-radius..radius] by 1
+                        targetI = @i + i
+                        targetJ = @j + j
+                        
+                        #Wrap around, make sure it's in range
+                        #I
+                        if targetI > World.rows
+                            targetI = targetI % World.rows
+                        if targetI < 0
+                            targetI = World.rows + targetI
+                        #J
+                        if targetJ > World.columns
+                            targetJ = targetJ % World.columns
+                        if targetJ < 0
+                            targetJ = World.columns + targetJ
+
+                        if World.grid[targetI] and World.grid[targetI][targetJ]
+                            targetEntities = World.grid[targetI][targetJ]
+                            #Target
+                            for entityId in targetEntities
+                                if entityId != @entity.id
+                                    #make sure the ID has not been added
+                                    if entityId not in neighbors
+                                        neighbors.push(entityId)
+                    
+            @neighborsByRadius[radius] = neighbors
             return neighbors
 
     return World
