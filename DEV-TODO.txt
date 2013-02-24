@@ -3,6 +3,7 @@
 -Extract world logic from component to system
     -Write unit tests for it
     -Think of better system to config world size. Maybe in game?
+-list of neighbors could be IDs instead of entity objects
 
 ### Combat ###
 -Make combat not suck
@@ -40,3 +41,19 @@
 
 ## GENERAL ##
 -Clean up code, make sure all functions return proper values
+
+## OPTIMIZATIONS ##
+-Make entitiesIndex an array of IDs (ints or strings?) instead of
+objects
+-Dont store circular references, allow game.entities to be JSON.stringifyible
+
+
+*GENERAL*
+-Create a few well defined object types
+-Give functions constant data
+-try to make it type stable
+-use v8 flags
+
+* GARBAGE COLLECTION *
+in general, have objects that live a very hort time or a very long time
+release references 

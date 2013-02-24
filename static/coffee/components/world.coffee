@@ -31,9 +31,9 @@ define([], ()->
         #GRID
         #NOTE: grid is reset each tick in the World system
         @grid = {}
-        @cellSize = 2
-        @rows = canvasHeight / @cellSize
-        @columns= canvasWidth / @cellSize
+        @cellSize = 4
+        @rows = Math.floor(canvasHeight / @cellSize)
+        @columns= Math.floor(canvasWidth / @cellSize)
 
         constructor: (entity, params)->
             #By default, we'll use the passed in canvas above.
@@ -86,28 +86,5 @@ define([], ()->
             @neighbors = neighbors
             return neighbors
 
-        getCellFromPosition: (position)->
-            i = Math.floor(position.y / World.cellSize)
-            j = Math.floor(position.x / World.cellSize)
-            return {i: i, j:j}
-
-        tick: (delta)->
-            #On each game tick, update the game world
-            position = @entity.components.position
-            cell = @getCellFromPosition(position)
-            
-            #Update this cell's position
-            @i = cell.i
-            @j = cell.j
-            
-            #Add entity to the corresponding cell. NOTE: The grid is cleared 
-            #  tick in the system.  TODO: Should this live in the system too?
-            if World.grid[@i] == undefined
-                World.grid[@i] = {}
-            if World.grid[@i][@j] == undefined
-                World.grid[@i][@j] = []
-            
-            World.grid[@i][@j].push(@entity)
-    
     return World
 )

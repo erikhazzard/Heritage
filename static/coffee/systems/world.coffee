@@ -10,24 +10,51 @@ define(['components/world'], (WorldComponent)->
     class World
         constructor: (entities)->
             @entities = entities
+            WorldComponent.grid = {}
             return @
+
+        #--------------------------------
+        #
+        #Helpers
+        #
+        #--------------------------------
+        getCellFromPosition: (position)->
+            #Gets cell i / j from position
+            i = Math.floor(position.y / WorldComponent.cellSize)
+            j = Math.floor(position.x / WorldComponent.cellSize)
+            return [i,j]
         
+        #--------------------------------
+        #
+        #Tick
+        #
+        #-------------------------------- 
         tick: (delta)->
             #Reset the world grid
-            #TODO: This way restricts us to only one world object
-            WorldComponent.grid = {}
-        
+            #TODO: This way restricts us to only one world object 
             for id, entity of @entities.entitiesIndex['world']
                 #Update the grid with this entity's position
-                entity.components.world.tick()
+                world = entity.components.world
                 
-                #If the entity is dead, remove it
-                human = entity.components.human
-                zombie = entity.components.zombie
-                #TODO: do this better, maybe a "living" component?
-                if (human and human.isDead) or (zombie and zombie.isDead)
-                    @entities.remove(entity)
-    
+                #On each game tick, update the game world
+                position = entity.components.position
+                cell = @getCellFromPosition(position)
+                
+                #Update this cell's position
+                i = cell[0]
+                j = cell[1]
+                world.i = i
+                world.j = j
+                
+                #Add entity to the corresponding cell. NOTE: The grid is cleared 
+                #  tick in the system.  TODO: Should this live in the system too?
+                if WorldComponent.grid[i] == undefined
+                    WorldComponent.grid[i] = {}
+                if WorldComponent.grid[i][j] == undefined
+                    WorldComponent.grid[i][j] = []
+                
+                WorldComponent.grid[i][j].push(entity)
+
             #Get each entity's neighbors
             for id, entity of @entities.entitiesIndex['world']
                 entity.components.world.getNeighbors()

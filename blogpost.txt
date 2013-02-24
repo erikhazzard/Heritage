@@ -78,13 +78,13 @@ contains".  An entity itself doesn't have any data, the data lives in the compon
 -can change components at runtime, which means behaviors can change.
 
 
-==========================================================
+=========================================
 Struggles / learning processes
 
 -Initially I put a modest amount of logic in the controllers to help get / set
 properties, but it became more obvious over time that while it worked, it didn't
 work well. 
-This programming concept sounded powerful, but it wasn't a religious experience
+This programming concept sounded powerful, but it didn't truly sink in
 until I started implementing it.  I had a few similar experiences when I started
 working with D3js (a data driven data visualization library, similar concepts to
 ECS) - really experiencing how powerful letting the data drive functionality can
@@ -98,3 +98,10 @@ have to write a bunch of code to handle what happens if I have multiple objects
 that can be user controlled - but it was unexpected.
 I got it for free, and it just worked! (Of course, making it work well from a 
 gameplay standpoint is another issue).  
+
+
+
+
+
+World - initially behavior for getting cell position was in a component, but it
+makes more sense to put it in a system

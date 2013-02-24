@@ -19,28 +19,6 @@
       }
 
       UserInterface.prototype.getEntitiesUnderMouse = function(e) {
-        var cell, entities, entity, grid, html, _i, _len;
-        cell = World.prototype.getCellFromPosition(this.mouse);
-        grid = World.grid;
-        html = '';
-        if (grid[cell.i] && grid[cell.i][cell.j]) {
-          entities = grid[cell.i][cell.j];
-          for (_i = 0, _len = entities.length; _i < _len; _i++) {
-            entity = entities[_i];
-            if (entity && entity.hasComponent('renderer')) {
-              entity.components.renderer.isSelected = true;
-            }
-            html = 'ID: ' + entity.id;
-            if (entity.hasComponent('human')) {
-              html += '<br />' + entity.components.human.age;
-              html += '<br />' + entity.components.human.children.length;
-              html += '<br />' + entity.components.human.mateId;
-            }
-          }
-        }
-        if (entities) {
-          this.$debug.innerHTML = html;
-        }
         return entities;
       };
 

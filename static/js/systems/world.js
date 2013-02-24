@@ -7,21 +7,36 @@
 
       function World(entities) {
         this.entities = entities;
+        WorldComponent.grid = {};
         return this;
       }
 
+      World.prototype.getCellFromPosition = function(position) {
+        var i, j;
+        i = Math.floor(position.y / WorldComponent.cellSize);
+        j = Math.floor(position.x / WorldComponent.cellSize);
+        return [i, j];
+      };
+
       World.prototype.tick = function(delta) {
-        var entity, human, id, zombie, _ref, _ref1;
-        WorldComponent.grid = {};
+        var cell, entity, i, id, j, position, world, _ref, _ref1;
         _ref = this.entities.entitiesIndex['world'];
         for (id in _ref) {
           entity = _ref[id];
-          entity.components.world.tick();
-          human = entity.components.human;
-          zombie = entity.components.zombie;
-          if ((human && human.isDead) || (zombie && zombie.isDead)) {
-            this.entities.remove(entity);
+          world = entity.components.world;
+          position = entity.components.position;
+          cell = this.getCellFromPosition(position);
+          i = cell[0];
+          j = cell[1];
+          world.i = i;
+          world.j = j;
+          if (WorldComponent.grid[i] === void 0) {
+            WorldComponent.grid[i] = {};
           }
+          if (WorldComponent.grid[i][j] === void 0) {
+            WorldComponent.grid[i][j] = [];
+          }
+          WorldComponent.grid[i][j].push(entity);
         }
         _ref1 = this.entities.entitiesIndex['world'];
         for (id in _ref1) {

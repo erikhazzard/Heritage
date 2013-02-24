@@ -19,11 +19,11 @@
 
       World.grid = {};
 
-      World.cellSize = 2;
+      World.cellSize = 4;
 
-      World.rows = canvasHeight / World.cellSize;
+      World.rows = Math.floor(canvasHeight / World.cellSize);
 
-      World.columns = canvasWidth / World.cellSize;
+      World.columns = Math.floor(canvasWidth / World.cellSize);
 
       function World(entity, params) {
         params = params || {};
@@ -69,31 +69,6 @@
         }
         this.neighbors = neighbors;
         return neighbors;
-      };
-
-      World.prototype.getCellFromPosition = function(position) {
-        var i, j;
-        i = Math.floor(position.y / World.cellSize);
-        j = Math.floor(position.x / World.cellSize);
-        return {
-          i: i,
-          j: j
-        };
-      };
-
-      World.prototype.tick = function(delta) {
-        var cell, position;
-        position = this.entity.components.position;
-        cell = this.getCellFromPosition(position);
-        this.i = cell.i;
-        this.j = cell.j;
-        if (World.grid[this.i] === void 0) {
-          World.grid[this.i] = {};
-        }
-        if (World.grid[this.i][this.j] === void 0) {
-          World.grid[this.i][this.j] = [];
-        }
-        return World.grid[this.i][this.j].push(this.entity);
       };
 
       return World;
