@@ -3,13 +3,22 @@
 -Extract world logic from component to system
     -Write unit tests for it
     -Think of better system to config world size. Maybe in game?
--list of neighbors could be IDs instead of entity objects
+    -getNeighbors to system?
+✓ list of neighbors could be IDs instead of entity objects
+
+### getNeighbor calls ###
+-convert all to use IDs
+-cache instead of call directly (check neighborsByRange first)
 
 ### Combat ###
 -Make combat not suck
     -Maybe shrink / grow entities based on health? 
         -Some other dimension should show health
--Fix combat issues
+✓ Fix combat issues
+
+### SYSTEMS ###
+-store IDs in entitiesIndex instead of entity objects, convert all systems to 
+use IDs
 
 ### Zombies ###
 -Don't let them die so fast

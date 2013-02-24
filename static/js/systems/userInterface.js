@@ -36,6 +36,23 @@
             html += '<br />Mate: ' + entity.components.human.mateId;
             html += '<br />Infected:' + entity.components.human.hasZombieInfection;
           }
+          if (entity.hasComponent('combat')) {
+            html += '<br />Attack: ' + entity.components.combat.attack;
+            html += '<br />Defense: ' + entity.components.combat.defense;
+            html += '<br />AttackCounter: ' + entity.components.combat.attackCounter;
+            html += '<br />Delay: ' + entity.components.combat.attackDelay;
+            html += '<br />Target: ' + entity.components.combat.target;
+            html += '<br />Range: ' + entity.components.combat.range;
+          }
+          if (entity.hasComponent('world')) {
+            html += '<hr />';
+            html += '<br />Position';
+            html += '<br />X: ' + entity.components.position.x;
+            html += '<br />Y: ' + entity.components.position.y;
+            html += '<br /><br />World';
+            html += '<br />I: ' + entity.components.world.i;
+            html += '<br />J: ' + entity.components.world.j;
+          }
         }
         this.$debug.innerHTML += html;
         return entities;

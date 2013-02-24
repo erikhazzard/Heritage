@@ -4,7 +4,7 @@
 #   Simulates fighting between entities
 #
 #============================================================================
-define([], ()->
+define(['components/world'], (World)->
     class Combat
         constructor: (entities)->
             @entities = entities
@@ -19,8 +19,9 @@ define([], ()->
                 return neighbors
             
             #Get neighbors
-            for neighbor in world.getNeighbors(entity.components.combat.range)
+            for neighborId in world.getNeighbors(entity.components.combat.range)
                 #Don't add it to the neighbors if it doesn't have a combat component
+                neighbor = @entities.entities[neighborId]
                 if not neighbor.hasComponent('combat')
                     continue
                 
@@ -31,7 +32,7 @@ define([], ()->
                     creatureType = 'human'
                     
                 if neighbor != entity and creatureType
-                    neighbors[creatureType].push(neighbor)
+                    neighbors[creatureType].push(neighborId)
                 
             return neighbors
             
@@ -77,6 +78,8 @@ define([], ()->
             #Get references
             entityCombat = entity.components.combat
             enemyCombat = enemyEntity.components.combat
+            console.log('FOUGHT!', entity.id, enemyEntity.id,
+                entityCombat.canAttack, enemyCombat.canAttack)
 
             #If entity can't attack, return false
             if not entityCombat.canAttack
@@ -131,6 +134,7 @@ define([], ()->
                 isZombie = entity.hasComponent('zombie')
                 #store ref to combat component
                 combat = entity.components.combat
+                combatTarget = entity.components.combat.target
 
                 #If the entity can attack, do it
                 if combat.canAttack
@@ -143,9 +147,24 @@ define([], ()->
                     if isZombie
                         targetGroup = 'human'
 
-                    for targetEntity in neighbors[targetGroup]
+                    #Reset target if there are no neighbors
+                    if neighbors[targetGroup].length < 1
+                        entity.components.combat.target = null
+                    else
+                        #There's at least one neighbor, so use it as the new 
+                        #target
+                        targetEntityId = neighbors[targetGroup][0]
+
+                        #Try to fight the same target
+                        if combatTarget? and @entities.entities[combatTarget]
+                            targetEntity = @entities.entities[combatTarget]
+                        else
+                            targetEntity = @entities.entities[targetEntityId]
+
+                        #Set the target to the first entity found
+                        entity.components.combat.target = targetEntity.id
+
                         @fight(entity, targetEntity)
-                        break
                     
                 #Update attack counter
                 @updateAttackCounter(combat)

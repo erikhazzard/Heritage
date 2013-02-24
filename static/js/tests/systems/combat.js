@@ -17,7 +17,7 @@
         entityHuman.components.position.x = 10;
         entityHuman.components.position.y = 10;
         entityZombie.components.position.x = 10;
-        entityZombie.components.position.y = 20;
+        entityZombie.components.position.y = 11;
         entityZombie2.components.position.x = 40;
         entityZombie2.components.position.y = 40;
         world = new World(entities);
@@ -34,19 +34,21 @@
         });
         it('should return 1 zombie neighbors when range is 1', function() {
           var humanCombat;
+          world.tick();
           humanCombat = entityHuman.components.combat;
           humanCombat.range = 1;
           return combat.getNeighbors(entityHuman).should.deep.equal({
-            zombie: [entityZombie],
+            zombie: [entityZombie.id],
             human: []
           });
         });
         return it('should return 2 zombie neighbors when range is 50', function() {
           var humanCombat;
+          world.tick();
           humanCombat = entityHuman.components.combat;
           humanCombat.range = 50;
           return combat.getNeighbors(entityHuman).should.deep.equal({
-            zombie: [entityZombie, entityZombie2],
+            zombie: [entityZombie.id, entityZombie2.id],
             human: []
           });
         });

@@ -12,7 +12,7 @@
       }
 
       Spawner.prototype.canBirth = function(entity, neighbors) {
-        var human, neighbor, neighborHuman, parentIndex, resources, _i, _len, _ref;
+        var human, neighbor, neighborHuman, neighborId, parentIndex, resources, _i, _len, _ref;
         human = entity.components.human;
         resources = entity.components.resources.resources;
         if (human.sex === 'male') {
@@ -33,7 +33,11 @@
           return false;
         } else {
           for (_i = 0, _len = neighbors.length; _i < _len; _i++) {
-            neighbor = neighbors[_i];
+            neighborId = neighbors[_i];
+            neighbor = this.entities.entities[neighborId];
+            if (!(neighbor != null)) {
+              continue;
+            }
             if (neighbor.hasComponent('human') !== true) {
               continue;
             }

@@ -25,7 +25,7 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
             entityHuman.components.position.y = 10
             
             entityZombie.components.position.x = 10
-            entityZombie.components.position.y = 20
+            entityZombie.components.position.y = 11
 
             entityZombie2.components.position.x = 40
             entityZombie2.components.position.y = 40
@@ -45,18 +45,20 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
                 })
             )
             it('should return 1 zombie neighbors when range is 1', ()->
+                world.tick()
                 humanCombat = entityHuman.components.combat
                 humanCombat.range = 1
                 combat.getNeighbors(entityHuman).should.deep.equal({
-                    zombie: [entityZombie],
+                    zombie: [entityZombie.id],
                     human: []
                 })
             )
             it('should return 2 zombie neighbors when range is 50', ()->
+                world.tick()
                 humanCombat = entityHuman.components.combat
                 humanCombat.range = 50
                 combat.getNeighbors(entityHuman).should.deep.equal({
-                    zombie: [entityZombie, entityZombie2],
+                    zombie: [entityZombie.id, entityZombie2.id],
                     human: []
                 })
             )

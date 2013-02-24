@@ -32,8 +32,8 @@ define([], ()->
         #NOTE: grid is reset each tick in the World system
         @grid = {}
         @cellSize = 4
-        @rows = Math.floor(canvasHeight / @cellSize)
-        @columns= Math.floor(canvasWidth / @cellSize)
+        @rows = Math.floor(@height / @cellSize)
+        @columns= Math.floor(@width / @cellSize)
 
         constructor: (entity, params)->
             #By default, we'll use the passed in canvas above.
@@ -100,6 +100,7 @@ define([], ()->
                                     if entityId not in neighbors
                                         neighbors.push(entityId)
                     
+
             @neighborsByRadius[radius] = neighbors
             return neighbors
 

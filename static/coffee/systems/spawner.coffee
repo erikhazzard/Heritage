@@ -3,6 +3,11 @@
 #Systems - spawn
 #   Handles logic to create new entities
 #
+#   -Components: Human
+#
+#   TODO: Should this be rolled into the human system? Or should there be
+#   a spawner component instead? Or maybe this is a subsystem of human?
+#
 #============================================================================
 define(['entity', 'systems/human'], (Entity, Human)->
     class Spawner
@@ -51,7 +56,11 @@ define(['entity', 'systems/human'], (Entity, Human)->
             if neighbors.length < 1
                 return false
             else
-                for neighbor in neighbors
+                for neighborId in neighbors
+                    neighbor = @entities.entities[neighborId]
+                    if not neighbor?
+                        continue
+
                     #Only humans can give birth (for now)
                     if neighbor.hasComponent('human') != true
                         continue

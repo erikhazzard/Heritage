@@ -70,6 +70,7 @@ define(['systems/world', 'components/world',
                 humanWorld.getNeighbors(30).should.deep.equal(neighbors)
                 humanWorld.neighborsByRadius[30].should.deep.equal(neighbors)
             )
+
         )
     )
 )

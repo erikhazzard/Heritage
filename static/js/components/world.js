@@ -22,9 +22,9 @@
 
       World.cellSize = 4;
 
-      World.rows = Math.floor(canvasHeight / World.cellSize);
+      World.rows = Math.floor(World.height / World.cellSize);
 
-      World.columns = Math.floor(canvasWidth / World.cellSize);
+      World.columns = Math.floor(World.width / World.cellSize);
 
       function World(entity, params) {
         params = params || {};
