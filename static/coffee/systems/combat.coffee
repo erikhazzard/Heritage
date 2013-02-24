@@ -14,9 +14,12 @@ define([], ()->
             #Get entities around this entity and return an object containing
             #  the counts for each type of neighbor
             neighbors = {zombie: [], human: []}
+            world = entity.components.world
+            if not world
+                return neighbors
             
             #Get neighbors
-            for neighbor in entity.components.world.getNeighbors(entity.components.combat.range)
+            for neighbor in world.getNeighbors(entity.components.combat.range)
                 #Don't add it to the neighbors if it doesn't have a combat component
                 if not neighbor.hasComponent('combat')
                     continue
@@ -31,40 +34,77 @@ define([], ()->
                     neighbors[creatureType].push(neighbor)
                 
             return neighbors
-        
-        checkCanAttack: (combat)->
-            #First, update the attack speed counter
-            if not combat.canAttack
-                combat.attackTicksRemaining -= 1
-                if combat.attackTicksRemaining <= 0
-                    combat.canAttack = true
-                    combat.attackTicksRemaining = combat.attackDelay
+            
+        #--------------------------------
+        #
+        #Combat helper functions
+        #
+        #--------------------------------
+        updateAttackCounter: (combat)->
+            #Updates attack delay for passed in combat component
+            
+            #update counter
+            if combat.attackCounter > 0
+                combat.attackCounter -= 1
+
+            if combat.attackCounter <= 0
+                combat.canAttack = true
 
             return combat.canAttack
-        
-        calculateDamage: (entity, enemyEntity)->
-            #Calculate damage to take based on the passed in combat
-            #  components of the target entity and enemy entity
-            damageTaken = 0
+
+        calculateDamage: (combat, enemyCombat)->
+            #Calculate damage the passd in entity combat component
+            # will do the passed in enemy
+            # PARAMETERS: Expects two COMBAT components to be passed in
+            damage = 0
             
             #get the attack value for the enemy entity
-            enemyDamage = enemyEntity.attack
-            damageTaken += enemyDamage
+            damage = combat.attack
 
             #Subtract the enemy attack damage with the entity's defense
-            damageTaken -= entity.defense
+            damage -= enemyCombat.defense
             
             #Never return a negative number
-            if damageTaken < 0
-                damageTaken = 0
+            if damage < 0
+                damage = 0
                 
-            #Enemey attacked, so don't let them attack again until timer is 
-            #   reached
-            enemyEntity.canAttack = false
-            enemyEntity.attackTicksRemaining = enemyEntity.attackDelay
+            return damage
             
-            return damageTaken
+        fight: (entity, enemyEntity)->
+            #Fights an entity with a passed in enemeny. 
+            #PARAMETERS: Expects two ENTITY components to be passed in
+
+            #Get references
+            entityCombat = entity.components.combat
+            enemyCombat = enemyEntity.components.combat
+
+            #If entity can't attack, return false
+            if not entityCombat.canAttack
+                return false
             
+            if not entityCombat or not enemyCombat
+                #entities do not have combat components
+                return false
+
+            #Calculate damage to deal
+            damage = @calculateDamage(entityCombat, enemyCombat)
+            
+            #Subtract damage from enemy
+            health = enemyEntity.components.health
+            if health
+                health.health -= damage
+            
+            #Update the attack counter
+            entityCombat.canAttack = false
+            #we just attacked, so set the attack counter to the combat delay
+            #  NOTE: set it to the delay + 1 because the tick() function calls
+            #  updateAttackCounter() BEFORE checking to see if we can attack,
+            #  and if we don't add 1 the attackCounter will effectively be one
+            #  LESS than the attack delay
+            entityCombat.attackCounter = entityCombat.attackDelay + 1
+
+            return true
+
         #--------------------------------
         #
         #Tick
@@ -81,7 +121,6 @@ define([], ()->
             #After the inital look through is complete, look at each
             #  item in the stack and resolve the damage.
             #
-            #
             #NOTES: An entity can only fight one other entity at a time
             
             #keep track of damage to deal. in form of 
@@ -92,53 +131,25 @@ define([], ()->
                 isZombie = entity.hasComponent('zombie')
                 #store ref to combat component
                 combat = entity.components.combat
-                @checkCanAttack(combat)
-                
-                if isHuman or isZombie
+
+                #If the entity can attack, do it
+                if combat.canAttack
+                    #store refs
+                    health = entity.components.health
                     neighbors = @getNeighbors(entity)
-                    #Fight between entities - but only fight one at a time 
-                    #  The more of the same type of entities around this entity,
-                    #  the strong it is
+
+                    if isHuman
+                        targetGroup = 'zombie'
+                    if isZombie
+                        targetGroup = 'human'
+
+                    for targetEntity in neighbors[targetGroup]
+                        @fight(entity, targetEntity)
+                        break
                     
-                    #HUMAN vs Zombie
-                    #--------------------
-                    #Small bits of logic - go after the weakest enemy
-                    if isHuman and neighbors.zombie.length > 0
-                        #should slow down when in fight
-                        if entity.hasComponent('physics')
-                            entity.components.physics.velocity.multiply(0.05)
-                        #store refs
-                        health = entity.components.health
-                        human = entity.components.human
-                        
-                        #For each enemy in range, calculate how much damage the
-                        #   enemy will do to the entity
-                        for zombie in neighbors.zombie
-                            #------------
-                            #figure out how much damage to take
-                            #------------
+                #Update attack counter
+                @updateAttackCounter(combat)
 
-                            #Calculate damage taken
-                            damageTaken = @calculateDamage(combat, zombie.components.combat)
-
-                            #Decrease entity's health
-                            health.health -= damageTaken
-                            
-                            #Chance for human to get infected
-                            if damageTaken > 0
-                                if Math.random() < human.getInfectionChance(health.health, damageTaken)
-                                    human.hasZombieInfection = true
-                        
-                    #ZOMBIE vs Human
-                    #--------------------
-                    else if isZombie and neighbors.human.length > 0
-                        entity.components.health.health -= 10
-
-                        #should slow down when in fight
-                        if entity.hasComponent('physics')
-                            entity.components.physics.velocity.multiply(0.01)
-
-            
             #TODO: RESOLVE DAMAGE ON STACK
 
             return @

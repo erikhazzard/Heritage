@@ -8,13 +8,14 @@
       function Combat(entity, params) {
         params = params || {};
         this.entity = entity;
-        this.range = params.range || 1;
+        this.range = params.range || 4;
         this.defense = params.defense || 0;
         this.attack = params.attack || 1;
         this.dodge = params.dodge || 0;
         this.attackDelay = 10;
-        this.attackTicksRemaining = 0;
+        this.attackCounter = 0;
         this.canAttack = true;
+        this.target = null;
       }
 
       return Combat;

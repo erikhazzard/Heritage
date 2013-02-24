@@ -41,7 +41,7 @@ define(['entity', 'entities', 'components/all',
             @entities.add(entity)
             
             #TODO: tweak this for testing
-            while i < 150
+            while i < 50
                 if Math.random() < 0.3
                     entity = Assemblages.zombie()
                     entity.components.combat.attack = Math.random() * 10 | 0
