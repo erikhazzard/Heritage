@@ -78,8 +78,6 @@ define(['components/world'], (World)->
             #Get references
             entityCombat = entity.components.combat
             enemyCombat = enemyEntity.components.combat
-            console.log('FOUGHT!', entity.id, enemyEntity.id,
-                entityCombat.canAttack, enemyCombat.canAttack)
 
             #If entity can't attack, return false
             if not entityCombat.canAttack

@@ -64,7 +64,6 @@
         var damage, enemyCombat, entityCombat, health;
         entityCombat = entity.components.combat;
         enemyCombat = enemyEntity.components.combat;
-        console.log('FOUGHT!', entity.id, enemyEntity.id, entityCombat.canAttack, enemyCombat.canAttack);
         if (!entityCombat.canAttack) {
           return false;
         }
