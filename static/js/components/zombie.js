@@ -13,7 +13,7 @@
         this.seekRange = 1 + (Math.random() * 17 | 0);
         this.resources = params.resources || 100;
         this.isDead = false;
-        this.decayRate = params.decayRate || Math.abs(d3.random.normal(1, 0.4)());
+        this.decayRate = params.decayRate || Math.abs(d3.random.normal(0.07, 0.01)());
         this.strength = Math.random() * 20 | 0;
         this.agility = Math.random() * 20 | 0;
       }
@@ -23,16 +23,6 @@
           this.isDead = true;
         }
         return this.isDead;
-      };
-
-      Zombie.prototype.getMaxSpeed = function() {
-        var maxSpeed;
-        maxSpeed = this.maxSpeed;
-        if (this.resources < 20) {
-          maxSpeed = 2;
-        }
-        this.maxSpeed = maxSpeed;
-        return maxSpeed;
       };
 
       return Zombie;

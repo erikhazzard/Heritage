@@ -1,7 +1,8 @@
 #========================================
 #TEST - System - World
 #========================================
-define(['systems/world', 'components/world'], (WorldSystem, WorldComponent)->
+define(['systems/world', 'components/world', 'entity', 'entities'], (
+    WorldSystem, WorldComponent, Entity, Entities)->
     #--------------------------------
     #Basic tests
     #--------------------------------

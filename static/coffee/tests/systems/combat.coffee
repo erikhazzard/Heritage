@@ -15,15 +15,20 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
         describe('getNeighbors(): Calculate neighbors properly', ()->
             entityHuman = Assemblages.human()
             entityZombie = Assemblages.zombie()
+            entityZombie2 = Assemblages.zombie()
             entities = new Entities()
                 .add(entityHuman)
                 .add(entityZombie)
+                .add(entityZombie2)
                 
             entityHuman.components.position.x = 10
             entityHuman.components.position.y = 10
             
             entityZombie.components.position.x = 10
             entityZombie.components.position.y = 20
+
+            entityZombie2.components.position.x = 40
+            entityZombie2.components.position.y = 40
 
             #Must call world tick to setup grid
             world = new World(entities)
@@ -44,6 +49,14 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
                 humanCombat.range = 1
                 combat.getNeighbors(entityHuman).should.deep.equal({
                     zombie: [entityZombie],
+                    human: []
+                })
+            )
+            it('should return 2 zombie neighbors when range is 50', ()->
+                humanCombat = entityHuman.components.combat
+                humanCombat.range = 50
+                combat.getNeighbors(entityHuman).should.deep.equal({
+                    zombie: [entityZombie, entityZombie2],
                     human: []
                 })
             )
@@ -212,7 +225,6 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
             it('should equal 0 and allow attacking', ()->
                 #for good measure, test calling it again
                 combat.updateAttackCounter(humanCombat)
-                console.log(humanCombat.attackCounter, humanCombat.canAttack)
                 humanCombat.attackCounter.should.equal(0)
                 humanCombat.canAttack.should.be.true
 

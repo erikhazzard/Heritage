@@ -19,7 +19,7 @@
       }
 
       Renderer.prototype.tick = function(delta) {
-        var alpha, entity, id, renderPosition, size, targetX, targetY, _ref, _ref1;
+        var alpha, entity, entityFill, id, renderPosition, size, targetX, targetY, _ref, _ref1;
         canvas.width = canvas.width;
         miniMapCanvas.width = miniMapCanvas.width;
         this.camera = {
@@ -36,49 +36,72 @@
         _ref1 = this.entities.entitiesIndex['renderer'];
         for (id in _ref1) {
           entity = _ref1[id];
-          size = entity.components.renderer.size;
           context.save();
           renderPosition = entity.components.position;
-          context.fillStyle = entity.components.renderer.color;
-          if (entity.components.human) {
+          size = entity.components.renderer.size;
+          targetX = renderPosition.x - (size / 2) - this.camera.x + this.canvasHalfWidth;
+          targetY = renderPosition.y - (size / 2) - this.camera.y + this.canvasHalfHeight;
+          entityFill = entity.components.renderer.color;
+          if (entity.hasComponent('human')) {
             alpha = Math.round((1 - (entity.components.human.age / 110)) * 10) / 10;
             if (entity.components.human.age < 20) {
-              context.fillStyle = 'rgba(0,0,0,0.9)';
+              entityFill = 'rgba(0,0,0,0.9)';
             } else if (entity.components.human.age > 64) {
-              context.fillStyle = 'rgba(190,190,190,0.9)';
+              entityFill = 'rgba(150,150,150,0.9)';
             }
             if (entity.components.human.age > 19 && entity.components.human.age < 65) {
               if (entity.components.human.sex === 'female') {
-                context.fillStyle = 'rgba(255,100,255,' + alpha + ')';
+                entityFill = 'rgba(255,100,255,' + alpha + ')';
               } else {
-                context.fillStyle = 'rgba(100,150,200,' + alpha + ')';
+                entityFill = 'rgba(100,150,200,' + alpha + ')';
               }
+            }
+            if (entity.components.human.isPregnant) {
+              context.save();
+              context.strokeStyle = 'rgba(0,255,0,0.5)';
+              context.lineWidth = 8;
+              context.strokeRect(targetX, targetY, size, size);
+              context.restore();
+            }
+            if (this.entities.entities[0] && this.entities.entities[0].components.human && entity.id === this.entities.entities[0].components.human.mateId) {
+              context.save();
+              context.strokeStyle = 'rgba(0,255,255,0.5)';
+              context.lineWidth = 8;
+              context.strokeRect(targetX, targetY, size, size);
+              context.restore();
+            }
+            if (entity.components.human && entity.components.human.mateId) {
+              context.save();
+              context.strokeStyle = 'rgba(255,100,255,0.5)';
+              context.strokeRect(targetX, targetY, size, size);
+              context.restore();
             }
           }
           if (entity.hasComponent('zombie')) {
-            context.fillStyle = 'rgba(255,100,100,1)';
+            entityFill = 'rgba(255,100,100,1)';
           }
-          targetX = renderPosition.x - (size / 2) - this.camera.x + this.canvasHalfWidth;
-          targetY = renderPosition.y - (size / 2) - this.camera.y + this.canvasHalfHeight;
-          if (targetX < 0) {
-            targetX = canvas.width + targetX;
-          }
-          if (targetY < 0) {
-            targetY = canvas.height + targetY;
-          }
-          if (renderPosition.y > this.camera.y + this.canvasHalfHeight) {
-            targetY = renderPosition.y - (size / 2) - this.canvasHalfHeight;
-          }
-          if (renderPosition.x > this.camera.x + this.canvasHalfWidth) {
-            targetX = renderPosition.x - (size / 2) - this.canvasHalfWidth;
-          }
+          context.save();
+          context.fillStyle = entityFill;
           context.fillRect(targetX, targetY, size, size);
+          context.restore();
           if (entity.hasComponent('userMovable')) {
+            context.save();
             context.strokeStyle = 'rgba(100,150,200,1)';
             context.lineWidth = 2;
             context.strokeRect(targetX, targetY, size, size);
+            context.restore();
           }
-          context.restore();
+          if (entity.hasComponent('combat')) {
+            if (entity.components.combat.canAttack) {
+              context.save();
+              context.beginPath();
+              context.strokeStyle = 'rgba(255,0,0,0.2)';
+              context.lineWidth = 2;
+              context.arc(targetX + (size / 2), targetY + (size / 2), 10, 0, 20);
+              context.stroke();
+              context.restore();
+            }
+          }
           miniMapContext.save();
           miniMapContext.fillStyle = 'rgba(20,20,20,1)';
           if (entity.hasComponent('zombie')) {
@@ -86,9 +109,9 @@
           }
           if (entity.hasComponent('userMovable')) {
             miniMapContext.fillStyle = 'rgba(20,255,20,1)';
-            miniMapContext.strokeRect((renderPosition.x / 6) - this.canvasHalfWidth / 4, (renderPosition.y / 6) - this.canvasHalfHeight / 4, this.canvasHalfWidth / 2, this.canvasHalfHeight / 2);
+            miniMapContext.strokeRect((renderPosition.x / 8) - this.canvasHalfWidth / 4, (renderPosition.y / 8) - this.canvasHalfHeight / 4, this.canvasHalfWidth / 2, this.canvasHalfHeight / 2);
           }
-          miniMapContext.fillRect(renderPosition.x / 6 - 1, renderPosition.y / 6 - 1, 2, 2);
+          miniMapContext.fillRect(renderPosition.x / 8 - 1, renderPosition.y / 8 - 1, 2, 2);
           miniMapContext.restore();
         }
         return this;

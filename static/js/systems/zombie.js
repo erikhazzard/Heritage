@@ -33,6 +33,15 @@
         return health;
       };
 
+      Zombie.prototype.calculateMaxSpeed = function(entity) {
+        var maxSpeed;
+        maxSpeed = entity.components.physics.maxSpeed;
+        if (entity.components.resourcesresources < 20) {
+          maxSpeed = 2;
+        }
+        return maxSpeed;
+      };
+
       Zombie.prototype.updateZombie = function(entity) {
         var health, physics, resources, zombie;
         zombie = entity.components.zombie;
@@ -40,7 +49,7 @@
         health = entity.components.health;
         resources = entity.components.resources;
         zombie.age += Zombie.ageSpeed;
-        physics.maxSpeed = zombie.getMaxSpeed();
+        physics.maxSpeed = this.calculateMaxSpeed(entity);
         resources.resources = this.calculateResources(entity);
         health.health = this.calculateHealth(entity);
         zombie.isDead = zombie.getIsDead(health.health);

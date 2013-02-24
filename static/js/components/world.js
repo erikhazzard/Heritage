@@ -9,9 +9,9 @@
     canvasHeight = canvas.height;
     World = (function() {
 
-      World.width = canvasWidth * 3;
+      World.width = canvasWidth * 4;
 
-      World.height = canvasHeight * 3;
+      World.height = canvasHeight * 4;
 
       World.canvas = canvas;
 

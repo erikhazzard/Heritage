@@ -11,12 +11,16 @@
       }
 
       Combat.prototype.getNeighbors = function(entity) {
-        var creatureType, neighbor, neighbors, _i, _len, _ref;
+        var creatureType, neighbor, neighbors, world, _i, _len, _ref;
         neighbors = {
           zombie: [],
           human: []
         };
-        _ref = entity.components.world.getNeighbors(entity.components.combat.range);
+        world = entity.components.world;
+        if (!world) {
+          return neighbors;
+        }
+        _ref = world.getNeighbors(entity.components.combat.range);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           neighbor = _ref[_i];
           if (!neighbor.hasComponent('combat')) {
@@ -34,33 +38,49 @@
         return neighbors;
       };
 
-      Combat.prototype.checkCanAttack = function(combat) {
-        if (!combat.canAttack) {
-          combat.attackTicksRemaining -= 1;
-          if (combat.attackTicksRemaining <= 0) {
-            combat.canAttack = true;
-            combat.attackTicksRemaining = combat.attackDelay;
-          }
+      Combat.prototype.updateAttackCounter = function(combat) {
+        if (combat.attackCounter > 0) {
+          combat.attackCounter -= 1;
+        }
+        if (combat.attackCounter <= 0) {
+          combat.canAttack = true;
         }
         return combat.canAttack;
       };
 
-      Combat.prototype.calculateDamage = function(entity, enemyEntity) {
-        var damageTaken, enemyDamage;
-        damageTaken = 0;
-        enemyDamage = enemyEntity.attack;
-        damageTaken += enemyDamage;
-        damageTaken -= entity.defense;
-        if (damageTaken < 0) {
-          damageTaken = 0;
+      Combat.prototype.calculateDamage = function(combat, enemyCombat) {
+        var damage;
+        damage = 0;
+        damage = combat.attack;
+        damage -= enemyCombat.defense;
+        if (damage < 0) {
+          damage = 0;
         }
-        enemyEntity.canAttack = false;
-        enemyEntity.attackTicksRemaining = enemyEntity.attackDelay;
-        return damageTaken;
+        return damage;
+      };
+
+      Combat.prototype.fight = function(entity, enemyEntity) {
+        var damage, enemyCombat, entityCombat, health;
+        entityCombat = entity.components.combat;
+        enemyCombat = enemyEntity.components.combat;
+        if (!entityCombat.canAttack) {
+          return false;
+        }
+        if (!entityCombat || !enemyCombat) {
+          return false;
+        }
+        damage = this.calculateDamage(entityCombat, enemyCombat);
+        health = enemyEntity.components.health;
+        if (health) {
+          health.health -= damage;
+        }
+        entityCombat.canAttack = false;
+        entityCombat.attackCounter = entityCombat.attackDelay + 1;
+        return true;
       };
 
       Combat.prototype.tick = function(delta) {
-        var combat, damageStack, damageTaken, entity, health, human, id, isHuman, isZombie, neighbors, zombie, _i, _len, _ref, _ref1;
+        var combat, damageStack, entity, health, id, isHuman, isZombie, neighbors, targetEntity, targetGroup, _i, _len, _ref, _ref1;
         damageStack = [];
         _ref = this.entities.entitiesIndex['combat'];
         for (id in _ref) {
@@ -68,33 +88,23 @@
           isHuman = entity.hasComponent('human');
           isZombie = entity.hasComponent('zombie');
           combat = entity.components.combat;
-          this.checkCanAttack(combat);
-          if (isHuman || isZombie) {
+          if (combat.canAttack) {
+            health = entity.components.health;
             neighbors = this.getNeighbors(entity);
-            if (isHuman && neighbors.zombie.length > 0) {
-              if (entity.hasComponent('physics')) {
-                entity.components.physics.velocity.multiply(0.05);
-              }
-              health = entity.components.health;
-              human = entity.components.human;
-              _ref1 = neighbors.zombie;
-              for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                zombie = _ref1[_i];
-                damageTaken = this.calculateDamage(combat, zombie.components.combat);
-                health.health -= damageTaken;
-                if (damageTaken > 0) {
-                  if (Math.random() < human.getInfectionChance(health.health, damageTaken)) {
-                    human.hasZombieInfection = true;
-                  }
-                }
-              }
-            } else if (isZombie && neighbors.human.length > 0) {
-              entity.components.health.health -= 10;
-              if (entity.hasComponent('physics')) {
-                entity.components.physics.velocity.multiply(0.01);
-              }
+            if (isHuman) {
+              targetGroup = 'zombie';
+            }
+            if (isZombie) {
+              targetGroup = 'human';
+            }
+            _ref1 = neighbors[targetGroup];
+            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+              targetEntity = _ref1[_i];
+              this.fight(entity, targetEntity);
+              break;
             }
           }
+          this.updateAttackCounter(combat);
         }
         return this;
       };
