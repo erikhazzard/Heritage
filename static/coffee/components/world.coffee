@@ -23,8 +23,8 @@ define([], ()->
     class World
         #NOTE: This isn't the best way to do this - this will allow us to
         #  use only one world
-        @width = canvasWidth * 3
-        @height = canvasHeight * 3
+        @width = canvasWidth * 4
+        @height = canvasHeight * 4
         @canvas = canvas
         @context = context
         

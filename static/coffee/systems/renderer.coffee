@@ -40,36 +40,17 @@ define(['components/world'], (World)->
             
             #Renders to the canvas. Ideally, we'd use events here
             for id, entity of @entities.entitiesIndex['renderer']
-                size = entity.components.renderer.size
                 context.save()
                 
                 #Get the position to render to
                 renderPosition = entity.components.position
+                size = entity.components.renderer.size
 
-                #Setup the canvas
-                context.fillStyle = entity.components.renderer.color
-                
-                #Color humans based on sex and age
-                if entity.components.human
-                    alpha = Math.round( (1-(entity.components.human.age / 110)) * 10 ) / 10
-                    
-                    #Color based on age and gender
-                    if entity.components.human.age < 20
-                        context.fillStyle = 'rgba(0,0,0,0.9)'
-                    else if entity.components.human.age > 64
-                        context.fillStyle = 'rgba(190,190,190,0.9)'
-                    
-                    if entity.components.human.age > 19 and entity.components.human.age < 65
-                        if entity.components.human.sex == 'female'
-                            context.fillStyle = 'rgba(255,100,255,' + alpha + ')'
-                        else
-                            context.fillStyle = 'rgba(100,150,200,' + alpha + ')'
-
-                    
-                if entity.hasComponent('zombie')
-                    context.fillStyle = 'rgba(255,100,100,1)'
-                    
-                #Draw square for entity
+                #------------------------
+                #
+                # CAMERA - get positions
+                #
+                #------------------------
                 #TODO: if there is an image, draw the image
                 
                 #If we can see wrapped around area, draw it
@@ -77,25 +58,101 @@ define(['components/world'], (World)->
                 targetY = renderPosition.y - (size / 2) - @camera.y + @canvasHalfHeight
                 
                 #Draw entities that are in the "next" location (wraped around world)
-                if targetX < 0
-                    targetX = canvas.width + targetX
-                if targetY < 0
-                    targetY = canvas.height + targetY
+                #if targetX < 0
+                    #targetX = canvas.width + targetX
+                #if targetY < 0
+                    #targetY = canvas.height + targetY
                     
-                if renderPosition.y > @camera.y + @canvasHalfHeight
-                    targetY = renderPosition.y - (size / 2) - @canvasHalfHeight
-                if renderPosition.x > @camera.x + @canvasHalfWidth
-                    targetX = renderPosition.x - (size / 2) - @canvasHalfWidth
-                    #targetY = targetY - @camera.y
+                #if renderPosition.y > @camera.y + @canvasHalfHeight
+                    #targetY = renderPosition.y - (size / 2) - @canvasHalfHeight
+                #if renderPosition.x > @camera.x + @canvasHalfWidth
+                    #targetX = renderPosition.x - (size / 2) - @canvasHalfWidth
+                    ##targetY = targetY - @camera.y
                     
+
+                #Setup the canvas
+                entityFill = entity.components.renderer.color
+                
+                #------------------------
+                #
+                # Draw entities
+                #
+                #------------------------
+                #------------------------
+                #Color humans based on sex and age
+                #------------------------
+                if entity.hasComponent('human')
+                    alpha = Math.round( (1-(entity.components.human.age / 110)) * 10 ) / 10
+                    
+                    #AGE
+                    if entity.components.human.age < 20
+                        entityFill = 'rgba(0,0,0,0.9)'
+                    else if entity.components.human.age > 64
+                        entityFill = 'rgba(150,150,150,0.9)'
+                    
+                    #GENDER
+                    if entity.components.human.age > 19 and entity.components.human.age < 65
+                        if entity.components.human.sex == 'female'
+                            entityFill = 'rgba(255,100,255,' + alpha + ')'
+                        else
+                            entityFill = 'rgba(100,150,200,' + alpha + ')'
+
+                    #Draw outline if pregnant
+                    if entity.components.human.isPregnant
+                        context.save()
+                        context.strokeStyle = 'rgba(0,255,0,0.5)'
+                        context.lineWidth = 8
+                        context.strokeRect(
+                            targetX,
+                            targetY,
+                            size,
+                            size
+                        )
+                        context.restore()
+                    
+                    #Draw the user's mate
+                    if @entities.entities[0] and @entities.entities[0].components.human and entity.id == @entities.entities[0].components.human.mateId
+
+                        context.save()
+                        context.strokeStyle = 'rgba(0,255,255,0.5)'
+                        context.lineWidth = 8
+                        context.strokeRect(
+                            targetX,
+                            targetY,
+                            size,
+                            size
+                        )
+                        context.restore()
+
+                    #If entity has a mate, draw outline
+                    if entity.components.human and entity.components.human.mateId
+                        context.save()
+                        context.strokeStyle = 'rgba(255,100,255,0.5)'
+                        context.strokeRect(
+                            targetX,
+                            targetY,
+                            size,
+                            size
+                        )
+                        context.restore()
+
+                #ZOMBIE
+                if entity.hasComponent('zombie')
+                    entityFill = 'rgba(255,100,100,1)'
+
+                #Draw PC entity
+                context.save()
+                context.fillStyle= entityFill
                 context.fillRect(
                     targetX,
                     targetY,
                     size,
                     size
                 )
+                context.restore()
                 
                 if entity.hasComponent('userMovable')
+                    context.save()
                     context.strokeStyle = 'rgba(100,150,200,1)'
                     context.lineWidth = 2
                     context.strokeRect(
@@ -104,10 +161,35 @@ define(['components/world'], (World)->
                         size,
                         size
                     )
-                context.restore()
+                    context.restore()
+
+                #COMBAT
+                if entity.hasComponent('combat')
+                    if entity.components.combat.canAttack
+                        context.save()
+                        context.beginPath()
+                        context.strokeStyle = 'rgba(255,0,0,0.2)'
+                        context.lineWidth = 2
+                        #context.strokeRect(
+                            #targetX,
+                            #targetY,
+                            #size,
+                            #size
+                        #)
+                        context.arc(
+                            targetX + (size / 2),
+                            targetY + (size / 2),
+                            10,
+                            0,
+                            20
+                        )
+                        context.stroke()
+                        context.restore()
                 
                 #------------------------
+                #
                 #DRAW MINIMAP
+                #
                 #------------------------
                 miniMapContext.save()
                 miniMapContext.fillStyle = 'rgba(20,20,20,1)'
@@ -118,15 +200,15 @@ define(['components/world'], (World)->
                     #Draw outline around what entity can see
                     #NOTE: THIS IS NOT PERFECT YET
                     miniMapContext.strokeRect(
-                        (renderPosition.x / 6) - @canvasHalfWidth / 4,
-                        (renderPosition.y / 6) - @canvasHalfHeight / 4,
+                        (renderPosition.x / 8) - @canvasHalfWidth / 4,
+                        (renderPosition.y / 8) - @canvasHalfHeight / 4,
                         @canvasHalfWidth / 2,
                         @canvasHalfHeight / 2
                     )
                     
                 miniMapContext.fillRect(
-                    renderPosition.x / 6 - 1,
-                    renderPosition.y / 6 - 1,
+                    renderPosition.x / 8 - 1,
+                    renderPosition.y / 8 - 1,
                     2,
                     2
                 )

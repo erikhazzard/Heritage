@@ -27,7 +27,7 @@ define(['lib/d3'], (d3)->
             
             #If the zombie is killed / dead
             @isDead = false
-            @decayRate = params.decayRate || Math.abs(d3.random.normal(1,0.4)())
+            @decayRate = params.decayRate || Math.abs(d3.random.normal(0.07,0.01)())
             
             #----------------------------
             #Stats
@@ -43,15 +43,6 @@ define(['lib/d3'], (d3)->
                 @isDead = true
                 
             return @isDead
-        
-        getMaxSpeed: ()->
-            #Returns max speed based on various factors
-            maxSpeed = @maxSpeed
-            if @resources < 20
-                maxSpeed = 2
-                
-            @maxSpeed = maxSpeed
-            return maxSpeed
             
     return Zombie
 )

@@ -45,6 +45,7 @@ require(['require', 'lib/chai', 'lib/mocha'], (require,chai)->
         'tests/systems/zombie',
         'tests/systems/physics',
         'tests/systems/spawner',
+        'tests/systems/world',
         ], ()->
         #Start runner
         mocha.run()

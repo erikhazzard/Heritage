@@ -43,6 +43,14 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
 
             return health
 
+        calculateMaxSpeed: (entity)->
+            #Returns max speed based on various factors
+            maxSpeed = entity.components.physics.maxSpeed
+            if entity.components.resourcesresources < 20
+                maxSpeed = 2
+                
+            return maxSpeed
+
         #--------------------------------
         #
         #Update Zombie 
@@ -58,7 +66,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #  NOTE: Age doesn't affect zombies in any way
             zombie.age += Zombie.ageSpeed
             
-            physics.maxSpeed = zombie.getMaxSpeed()
+            physics.maxSpeed = @calculateMaxSpeed(entity)
             
             #update resources
             resources.resources = @calculateResources(entity)
