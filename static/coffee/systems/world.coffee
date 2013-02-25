@@ -26,6 +26,10 @@ define(['components/world'], (WorldComponent)->
             i = Math.floor(position.y / WorldComponent.cellSize)
             j = Math.floor(position.x / WorldComponent.cellSize)
             return [i,j]
+
+        getNeighborsByCreatureType: (entities)->
+            #Returns an object of creature types: neighbors
+
         
         #--------------------------------
         #

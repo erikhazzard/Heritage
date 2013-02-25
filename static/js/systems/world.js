@@ -23,6 +23,8 @@
         return [i, j];
       };
 
+      World.prototype.getNeighborsByCreatureType = function(entities) {};
+
       World.prototype.tick = function(delta) {
         var cell, entity, i, id, j, position, world, _ref, _ref1;
         WorldComponent.grid = {};

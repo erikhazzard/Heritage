@@ -31,7 +31,7 @@ define(['components/world'], (World)->
                 else if neighbor.hasComponent('human')
                     creatureType = 'human'
                     
-                if neighbor != entity and creatureType
+                if neighborId != entity.id and creatureType
                     neighbors[creatureType].push(neighborId)
                 
             return neighbors

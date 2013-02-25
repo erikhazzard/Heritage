@@ -1,8 +1,8 @@
 #========================================
 #TEST - Component - Flocking
 #========================================
-define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'entity'], (
-    Vector, Flocking, World, Entities, Entity)->
+define(['components/vector', 'systems/flocking', 'systems/world', 'components/world', 'entities', 'entity'], (
+    Vector, Flocking, World, WorldComponent, Entities, Entity)->
     #--------------------------------
     #Basic tests
     #--------------------------------
@@ -85,7 +85,6 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                     #Must call world tick to setup grid
                     world = new World(entities)
                     world.tick()
-                    console.log('about to call')
                     force = flocking.separate(
                         a,
                         a.components.world.getNeighbors(20)
@@ -122,6 +121,7 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                 .addComponent('position')
                 .addComponent('physics')
                 .addComponent('flocking')
+                .addComponent('world')
                 .addComponent('human')
             a.components.position.x = 4
             a.components.position.y = 4
@@ -133,6 +133,7 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                 .addComponent('physics')
                 .addComponent('flocking')
                 .addComponent('human')
+                .addComponent('world')
             b.components.position.x = 10
             b.components.position.y = 10
             b.components.physics.velocity.x = 1
@@ -143,6 +144,7 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                 .addComponent('physics')
                 .addComponent('flocking')
                 .addComponent('human')
+                .addComponent('world')
             c.components.position.x = 6
             c.components.position.y = 8
             
@@ -151,6 +153,7 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                 .addComponent('physics')
                 .addComponent('flocking')
                 .addComponent('human')
+                .addComponent('world')
             d.components.position.x = 2
             d.components.position.y = 2
 
@@ -160,6 +163,7 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                 .addComponent('physics')
                 .addComponent('flocking')
                 .addComponent('human')
+                .addComponent('world')
             e.components.position.x = 300
             e.components.position.y = 300
             e.components.physics.velocity.x = 4
@@ -174,7 +178,7 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
             flocking = new Flocking(entities)
 
             #----------------------------
-            #TESTS
+            #separate
             #----------------------------
             describe('separate()', ()->
                 it('separate should return proper values', ()->
@@ -194,7 +198,23 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                     force.y.should.equal(-6.614366477211186)
                 )
                 entities.remove(e)
+
+                it('should return same values when neighbors from a grid are passed in', ()->
+                    #Must call world tick to setup grid
+                    WorldComponent.cellSize = 4
+                    world = new World(entities)
+                    world.tick()
+                    force = flocking.separate(
+                        a,
+                        a.components.world.getNeighbors(1)
+                    )
+                    force.x.should.equal(4.500017344982671)
+                    force.y.should.equal(-6.614366477211186)
+                )
             )
+            #----------------------------
+            #cohesion
+            #----------------------------
             describe('cohesion()', ()->
                 it('cohesion should return proper values', ()->
                     force = flocking.cohesion(
@@ -212,7 +232,24 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                     force.y.should.equal(-0.45665094303812465)
                 )
                 entities.remove(e)
+
+                it('should return same values when neighbors from a grid are passed in', ()->
+                    #Must call world tick to setup grid
+                    WorldComponent.cellSize = 4
+                    world = new World(entities)
+                    world.tick()
+                    force = flocking.cohesion(
+                        a,
+                        a.components.world.getNeighbors(1)
+                    )
+                    force.x.should.equal(-0.2036416367602448)
+                    force.y.should.equal(-0.45665094303812465)
+                )
             )
+
+            #----------------------------
+            #align
+            #----------------------------
             describe('align()', ()->
                 it('align should return proper values', ()->
                     force = flocking.align(
@@ -231,6 +268,19 @@ define(['components/vector', 'systems/flocking', 'systems/world', 'entities', 'e
                     force.y.should.equal(0.4472135954999579)
                 )
                 entities.remove(e)
+
+                it('should return same values when neighbors from a grid are passed in', ()->
+                    #Must call world tick to setup grid
+                    WorldComponent.cellSize = 4
+                    world = new World(entities)
+                    world.tick()
+                    force = flocking.align(
+                        a,
+                        a.components.world.getNeighbors(1)
+                    )
+                    force.x.should.equal(0.22360679774997896)
+                    force.y.should.equal(0.4472135954999579)
+                )
             )
         )
     )

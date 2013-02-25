@@ -4,7 +4,9 @@
 #   Handles entity flocking (sub system of physics)
 #
 #============================================================================
-define(['components/vector', 'components/physics'], (Vector, Physics)->
+define(['components/vector', 'components/physics', 'systems/world'], (
+    Vector, Physics, World)->
+
     class Flocking
         constructor: (entities)->
             @entities = entities
@@ -34,7 +36,9 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
 
             separationDistance = flocking.separationDistance || entity.components.physics.mass
 
+            #----------------------------
             #Temporary hack for passing in array of IDs
+            #----------------------------
             if entities.length
                 tmpEntities = {}
                 for id in entities
@@ -94,6 +98,14 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
 
             distance = flocking.flockDistance
 
+            #----------------------------
+            #Temporary hack for passing in array of IDs
+            #----------------------------
+            if entities.length
+                tmpEntities = {}
+                for id in entities
+                    tmpEntities[id] = @entities.entities[id]
+                entities = tmpEntities
             #Get sum vector of velocity of all surrounding entities
             for key, targetEntity of entities
                 #Make sure we don't check this entity
@@ -134,6 +146,15 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             flocking = entity.components.flocking
             distance = flocking.flockDistance
 
+            #----------------------------
+            #Temporary hack for passing in array of IDs
+            #----------------------------
+            if entities.length
+                tmpEntities = {}
+                for id in entities
+                    tmpEntities[id] = @entities.entities[id]
+                entities = tmpEntities
+
             #add sum of vectors of neighbors
             for key, targetEntity of entities
                 #Make sure we don't check this entity
@@ -147,7 +168,7 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
                     
             #Setup seek force
             steer = new Vector(0,0)
-            
+
             #Divide the sum and set the seek force
             if count > 0
                 sum.divide(count)
@@ -168,6 +189,7 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
             if not entities
                 console.log('ERROR: COMPONENT: FLOCKING')
                 console.log('must pass in entities object')
+
             #Get each rule
             sep = @separate(entity, entities)
             align = @align(entity, entities)
@@ -193,18 +215,38 @@ define(['components/vector', 'components/physics'], (Vector, Physics)->
         #--------------------------------
         tick: (delta)->
             for id, entity of @entities.entitiesIndex['flocking']
+                neighbors = {zombie: [], human: []}
+                world = entity.components.world
+                
+                #Get neighbors
+                for neighborId in world.getNeighbors(8)
+                    #Don't add it to the neighbors if it doesn't have a combat component
+                    neighbor = @entities.entities[neighborId]
+                    if not neighbor?
+                        continue
+                    
+                    #Get all zombies around human, all humans around zombie
+                    if neighbor.hasComponent('zombie')
+                        creatureType = 'zombie'
+                    else if neighbor.hasComponent('human')
+                        creatureType = 'human'
+                        
+                    if neighborId != entity.id and creatureType
+                        neighbors[creatureType].push(neighborId)
+
+
                 #Only flock with same type of creature
                 if entity.hasComponent('human')
                     @flock(
                         entity,
-                        @entities.entitiesIndex.human
+                        neighbors.human
                     )
                     
                 #Zombies try to flock together
                 if entity.hasComponent('zombie')
                     @flock(
                         entity,
-                        @entities.entitiesIndex.human,
+                        neighbors.zombie
                         0.5
                     )
 
