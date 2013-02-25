@@ -22,7 +22,9 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
             .add(entityFemale)
         spawner = new Spawner(entities)
             
-        it('should exist', ()->
+        it('should find mate', ()->
+            consolespawner.findMate(entityMale, [entityMale.id])
+
         )
     )
 )

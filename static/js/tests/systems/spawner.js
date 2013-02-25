@@ -12,7 +12,9 @@
       entityFemale.components.position.y = 11;
       entities = new Entities().add(entityMale).add(entityFemale);
       spawner = new Spawner(entities);
-      return it('should exist', function() {});
+      return it('should find mate', function() {
+        return consolespawner.findMate(entityMale, [entityMale.id]);
+      });
     });
   });
 
