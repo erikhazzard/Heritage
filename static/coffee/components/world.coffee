@@ -31,7 +31,7 @@ define([], ()->
         #GRID
         #NOTE: grid is reset each tick in the World system
         @grid = {}
-        @cellSize = 4
+        @cellSize = 6
         @rows = Math.floor(@height / @cellSize)
         @columns= Math.floor(@width / @cellSize)
 

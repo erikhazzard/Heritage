@@ -20,7 +20,7 @@
 
       World.grid = {};
 
-      World.cellSize = 4;
+      World.cellSize = 6;
 
       World.rows = Math.floor(World.height / World.cellSize);
 

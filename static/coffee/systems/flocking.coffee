@@ -5,7 +5,7 @@
 #
 #============================================================================
 define(['components/vector', 'components/physics', 'systems/world'], (
-    Vector, Physics, World)->
+    Vector, Physics, WorldSystem)->
 
     class Flocking
         constructor: (entities)->
@@ -215,25 +215,9 @@ define(['components/vector', 'components/physics', 'systems/world'], (
         #--------------------------------
         tick: (delta)->
             for id, entity of @entities.entitiesIndex['flocking']
-                neighbors = {zombie: [], human: []}
-                world = entity.components.world
-                
-                #Get neighbors
-                for neighborId in world.getNeighbors(8)
-                    #Don't add it to the neighbors if it doesn't have a combat component
-                    neighbor = @entities.entities[neighborId]
-                    if not neighbor?
-                        continue
-                    
-                    #Get all zombies around human, all humans around zombie
-                    if neighbor.hasComponent('zombie')
-                        creatureType = 'zombie'
-                    else if neighbor.hasComponent('human')
-                        creatureType = 'human'
-                        
-                    if neighborId != entity.id and creatureType
-                        neighbors[creatureType].push(neighborId)
-
+                neighbors = WorldSystem.prototype.getNeighborsByCreatureType(
+                    entity, @entities, 6, ['flocking']
+                )
 
                 #Only flock with same type of creature
                 if entity.hasComponent('human')

@@ -8,51 +8,6 @@
         a = new Combat();
         return a.should.not.equal(void 0);
       });
-      describe('getNeighbors(): Calculate neighbors properly', function() {
-        var combat, entities, entityHuman, entityZombie, entityZombie2, world;
-        entityHuman = Assemblages.human();
-        entityZombie = Assemblages.zombie();
-        entityZombie2 = Assemblages.zombie();
-        entities = new Entities().add(entityHuman).add(entityZombie).add(entityZombie2);
-        entityHuman.components.position.x = 10;
-        entityHuman.components.position.y = 10;
-        entityZombie.components.position.x = 10;
-        entityZombie.components.position.y = 11;
-        entityZombie2.components.position.x = 40;
-        entityZombie2.components.position.y = 40;
-        world = new World(entities);
-        world.tick();
-        combat = new Combat(entities);
-        it('should return no neighbors when range is 0', function() {
-          var humanCombat;
-          humanCombat = entityHuman.components.combat;
-          humanCombat.range = 0;
-          return combat.getNeighbors(entityHuman).should.deep.equal({
-            zombie: [],
-            human: []
-          });
-        });
-        it('should return 1 zombie neighbors when range is 1', function() {
-          var humanCombat;
-          world.tick();
-          humanCombat = entityHuman.components.combat;
-          humanCombat.range = 1;
-          return combat.getNeighbors(entityHuman).should.deep.equal({
-            zombie: [entityZombie.id],
-            human: []
-          });
-        });
-        return it('should return 2 zombie neighbors when range is 50', function() {
-          var humanCombat;
-          world.tick();
-          humanCombat = entityHuman.components.combat;
-          humanCombat.range = 50;
-          return combat.getNeighbors(entityHuman).should.deep.equal({
-            zombie: [entityZombie.id, entityZombie2.id],
-            human: []
-          });
-        });
-      });
       describe('Combat System: getDamage', function() {
         var combat, entities, entityHuman, entityZombie, humanCombat, zombieCombat;
         entityHuman = Assemblages.human();

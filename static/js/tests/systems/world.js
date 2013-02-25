@@ -2,7 +2,7 @@
 (function() {
 
   define(['systems/world', 'components/world', 'entity', 'entities', 'assemblages/assemblages'], function(WorldSystem, WorldComponent, Entity, Entities, Assemblages) {
-    return describe('World System', function() {
+    describe('World System', function() {
       var entities, entityHuman, entityZombie, entityZombie2, humanWorld, world;
       entityHuman = Assemblages.human();
       entityZombie = Assemblages.zombie();
@@ -63,6 +63,42 @@
           world.tick();
           hasNeighbors = humanWorld.neighborsByRadius[2] != null;
           return hasNeighbors.should.be["false"];
+        });
+      });
+    });
+    return describe('World System: getNeighborsByCreatureType()', function() {
+      var entities, entityHuman, entityZombie, entityZombie2, world;
+      entityHuman = Assemblages.human();
+      entityZombie = Assemblages.zombie();
+      entityZombie2 = Assemblages.zombie();
+      entities = new Entities().add(entityHuman).add(entityZombie).add(entityZombie2);
+      entityHuman.components.position.x = 10;
+      entityHuman.components.position.y = 10;
+      entityZombie.components.position.x = 10;
+      entityZombie.components.position.y = 12;
+      entityZombie2.components.position.x = 40;
+      entityZombie2.components.position.y = 40;
+      world = new WorldSystem(entities);
+      world.tick();
+      it('should return no neighbors when range is 0', function() {
+        world.tick();
+        return WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 0).should.deep.equal({
+          zombie: [],
+          human: []
+        });
+      });
+      it('should return 1 zombie neighbors when range is 1', function() {
+        world.tick();
+        return WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 1).should.deep.equal({
+          zombie: [entityZombie.id],
+          human: []
+        });
+      });
+      return it('should return 2 zombie neighbors when range is 50', function() {
+        world.tick();
+        return WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 50).should.deep.equal({
+          zombie: [entityZombie.id, entityZombie2.id],
+          human: []
         });
       });
     });

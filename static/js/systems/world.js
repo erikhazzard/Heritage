@@ -23,7 +23,47 @@
         return [i, j];
       };
 
-      World.prototype.getNeighborsByCreatureType = function(entities) {};
+      World.prototype.getNeighborsByCreatureType = function(entity, entities, radius, requiredComponents) {
+        var component, continueNeighborLoop, creatureType, neighbor, neighborId, neighbors, world, _i, _j, _len, _len1, _ref;
+        neighbors = {
+          zombie: [],
+          human: []
+        };
+        requiredComponents = requiredComponents || false;
+        world = entity.components.world;
+        if (!world) {
+          return neighbors;
+        }
+        _ref = world.getNeighbors(radius);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          neighborId = _ref[_i];
+          neighbor = entities.entities[neighborId];
+          if (!(neighbor != null)) {
+            continue;
+          }
+          continueNeighborLoop = false;
+          if (requiredComponents) {
+            for (_j = 0, _len1 = requiredComponents.length; _j < _len1; _j++) {
+              component = requiredComponents[_j];
+              if (!(neighbor.components[component] != null)) {
+                continueNeighborLoop = true;
+              }
+            }
+          }
+          if (continueNeighborLoop) {
+            continue;
+          }
+          if (neighbor.hasComponent('zombie')) {
+            creatureType = 'zombie';
+          } else if (neighbor.hasComponent('human')) {
+            creatureType = 'human';
+          }
+          if (neighborId !== entity.id && creatureType) {
+            neighbors[creatureType].push(neighborId);
+          }
+        }
+        return neighbors;
+      };
 
       World.prototype.tick = function(delta) {
         var cell, entity, i, id, j, position, world, _ref, _ref1;

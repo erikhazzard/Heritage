@@ -27,9 +27,44 @@ define(['components/world'], (WorldComponent)->
             j = Math.floor(position.x / WorldComponent.cellSize)
             return [i,j]
 
-        getNeighborsByCreatureType: (entities)->
-            #Returns an object of creature types: neighbors
+        getNeighborsByCreatureType: (entity, entities, radius, requiredComponents)->
+            #Get entities around this entity and return an object containing
+            #  the counts for each type of neighbor
+            neighbors = {zombie: [], human: []}
+            requiredComponents = requiredComponents || false
 
+            world = entity.components.world
+            if not world
+                return neighbors
+ 
+            #Get neighbors
+            for neighborId in world.getNeighbors(radius)
+                #Don't add it to the neighbors if it doesn't have a combat component
+                neighbor = entities.entities[neighborId]
+                if not neighbor?
+                    continue
+
+                continueNeighborLoop = false
+
+                #Don't add if it doesn't have the matched component
+                if requiredComponents
+                    for component in requiredComponents
+                        if not neighbor.components[component]?
+                            continueNeighborLoop = true
+
+                if continueNeighborLoop
+                    continue
+
+                #Get all zombies around human, all humans around zombie
+                if neighbor.hasComponent('zombie')
+                    creatureType = 'zombie'
+                else if neighbor.hasComponent('human')
+                    creatureType = 'human'
+                    
+                if neighborId != entity.id and creatureType
+                    neighbors[creatureType].push(neighborId)
+                
+            return neighbors
         
         #--------------------------------
         #

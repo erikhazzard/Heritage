@@ -12,58 +12,6 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
             a.should.not.equal(undefined)
         )
     
-        describe('getNeighbors(): Calculate neighbors properly', ()->
-            entityHuman = Assemblages.human()
-            entityZombie = Assemblages.zombie()
-            entityZombie2 = Assemblages.zombie()
-            entities = new Entities()
-                .add(entityHuman)
-                .add(entityZombie)
-                .add(entityZombie2)
-                
-            entityHuman.components.position.x = 10
-            entityHuman.components.position.y = 10
-            
-            entityZombie.components.position.x = 10
-            entityZombie.components.position.y = 11
-
-            entityZombie2.components.position.x = 40
-            entityZombie2.components.position.y = 40
-
-            #Must call world tick to setup grid
-            world = new World(entities)
-            world.tick()
-
-            combat = new Combat(entities)
-
-            it('should return no neighbors when range is 0', ()->
-                humanCombat = entityHuman.components.combat
-                humanCombat.range = 0
-                combat.getNeighbors(entityHuman).should.deep.equal({
-                    zombie: [],
-                    human: []
-                })
-            )
-            it('should return 1 zombie neighbors when range is 1', ()->
-                world.tick()
-                humanCombat = entityHuman.components.combat
-                humanCombat.range = 1
-                combat.getNeighbors(entityHuman).should.deep.equal({
-                    zombie: [entityZombie.id],
-                    human: []
-                })
-            )
-            it('should return 2 zombie neighbors when range is 50', ()->
-                world.tick()
-                humanCombat = entityHuman.components.combat
-                humanCombat.range = 50
-                combat.getNeighbors(entityHuman).should.deep.equal({
-                    zombie: [entityZombie.id, entityZombie2.id],
-                    human: []
-                })
-            )
-        )
-        
         #--------------------------------
         #
         #Test getDamage()

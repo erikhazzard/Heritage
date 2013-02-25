@@ -4,38 +4,12 @@
 #   Simulates fighting between entities
 #
 #============================================================================
-define(['components/world'], (World)->
+define(['components/world', 'systems/world'], (World, WorldSystem)->
     class Combat
         constructor: (entities)->
             @entities = entities
             return @
         
-        getNeighbors: (entity)->
-            #Get entities around this entity and return an object containing
-            #  the counts for each type of neighbor
-            neighbors = {zombie: [], human: []}
-            world = entity.components.world
-            if not world
-                return neighbors
-            
-            #Get neighbors
-            for neighborId in world.getNeighbors(entity.components.combat.range)
-                #Don't add it to the neighbors if it doesn't have a combat component
-                neighbor = @entities.entities[neighborId]
-                if not neighbor.hasComponent('combat')
-                    continue
-                
-                #Get all zombies around human, all humans around zombie
-                if neighbor.hasComponent('zombie')
-                    creatureType = 'zombie'
-                else if neighbor.hasComponent('human')
-                    creatureType = 'human'
-                    
-                if neighborId != entity.id and creatureType
-                    neighbors[creatureType].push(neighborId)
-                
-            return neighbors
-            
         #--------------------------------
         #
         #Combat helper functions
@@ -138,7 +112,7 @@ define(['components/world'], (World)->
                 if combat.canAttack
                     #store refs
                     health = entity.components.health
-                    neighbors = @getNeighbors(entity)
+                    neighbors = WorldSystem.prototype.getNeighborsByCreatureType(entity, @entities, combat.range)
 
                     if isHuman
                         targetGroup = 'zombie'

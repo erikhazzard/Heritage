@@ -89,7 +89,51 @@ define(['systems/world', 'components/world',
                 hasNeighbors = humanWorld.neighborsByRadius[2]?
                 hasNeighbors.should.be.false
             )
-
         )
     )
+    describe('World System: getNeighborsByCreatureType()', ()->
+        entityHuman = Assemblages.human()
+        entityZombie = Assemblages.zombie()
+        entityZombie2 = Assemblages.zombie()
+        entities = new Entities()
+            .add(entityHuman)
+            .add(entityZombie)
+            .add(entityZombie2)
+            
+        entityHuman.components.position.x = 10
+        entityHuman.components.position.y = 10
+        
+        entityZombie.components.position.x = 10
+        entityZombie.components.position.y = 12
+
+        entityZombie2.components.position.x = 40
+        entityZombie2.components.position.y = 40
+
+        #Must call world tick to setup grid
+        world = new WorldSystem(entities)
+        world.tick()
+
+        it('should return no neighbors when range is 0', ()->
+            world.tick()
+            WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 0).should.deep.equal({
+                zombie: [],
+                human: []
+            })
+        )
+        it('should return 1 zombie neighbors when range is 1', ()->
+            world.tick()
+            WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 1).should.deep.equal({
+                zombie: [entityZombie.id],
+                human: []
+            })
+        )
+        it('should return 2 zombie neighbors when range is 50', ()->
+            world.tick()
+            WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 50).should.deep.equal({
+                zombie: [entityZombie.id, entityZombie2.id],
+                human: []
+            })
+        )
+    )
+
 )
