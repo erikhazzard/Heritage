@@ -59,6 +59,7 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
         #
         #---------------------------------------
         seekForce: (target, maxDistance, overrideMaxDistance)->
+            #TODO: Move to physics system
             #Calculate steering force towards a target and returns the force
             #  If maxDistance is passed in, specifies how far to check for neighbors
             #  If flee is passed in, force is multiplied by -1

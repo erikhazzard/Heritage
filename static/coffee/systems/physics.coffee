@@ -82,7 +82,11 @@ define(['components/vector'], (Vector)->
                 #
                 #First we need to count number of zombies and human neighbors
                 neighbors = []
-                for neighbor in entity.components.world.getNeighbors(5)
+                for neighborId in entity.components.world.getNeighbors(5)
+                    neighbor = @entities.entities[neighborId]
+                    if not neighbor?
+                        continue
+
                     if neighbor.hasComponent('zombie')
                         numZombies += 1
                     if neighbor.hasComponent('human')
@@ -90,7 +94,7 @@ define(['components/vector'], (Vector)->
                     #keep track of neighbors so we don't need to call function
                     #  again
                     if neighbor != entity
-                        neighbors.push(neighbor)
+                        neighbors.push(neighborId)
                     
                 #Let's calculate some number based off the entity's health and
                 # other attribtues to add to the pursuit calculation
@@ -104,7 +108,11 @@ define(['components/vector'], (Vector)->
                     pursuitDesire -= 3
                    
                 #Now check to see if the entity should flee or pursue a zombie
-                for neighbor in neighbors
+                for neighborId in neighbors
+                    neighbor = @entities.entities[neighborId]
+                    if not neighbor?
+                        continue
+
                     #if it's a zombie
                     if neighbor.hasComponent('zombie')
                         zombie = neighbor
@@ -148,23 +156,6 @@ define(['components/vector'], (Vector)->
                     if entity.hasComponent('randomWalker')
                         physics.applyForce( entity.components.randomWalker.walkForce() )
                         
-                    #BOIDS / Flocking  - TODO: own system?
-                    #------------------------
-                    if entity.hasComponent('flocking')
-                        #Only flock with same type of creature
-                        if entity.hasComponent('human')
-                            entity.components.flocking.flock(
-                                @entities.entitiesIndex.human
-                            )
-                            
-                        #Zombies try to flock together
-                        if entity.hasComponent('zombie')
-                            entity.components.flocking.flock(
-                                @entities.entitiesIndex.zombie,
-                                #make the multiplier for flocking a bit smaller
-                                0.7
-                            )
-                            
                     #------------------------
                     #Human movement - TODO: own system?
                     #------------------------
@@ -207,7 +198,10 @@ define(['components/vector'], (Vector)->
                         #Zombies just want brains
                         #  go after first human in it's neighborhood
                         zombie = entity.components.zombie
-                        for neighbor in entity.components.world.getNeighbors(zombie.seekRange)
+                        for neighborId in entity.components.world.getNeighbors(zombie.seekRange)
+                            neighbor = @entities.entities[neighborId]
+                            if not neighbor?
+                                continue
                             if neighbor.hasComponent('human')
                                 #Chase human
                                 chaseForce = physics.seekForce(

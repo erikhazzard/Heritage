@@ -8,7 +8,7 @@
       function Combat(entity, params) {
         params = params || {};
         this.entity = entity;
-        this.range = params.range || 4;
+        this.range = params.range || 2;
         this.defense = params.defense || 0;
         this.attack = params.attack || 1;
         this.dodge = params.dodge || 0;
@@ -16,6 +16,7 @@
         this.attackCounter = 0;
         this.canAttack = true;
         this.target = null;
+        this.damageTaken = [];
       }
 
       return Combat;

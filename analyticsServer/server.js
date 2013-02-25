@@ -7,7 +7,7 @@ var io = require('socket.io').listen(1337),
 
 //Set SocketIO Log level (TODO: Use winston)
 io.set('log level', 1);
-var db = new mongo('legacy', new Server('127.0.0.1', 27017, {}), {w:0});
+var db = new mongo('heritage', new Server('127.0.0.1', 27017, {}), {w:0});
 var logCollection = null;
 
 db.open(function(err, targetDb){

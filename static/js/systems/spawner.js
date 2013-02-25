@@ -12,60 +12,74 @@
       }
 
       Spawner.prototype.canBirth = function(entity, neighbors) {
-        var human, neighbor, neighborHuman, parentIndex, resources, _i, _len, _ref;
+        var human, resources;
         human = entity.components.human;
         resources = entity.components.resources.resources;
         if (human.sex === 'male') {
-          return false;
-        }
-        if (human.age < 20 || human.age > 64 || resources < 15) {
           return false;
         }
         if (human.isPregnant) {
           human.gestationTimeLeft -= Human.ageSpeed;
           if (human.gestationTimeLeft < 0) {
             return true;
-          } else {
-            return false;
           }
         }
-        if (neighbors.length < 1) {
+        return false;
+      };
+
+      Spawner.prototype.conceive = function(entity, neighbors) {
+        if (human.igPregnant) {
+          return true;
+        }
+        if (human.mateId) {
+          if (neighbors.indexOf(human.mateId) > -1) {
+            if (Math.random() < human.pregnancyChance) {
+              human.isPregnant = true;
+            }
+          }
+        }
+        return human.isPregnant;
+      };
+
+      Spawner.prototype.findMate = function(entity, neighbors) {
+        var human, neighbor, neighborHuman, neighborId, parentIndex, _i, _len, _ref;
+        human = entity.components.human;
+        if (human.mateId != null) {
           return false;
-        } else {
-          for (_i = 0, _len = neighbors.length; _i < _len; _i++) {
-            neighbor = neighbors[_i];
-            if (neighbor.hasComponent('human') !== true) {
+        }
+        if (human.age < 20 || human.age > 64 || resources < 15) {
+          return false;
+        }
+        for (_i = 0, _len = neighbors.length; _i < _len; _i++) {
+          neighborId = neighbors[_i];
+          neighbor = this.entities.entities[neighborId];
+          if (!(neighbor != null)) {
+            continue;
+          }
+          if (neighbor.hasComponent('human') !== true) {
+            continue;
+          }
+          neighborHuman = neighbor.components.human;
+          if (neighborHuman.sex === 'male') {
+            parentIndex = neighborHuman.family.indexOf(entity.id);
+            if (parentIndex > -1 && parentIndex < 6) {
               continue;
             }
-            neighborHuman = neighbor.components.human;
-            if (neighborHuman.sex === 'male') {
-              parentIndex = neighborHuman.family.indexOf(entity.id);
-              if (parentIndex > -1 && parentIndex < 6) {
+            if (_ref = entity.id, __indexOf.call(neighborHuman.children, _ref) >= 0) {
+              continue;
+            }
+            if (human.mateId !== null && human.mateId !== neighbor.id) {
+              continue;
+            }
+            if (neighborHuman.mateId === null) {
+              if (Math.random() < 0.06) {
+                neighborHuman.mateId = entity.id;
+                human.mateId = neighbor.id;
+              } else {
                 continue;
               }
-              if (_ref = entity.id, __indexOf.call(neighborHuman.children, _ref) >= 0) {
-                continue;
-              }
-              if (human.mateId !== null && human.mateId !== neighbor.id) {
-                continue;
-              }
-              if (neighborHuman.mateId === null) {
-                if (Math.random() < 0.06) {
-                  neighborHuman.mateId = entity.id;
-                  human.mateId = neighbor.id;
-                } else {
-                  continue;
-                }
-              } else if (neighborHuman.mateId !== entity.id) {
-                continue;
-              }
-              if (neighborHuman.age < 19) {
-                continue;
-              }
-              if (Math.random() < human.pregnancyChance) {
-                human.isPregnant = true;
-                break;
-              }
+            } else if (neighborHuman.mateId !== entity.id) {
+              continue;
             }
           }
         }
@@ -101,8 +115,9 @@
           if (entity.hasComponent('human') !== true) {
             continue;
           }
-          neighbors = entity.components.world.getNeighbors(4);
+          neighbors = entity.components.world.getNeighbors(3);
           canBirth = this.canBirth(entity, neighbors);
+          this.findMate(entity, neighbors);
           if (canBirth) {
             this.makeBaby(entity);
           }

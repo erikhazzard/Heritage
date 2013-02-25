@@ -3,6 +3,11 @@
 #Systems - spawn
 #   Handles logic to create new entities
 #
+#   -Components: Human
+#
+#   TODO: Should this be rolled into the human system? Or should there be
+#   a spawner component instead? Or maybe this is a subsystem of human?
+#
 #============================================================================
 define(['entity', 'systems/human'], (Entity, Human)->
     class Spawner
@@ -18,16 +23,13 @@ define(['entity', 'systems/human'], (Entity, Human)->
         canBirth: (entity, neighbors)->
             #Looks at entity and returns true or false if it can birth
             #  a new entity
+            #  Will return either true or false
+            #TODO: SPLIT THIS FUNCTION UP
             human = entity.components.human
             resources = entity.components.resources.resources
             
             if human.sex == 'male'
                 #males can't become pregnant or give birth
-                return false
-            
-            #Need some rules to prevent some entities from making babies
-            #----------------------------
-            if human.age < 20 or human.age > 64 or resources < 15
                 return false
             
             #If it's pregnant, we can potentially make a baby!
@@ -40,67 +42,83 @@ define(['entity', 'systems/human'], (Entity, Human)->
                 #------------------------
                 if human.gestationTimeLeft < 0
                     return true
-                else
-                    #A pregnant thing can't become pregnant
-                    return false
-                
-            #Not pregnant, so let's try to make a baby
-            #----------------------------
-            
-            #can't make a baby with itself
-            if neighbors.length < 1
-                return false
-            else
-                for neighbor in neighbors
-                    #Only humans can give birth (for now)
-                    if neighbor.hasComponent('human') != true
-                        continue
-                    
-                    neighborHuman = neighbor.components.human
-                    
-                    #Rules for impregnanting - neighbor:
-                    #must be male
-                    if neighborHuman.sex == 'male'
-                        #cannot be parent
-                        #  but can be distantly related
-                        parentIndex = neighborHuman.family.indexOf(entity.id)
-                        if parentIndex > -1 and parentIndex < 6
-                            continue
-                        #or a child
-                        if entity.id in neighborHuman.children
-                            continue
-
-                        #TODO: If mate dies, allow them to mate with another
-                        #Monogamus female 
-                        if human.mateId != null and human.mateId != neighbor.id
-                            continue
-                    
-                        #Monogamus male
-                        if neighborHuman.mateId == null
-                            #Some chance that they become mates
-                            if Math.random() < 0.06
-                                neighborHuman.mateId = entity.id
-                                human.mateId = neighbor.id
-                            else
-                                continue
-                        else if neighborHuman.mateId != entity.id
-                            continue
-                        
-                        #Neighbor age has to be above 18
-                        if neighborHuman.age < 19
-                            continue
-
-                        #We got a potenial baby daddy
-                        if Math.random() < human.pregnancyChance
-                            #initiate coitus 
-                            human.isPregnant = true
-                            
-                            #well, that was quick
-                            break
-                            
+    
             #even if entity gets knocked up, it can't make a baby yet
             return false
         
+
+
+        #--------------------------------
+        #Attempt conception
+        #--------------------------------
+        conceive: (entity, neighbors)->
+            #Try to make a baby
+            #Already pregnant
+            if human.igPregnant
+                return true
+
+            if human.mateId
+                if neighbors.indexOf(human.mateId) > -1
+                    if Math.random() < human.pregnancyChance
+                        #initiate coitus 
+                        human.isPregnant = true
+
+            return human.isPregnant
+
+        #--------------------------------
+        #Find a mate
+        #--------------------------------
+        findMate: (entity, neighbors)->
+            human = entity.components.human
+
+            #If it has a mate, return false
+            if human.mateId?
+                return false
+
+            if human.age < 20 or human.age > 64 or resources < 15
+                return false
+            
+            #Find a mate for this entity
+            for neighborId in neighbors
+                neighbor = @entities.entities[neighborId]
+                if not neighbor?
+                    continue
+
+                #Only humans can give birth (for now)
+                if neighbor.hasComponent('human') != true
+                    continue
+                
+                neighborHuman = neighbor.components.human
+                
+                #Rules for impregnanting - neighbor:
+                #must be male
+                if neighborHuman.sex == 'male'
+                    #cannot be parent
+                    #  but can be distantly related
+                    parentIndex = neighborHuman.family.indexOf(entity.id)
+                    if parentIndex > -1 and parentIndex < 6
+                        continue
+                    #or a child
+                    if entity.id in neighborHuman.children
+                        continue
+
+                    #TODO: If mate dies, allow them to mate with another
+                    #Monogamus female 
+                    if human.mateId != null and human.mateId != neighbor.id
+                        continue
+                
+                    #Monogamus male
+                    if neighborHuman.mateId == null
+                        #Some chance that they become mates
+                        if Math.random() < 0.06
+                            neighborHuman.mateId = entity.id
+                            human.mateId = neighbor.id
+                        else
+                            continue
+                    else if neighborHuman.mateId != entity.id
+                        continue
+
+            return false
         #--------------------------------
         #Make a baby
         #--------------------------------
@@ -158,8 +176,11 @@ define(['entity', 'systems/human'], (Entity, Human)->
                 #NOTE: not far enough
                 #neighbors = entity.components.world.neighbors
                 
-                neighbors = entity.components.world.getNeighbors(4)
+                neighbors = entity.components.world.getNeighbors(3)
                 canBirth = @canBirth(entity, neighbors)
+
+                #find a mate for this entity if it doesn't have one
+                @findMate(entity, neighbors)
                 
                 #Make a baby
                 if canBirth

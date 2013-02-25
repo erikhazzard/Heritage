@@ -13,7 +13,7 @@
       }
 
       Living.prototype.calculateResources = function(entity) {
-        var human, neighbors, resources;
+        var human, resources;
         resources = entity.components.resources.resources;
         human = entity.components.human;
         if (human.age < 20) {
@@ -25,10 +25,6 @@
           if (human.isPregnant) {
             resources -= 0.05;
           }
-        }
-        neighbors = entity.components.world.neighbors;
-        if (neighbors.length > 1) {
-          resources -= (neighbors.length * neighbors.length) * 0.08;
         }
         return resources;
       };
@@ -62,7 +58,9 @@
         health = entity.components.health;
         resources = entity.components.resources;
         human.age += Living.ageSpeed;
-        physics.maxSpeed = human.getMaxSpeed();
+        if (physics) {
+          physics.maxSpeed = human.getMaxSpeed();
+        }
         resources.resources = this.calculateResources(entity);
         if (resources < 10) {
           entity.components.flocking.rules.cohesion = -1;

@@ -13,7 +13,7 @@ define([], ()->
             params = params || {}
             @entity = entity
 
-            @range = params.range || 4
+            @range = params.range || 2
             @defense = params.defense || 0
             @attack = params.attack || 1
             #percent chance to dodge attack (0 to 100)
@@ -27,6 +27,8 @@ define([], ()->
             @canAttack = true
             #ID of target entity
             @target = null
+            #Keep track of any damage done (per tick)
+            @damageTaken = []
 
     return Combat
 )

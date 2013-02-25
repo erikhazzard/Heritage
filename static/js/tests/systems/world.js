@@ -2,7 +2,71 @@
 (function() {
 
   define(['systems/world', 'components/world', 'entity', 'entities', 'assemblages/assemblages'], function(WorldSystem, WorldComponent, Entity, Entities, Assemblages) {
-    return describe('World System', function() {
+    describe('World System', function() {
+      var entities, entityHuman, entityZombie, entityZombie2, humanWorld, world;
+      entityHuman = Assemblages.human();
+      entityZombie = Assemblages.zombie();
+      entityZombie2 = Assemblages.zombie();
+      entities = new Entities().add(entityHuman).add(entityZombie).add(entityZombie2);
+      entityHuman.components.position.x = 10;
+      entityHuman.components.position.y = 10;
+      entityZombie.components.position.x = 12;
+      entityZombie.components.position.y = 12;
+      entityZombie2.components.position.x = 40;
+      entityZombie2.components.position.y = 40;
+      world = new WorldSystem(entities);
+      world.tick();
+      WorldComponent.cellSize = 4;
+      humanWorld = entityHuman.components.world;
+      return describe('getNeighbors tests', function() {
+        it('when radius is negative, radius should be 0', function() {
+          WorldComponent.cellSize = 1;
+          world.tick();
+          humanWorld.getNeighbors(-5).should.deep.equal([]);
+          return humanWorld.neighborsByRadius[0].should.deep.equal([]);
+        });
+        it('when radius is 0, should only get neighbors which occupy same cell', function() {
+          WorldComponent.cellSize = 1;
+          world.tick();
+          humanWorld.getNeighbors(0).should.deep.equal([]);
+          return humanWorld.neighborsByRadius[0].should.deep.equal([]);
+        });
+        it('should get a single neighbor when radius is 1', function() {
+          WorldComponent.cellSize = 2;
+          world.tick();
+          humanWorld.getNeighbors(1).should.deep.equal([entityZombie.id]);
+          return humanWorld.neighborsByRadius[1].should.deep.equal([entityZombie.id]);
+        });
+        it('should get all neighbors when radius is big enough', function() {
+          var neighbors;
+          WorldComponent.cellSize = 10;
+          world.tick();
+          neighbors = [entityZombie.id, entityZombie2.id];
+          humanWorld.getNeighbors(3).should.deep.equal(neighbors);
+          humanWorld.neighborsByRadius[3].should.deep.equal(neighbors);
+          humanWorld.getNeighbors(2).should.deep.equal([entityZombie.id]);
+          return humanWorld.neighborsByRadius[2].should.deep.equal([entityZombie.id]);
+        });
+        it('should test getNeighborsByRadius function', function() {
+          var hasNeighbors;
+          WorldComponent.cellSize = 2;
+          world.tick();
+          hasNeighbors = humanWorld.neighborsByRadius[4] != null;
+          hasNeighbors.should.equal(false);
+          humanWorld.getNeighbors(4).should.deep.equal([entityZombie.id]);
+          hasNeighbors = humanWorld.neighborsByRadius[4] != null;
+          return hasNeighbors.should.equal(true);
+        });
+        return it('should clear neighborsByRadius each tick', function() {
+          var hasNeighbors;
+          WorldComponent.cellSize = 2;
+          world.tick();
+          hasNeighbors = humanWorld.neighborsByRadius[2] != null;
+          return hasNeighbors.should.be["false"];
+        });
+      });
+    });
+    return describe('World System: getNeighborsByCreatureType()', function() {
       var entities, entityHuman, entityZombie, entityZombie2, world;
       entityHuman = Assemblages.human();
       entityZombie = Assemblages.zombie();
@@ -11,13 +75,32 @@
       entityHuman.components.position.x = 10;
       entityHuman.components.position.y = 10;
       entityZombie.components.position.x = 10;
-      entityZombie.components.position.y = 20;
+      entityZombie.components.position.y = 12;
       entityZombie2.components.position.x = 40;
       entityZombie2.components.position.y = 40;
       world = new WorldSystem(entities);
       world.tick();
-      it('Should setup world component and properties', function() {});
-      return it('Should use prototype for default props', function() {});
+      it('should return no neighbors when range is 0', function() {
+        world.tick();
+        return WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 0).should.deep.equal({
+          zombie: [],
+          human: []
+        });
+      });
+      it('should return 1 zombie neighbors when range is 1', function() {
+        world.tick();
+        return WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 1).should.deep.equal({
+          zombie: [entityZombie.id],
+          human: []
+        });
+      });
+      return it('should return 2 zombie neighbors when range is 50', function() {
+        world.tick();
+        return WorldSystem.prototype.getNeighborsByCreatureType(entityHuman, entities, 50).should.deep.equal({
+          zombie: [entityZombie.id, entityZombie2.id],
+          human: []
+        });
+      });
     });
   });
 

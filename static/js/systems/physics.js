@@ -41,7 +41,7 @@
       };
 
       Physics.prototype.humanZombieBehavior = function(entity) {
-        var behaviorForce, behvaiorForce, neighbor, neighbors, numHumans, numZombies, physics, pursuitDesire, scale, zombie, _i, _j, _len, _len1, _ref;
+        var behaviorForce, behvaiorForce, neighbor, neighborId, neighbors, numHumans, numZombies, physics, pursuitDesire, scale, zombie, _i, _j, _len, _len1, _ref;
         physics = entity.components.physics;
         behvaiorForce = new Vector(0, 0);
         if (entity.hasComponent('human') && this.entities.entitiesIndex.zombie) {
@@ -49,7 +49,11 @@
           neighbors = [];
           _ref = entity.components.world.getNeighbors(5);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            neighbor = _ref[_i];
+            neighborId = _ref[_i];
+            neighbor = this.entities.entities[neighborId];
+            if (!(neighbor != null)) {
+              continue;
+            }
             if (neighbor.hasComponent('zombie')) {
               numZombies += 1;
             }
@@ -57,7 +61,7 @@
               numHumans += 1;
             }
             if (neighbor !== entity) {
-              neighbors.push(neighbor);
+              neighbors.push(neighborId);
             }
           }
           pursuitDesire = 0;
@@ -68,7 +72,11 @@
             pursuitDesire -= 3;
           }
           for (_j = 0, _len1 = neighbors.length; _j < _len1; _j++) {
-            neighbor = neighbors[_j];
+            neighborId = neighbors[_j];
+            neighbor = this.entities.entities[neighborId];
+            if (!(neighbor != null)) {
+              continue;
+            }
             if (neighbor.hasComponent('zombie')) {
               zombie = neighbor;
               scale = (numHumans / 2.5) - numZombies;
@@ -87,7 +95,7 @@
       };
 
       Physics.prototype.tick = function(delta) {
-        var chaseForce, child, childId, entity, human, id, mateId, neighbor, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+        var chaseForce, child, childId, entity, human, id, mateId, neighbor, neighborId, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2;
         _ref = this.entities.entitiesIndex['physics'];
         for (id in _ref) {
           entity = _ref[id];
@@ -95,14 +103,6 @@
           if (entity.hasComponent('userMovable') === false) {
             if (entity.hasComponent('randomWalker')) {
               physics.applyForce(entity.components.randomWalker.walkForce());
-            }
-            if (entity.hasComponent('flocking')) {
-              if (entity.hasComponent('human')) {
-                entity.components.flocking.flock(this.entities.entitiesIndex.human);
-              }
-              if (entity.hasComponent('zombie')) {
-                entity.components.flocking.flock(this.entities.entitiesIndex.zombie, 0.7);
-              }
             }
             if (entity.hasComponent('human') && !entity.hasComponent('userMovable')) {
               this.humanZombieBehavior(entity);
@@ -128,7 +128,11 @@
               zombie = entity.components.zombie;
               _ref2 = entity.components.world.getNeighbors(zombie.seekRange);
               for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-                neighbor = _ref2[_j];
+                neighborId = _ref2[_j];
+                neighbor = this.entities.entities[neighborId];
+                if (!(neighbor != null)) {
+                  continue;
+                }
                 if (neighbor.hasComponent('human')) {
                   chaseForce = physics.seekForce(neighbor).multiply(6);
                   entity.components.physics.applyForce(chaseForce);

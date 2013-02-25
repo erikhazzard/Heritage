@@ -5,7 +5,6 @@
 #
 #   components used:
 #       human
-#       physics
 #============================================================================
 define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
     class Living
@@ -40,10 +39,10 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
                 if human.isPregnant
                     resources -= 0.05
                     
-            #Higher resource consumpation based on number of neighbors
-            neighbors = entity.components.world.neighbors
-            if neighbors.length > 1
-                resources -= ((neighbors.length * neighbors.length) * 0.08)
+            ##Higher resource consumpation based on number of neighbors
+            #neighbors = entity.components.world.neighborsByRange[4]
+            #if neighbors.length > 1
+                #resources -= ((neighbors.length * neighbors.length) * 0.08)
                 
             return resources
         
@@ -89,7 +88,8 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             
             #update properties
             human.age += Living.ageSpeed
-            physics.maxSpeed = human.getMaxSpeed()
+            if physics
+                physics.maxSpeed = human.getMaxSpeed()
             resources.resources = @calculateResources(entity)
             
             #If entity is low on resources, make it not flock together so much

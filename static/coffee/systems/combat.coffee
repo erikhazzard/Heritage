@@ -4,37 +4,12 @@
 #   Simulates fighting between entities
 #
 #============================================================================
-define([], ()->
+define(['components/world', 'systems/world'], (World, WorldSystem)->
     class Combat
         constructor: (entities)->
             @entities = entities
             return @
         
-        getNeighbors: (entity)->
-            #Get entities around this entity and return an object containing
-            #  the counts for each type of neighbor
-            neighbors = {zombie: [], human: []}
-            world = entity.components.world
-            if not world
-                return neighbors
-            
-            #Get neighbors
-            for neighbor in world.getNeighbors(entity.components.combat.range)
-                #Don't add it to the neighbors if it doesn't have a combat component
-                if not neighbor.hasComponent('combat')
-                    continue
-                
-                #Get all zombies around human, all humans around zombie
-                if neighbor.hasComponent('zombie')
-                    creatureType = 'zombie'
-                else if neighbor.hasComponent('human')
-                    creatureType = 'human'
-                    
-                if neighbor != entity and creatureType
-                    neighbors[creatureType].push(neighbor)
-                
-            return neighbors
-            
         #--------------------------------
         #
         #Combat helper functions
@@ -71,7 +46,8 @@ define([], ()->
             return damage
             
         fight: (entity, enemyEntity)->
-            #Fights an entity with a passed in enemeny. 
+            #Fights an entity with a passed in enemeny. Deals damage to
+            #  enemy entity if it can
             #PARAMETERS: Expects two ENTITY components to be passed in
 
             #Get references
@@ -93,6 +69,9 @@ define([], ()->
             health = enemyEntity.components.health
             if health
                 health.health -= damage
+
+            #Keep track of damage taken
+            enemyCombat.damageTaken.push(damage)
             
             #Update the attack counter
             entityCombat.canAttack = false
@@ -123,29 +102,46 @@ define([], ()->
             #
             #NOTES: An entity can only fight one other entity at a time
             
-            #keep track of damage to deal. in form of 
-            damageStack = []
-            
             for id, entity of @entities.entitiesIndex['combat']
                 isHuman = entity.hasComponent('human')
                 isZombie = entity.hasComponent('zombie')
                 #store ref to combat component
                 combat = entity.components.combat
+                combatTarget = entity.components.combat.target
+                #only set to true when it gets hit
+                combat.wasHit = false
+                combat.damageTaken.length = 0
 
                 #If the entity can attack, do it
                 if combat.canAttack
                     #store refs
                     health = entity.components.health
-                    neighbors = @getNeighbors(entity)
+                    neighbors = WorldSystem.prototype.getNeighborsByCreatureType(
+                        entity, @entities, combat.range, ['combat'])
 
                     if isHuman
                         targetGroup = 'zombie'
                     if isZombie
                         targetGroup = 'human'
 
-                    for targetEntity in neighbors[targetGroup]
+                    #Reset target if there are no neighbors
+                    if neighbors[targetGroup].length < 1
+                        entity.components.combat.target = null
+                    else
+                        #There's at least one neighbor, so use it as the new 
+                        #target
+                        targetEntityId = neighbors[targetGroup][0]
+
+                        #Try to fight the same target
+                        if combatTarget? and @entities.entities[combatTarget]
+                            targetEntity = @entities.entities[combatTarget]
+                        else
+                            targetEntity = @entities.entities[targetEntityId]
+
+                        #Set the target to the first entity found
+                        entity.components.combat.target = targetEntity.id
+
                         @fight(entity, targetEntity)
-                        break
                     
                 #Update attack counter
                 @updateAttackCounter(combat)
