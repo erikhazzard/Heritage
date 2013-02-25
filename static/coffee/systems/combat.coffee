@@ -46,7 +46,8 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
             return damage
             
         fight: (entity, enemyEntity)->
-            #Fights an entity with a passed in enemeny. 
+            #Fights an entity with a passed in enemeny. Deals damage to
+            #  enemy entity if it can
             #PARAMETERS: Expects two ENTITY components to be passed in
 
             #Get references
@@ -68,6 +69,9 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
             health = enemyEntity.components.health
             if health
                 health.health -= damage
+
+            #Keep track of damage taken
+            enemyCombat.damageTaken.push(damage)
             
             #Update the attack counter
             entityCombat.canAttack = false
@@ -98,21 +102,22 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
             #
             #NOTES: An entity can only fight one other entity at a time
             
-            #keep track of damage to deal. in form of 
-            damageStack = []
-            
             for id, entity of @entities.entitiesIndex['combat']
                 isHuman = entity.hasComponent('human')
                 isZombie = entity.hasComponent('zombie')
                 #store ref to combat component
                 combat = entity.components.combat
                 combatTarget = entity.components.combat.target
+                #only set to true when it gets hit
+                combat.wasHit = false
+                combat.damageTaken.length = 0
 
                 #If the entity can attack, do it
                 if combat.canAttack
                     #store refs
                     health = entity.components.health
-                    neighbors = WorldSystem.prototype.getNeighborsByCreatureType(entity, @entities, combat.range)
+                    neighbors = WorldSystem.prototype.getNeighborsByCreatureType(
+                        entity, @entities, combat.range, ['combat'])
 
                     if isHuman
                         targetGroup = 'zombie'

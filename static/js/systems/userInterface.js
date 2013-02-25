@@ -53,6 +53,10 @@
             html += '<br />I: ' + entity.components.world.i;
             html += '<br />J: ' + entity.components.world.j;
           }
+          if (entity.components.combat.damageTaken.length > 0) {
+            console.log('HIT!');
+            console.log(entity.components.combat.damageTaken);
+          }
         }
         this.$debug.innerHTML += html;
         return entities;

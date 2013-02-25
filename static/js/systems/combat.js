@@ -46,14 +46,14 @@
         if (health) {
           health.health -= damage;
         }
+        enemyCombat.damageTaken.push(damage);
         entityCombat.canAttack = false;
         entityCombat.attackCounter = entityCombat.attackDelay + 1;
         return true;
       };
 
       Combat.prototype.tick = function(delta) {
-        var combat, combatTarget, damageStack, entity, health, id, isHuman, isZombie, neighbors, targetEntity, targetEntityId, targetGroup, _ref;
-        damageStack = [];
+        var combat, combatTarget, entity, health, id, isHuman, isZombie, neighbors, targetEntity, targetEntityId, targetGroup, _ref;
         _ref = this.entities.entitiesIndex['combat'];
         for (id in _ref) {
           entity = _ref[id];
@@ -61,9 +61,11 @@
           isZombie = entity.hasComponent('zombie');
           combat = entity.components.combat;
           combatTarget = entity.components.combat.target;
+          combat.wasHit = false;
+          combat.damageTaken.length = 0;
           if (combat.canAttack) {
             health = entity.components.health;
-            neighbors = WorldSystem.prototype.getNeighborsByCreatureType(entity, this.entities, combat.range);
+            neighbors = WorldSystem.prototype.getNeighborsByCreatureType(entity, this.entities, combat.range, ['combat']);
             if (isHuman) {
               targetGroup = 'zombie';
             }
