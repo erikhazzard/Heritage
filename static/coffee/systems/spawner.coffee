@@ -61,7 +61,7 @@ define(['entity', 'systems/human'], (Entity, Human)->
             if human.sex == 'male' or human.age < 20 or human.age > 64 or resources < 15
                 return false
 
-            if human.mateId
+            if human.mateId?
                 if neighbors.indexOf(human.mateId) > -1
                     if Math.random() < human.pregnancyChance
                         #initiate coitus 
@@ -109,17 +109,18 @@ define(['entity', 'systems/human'], (Entity, Human)->
                         continue
                 
                     #Monogamus male
-                    if neighborHuman.mateId == null
+                    if not neighborHuman.mateId?
                         #Some chance that they become mates
-                        if Math.random() < 0.06
+                        if Math.random() < human.findMateChance
                             neighborHuman.mateId = entity.id
                             human.mateId = neighbor.id
                         else
                             continue
+                        
                     else if neighborHuman.mateId != entity.id
                         continue
-
-            return false
+                    
+            return human.mateId?
         #--------------------------------
         #Make a baby
         #--------------------------------

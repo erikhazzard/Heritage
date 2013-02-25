@@ -31,7 +31,9 @@ define(['lib/d3'], (d3)->
             #  When it is pregnant, it uses twice the amount of resources
             #NOTE: These are not used if entity is male
             @isPregnant = false
-            @pregnancyChance = Math.round(Math.random() * 100) / 100
+            @pregnancyChance = Math.random()
+            @findMateChance = Math.random()
+            
             @gestationLength = 0.9
             #when entity is pregnant, this is set to gestationLength
             #  and descreased by some number each tick

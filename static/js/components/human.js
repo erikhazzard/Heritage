@@ -13,7 +13,8 @@
         this.resources = params.resources || 100;
         this.sex = ['male', 'female'][Math.random() * 2 | 0];
         this.isPregnant = false;
-        this.pregnancyChance = Math.round(Math.random() * 100) / 100;
+        this.pregnancyChance = Math.random();
+        this.findMateChance = Math.random();
         this.gestationLength = 0.9;
         this.gestationTimeLeft = 0;
         this.mateId = null;

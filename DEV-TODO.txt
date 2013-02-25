@@ -1,4 +1,11 @@
 # TODO #
+## MAIN ##
+-Fix world wrapper in renderer
+-Fix spawner
+
+
+
+
 ### World ###
 -Extract world logic from component to system
     -Write unit tests for it

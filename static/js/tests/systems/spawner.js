@@ -8,12 +8,30 @@
       entityFemale = Assemblages.human();
       entityMale.components.position.x = 10;
       entityMale.components.position.y = 10;
+      entityMale.components.human.age = 22;
+      entityMale.components.human.sex = 'male';
       entityFemale.components.position.x = 10;
       entityFemale.components.position.y = 11;
+      entityFemale.components.human.age = 22;
+      entityFemale.components.human.sex = 'female';
+      entityFemale.components.human.findMateChance = 1;
+      entityFemale.components.human.pregnancyChance = 1;
       entities = new Entities().add(entityMale).add(entityFemale);
       spawner = new Spawner(entities);
-      return it('should find mate', function() {
-        return consolespawner.findMate(entityMale, [entityMale.id]);
+      it('should have no mate', function() {
+        var hasMate;
+        hasMate = entityFemale.components.human.mateId != null;
+        return hasMate.should.be["false"];
+      });
+      it('should find a mate', function() {
+        return spawner.findMate(entityFemale, [entityMale.id]).should.be["true"];
+      });
+      return it('female and males should be mates', function() {
+        var hasMate;
+        hasMate = entityFemale.components.human.mateId != null;
+        hasMate.should.be["true"];
+        entityFemale.components.human.mateId.should.equal(entityMale.id);
+        return entityMale.components.human.mateId.should.equal(entityFemale.id);
       });
     });
   });

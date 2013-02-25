@@ -37,7 +37,7 @@
         if (human.sex === 'male' || human.age < 20 || human.age > 64 || resources < 15) {
           return false;
         }
-        if (human.mateId) {
+        if (human.mateId != null) {
           if (neighbors.indexOf(human.mateId) > -1) {
             if (Math.random() < human.pregnancyChance) {
               human.isPregnant = true;
@@ -74,8 +74,8 @@
             if (human.mateId !== null && human.mateId !== neighbor.id) {
               continue;
             }
-            if (neighborHuman.mateId === null) {
-              if (Math.random() < 0.06) {
+            if (!(neighborHuman.mateId != null)) {
+              if (Math.random() < human.findMateChance) {
                 neighborHuman.mateId = entity.id;
                 human.mateId = neighbor.id;
               } else {
@@ -86,7 +86,7 @@
             }
           }
         }
-        return false;
+        return human.mateId != null;
       };
 
       Spawner.prototype.makeBaby = function(entity, neighbors) {
