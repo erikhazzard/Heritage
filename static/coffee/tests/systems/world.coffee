@@ -33,6 +33,13 @@ define(['systems/world', 'components/world',
         humanWorld = entityHuman.components.world
         
         describe('getNeighbors tests', ()->
+            it('when radius is negative, radius should be 0', ()->
+                #If cell size is 1, there are no entities which occupy same cell
+                WorldComponent.cellSize = 1
+                world.tick()
+                humanWorld.getNeighbors(-5).should.deep.equal([])
+                humanWorld.neighborsByRadius[0].should.deep.equal([])
+            )
             it('when radius is 0, should only get neighbors which occupy same cell', ()->
                 #If cell size is 1, there are no entities which occupy same cell
                 WorldComponent.cellSize = 1
@@ -60,15 +67,27 @@ define(['systems/world', 'components/world',
                 humanWorld.neighborsByRadius[2].should.deep.equal([entityZombie.id])
             )
 
-            it('should not return duplicate IDs when radius is huge', ()->
+            it('should test getNeighborsByRadius function', ()->
                 #This should get ALL neighbors
                 #NOTE: this kind of call should never happen
-                WorldComponent.cellSize = 1000
+                WorldComponent.cellSize = 2
                 world.tick()
-                neighbors = [entityZombie.id, entityZombie2.id]
+                hasNeighbors = humanWorld.neighborsByRadius[4]?
+                hasNeighbors.should.equal(false)
 
-                humanWorld.getNeighbors(30).should.deep.equal(neighbors)
-                humanWorld.neighborsByRadius[30].should.deep.equal(neighbors)
+                humanWorld.getNeighbors(4).should.deep.equal([entityZombie.id])
+
+                hasNeighbors = humanWorld.neighborsByRadius[4]?
+                hasNeighbors.should.equal(true)
+            )
+
+            it('should clear neighborsByRadius each tick', ()->
+                #This should get ALL neighbors
+                #NOTE: this kind of call should never happen
+                WorldComponent.cellSize = 2
+                world.tick()
+                hasNeighbors = humanWorld.neighborsByRadius[2]?
+                hasNeighbors.should.be.false
             )
 
         )

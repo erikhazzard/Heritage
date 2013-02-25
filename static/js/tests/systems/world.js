@@ -19,6 +19,12 @@
       WorldComponent.cellSize = 4;
       humanWorld = entityHuman.components.world;
       return describe('getNeighbors tests', function() {
+        it('when radius is negative, radius should be 0', function() {
+          WorldComponent.cellSize = 1;
+          world.tick();
+          humanWorld.getNeighbors(-5).should.deep.equal([]);
+          return humanWorld.neighborsByRadius[0].should.deep.equal([]);
+        });
         it('when radius is 0, should only get neighbors which occupy same cell', function() {
           WorldComponent.cellSize = 1;
           world.tick();
@@ -41,13 +47,22 @@
           humanWorld.getNeighbors(2).should.deep.equal([entityZombie.id]);
           return humanWorld.neighborsByRadius[2].should.deep.equal([entityZombie.id]);
         });
-        return it('should not return duplicate IDs when radius is huge', function() {
-          var neighbors;
-          WorldComponent.cellSize = 1000;
+        it('should test getNeighborsByRadius function', function() {
+          var hasNeighbors;
+          WorldComponent.cellSize = 2;
           world.tick();
-          neighbors = [entityZombie.id, entityZombie2.id];
-          humanWorld.getNeighbors(30).should.deep.equal(neighbors);
-          return humanWorld.neighborsByRadius[30].should.deep.equal(neighbors);
+          hasNeighbors = humanWorld.neighborsByRadius[4] != null;
+          hasNeighbors.should.equal(false);
+          humanWorld.getNeighbors(4).should.deep.equal([entityZombie.id]);
+          hasNeighbors = humanWorld.neighborsByRadius[4] != null;
+          return hasNeighbors.should.equal(true);
+        });
+        return it('should clear neighborsByRadius each tick', function() {
+          var hasNeighbors;
+          WorldComponent.cellSize = 2;
+          world.tick();
+          hasNeighbors = humanWorld.neighborsByRadius[2] != null;
+          return hasNeighbors.should.be["false"];
         });
       });
     });

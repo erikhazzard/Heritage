@@ -156,23 +156,6 @@ define(['components/vector'], (Vector)->
                     if entity.hasComponent('randomWalker')
                         physics.applyForce( entity.components.randomWalker.walkForce() )
                         
-                    #BOIDS / Flocking  - TODO: own system?
-                    #------------------------
-                    if entity.hasComponent('flocking')
-                        #Only flock with same type of creature
-                        if entity.hasComponent('human')
-                            entity.components.flocking.flock(
-                                @entities.entitiesIndex.human
-                            )
-                            
-                        #Zombies try to flock together
-                        if entity.hasComponent('zombie')
-                            entity.components.flocking.flock(
-                                @entities.entitiesIndex.zombie,
-                                #make the multiplier for flocking a bit smaller
-                                0.7
-                            )
-                            
                     #------------------------
                     #Human movement - TODO: own system?
                     #------------------------

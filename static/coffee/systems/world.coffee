@@ -18,6 +18,9 @@ define(['components/world'], (WorldComponent)->
         #Helpers
         #
         #--------------------------------
+        getGrid: ()->
+            return WorldComponent.grid
+
         getCellFromPosition: (position)->
             #Gets cell i / j from position
             i = Math.floor(position.y / WorldComponent.cellSize)
@@ -37,6 +40,9 @@ define(['components/world'], (WorldComponent)->
             for id, entity of @entities.entitiesIndex['world']
                 #Update the grid with this entity's position
                 world = entity.components.world
+
+                #Reset neighbors lookup each tick
+                world.neighborsByRadius.length = 0
                 
                 #On each game tick, update the game world
                 position = entity.components.position

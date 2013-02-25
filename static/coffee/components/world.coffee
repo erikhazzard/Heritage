@@ -45,24 +45,44 @@ define([], ()->
             @height = params.height || World.width
             @canvas = params.canvas || World.canvas
             @context = params.context || World.context
-            @neighborsByRadius = {}
+            @neighborsByRadius = []
             
             #World config
             return @
         
+
         getNeighbors: (radius)->
-            #TODO: This probably shouldn't live here
-            #Gets the cells in a radius around this cell
+            #If the neighborsByRadius object exists for the radius, return it
+            #  otherweise create it
+
+            #Check radius
             if radius?
                 radius = radius
             else
                 radius = 1
+            #If it's negative, set it to 0
+            if radius < 1
+                radius = 0
 
+            #Try to lookup neighbors
+            neighbors = []
+            if @neighborsByRadius[radius]
+                neighbors = @neighborsByRadius[radius]
+            else
+                #Get neighbors and update lookup
+                neighbors = @calculateNeighbors(radius)
+                @neighborsByRadius[radius] = neighbors
+
+            return neighbors
+
+        calculateNeighbors: (radius)->
+            #TODO: This probably shouldn't live here
+            #Gets the cells in a radius around this cell
             neighbors = []
                 
             #If radius is less than 1, only check for entities
             #  in the same cell as this entity
-            if radius < 1
+            if radius == 0
                 if World.grid[@i] and World.grid[@i][@j]
                     targetEntities = World.grid[@i][@j]
                     #Target
@@ -99,9 +119,7 @@ define([], ()->
                                     #make sure the ID has not been added
                                     if entityId not in neighbors
                                         neighbors.push(entityId)
-                    
-
-            @neighborsByRadius[radius] = neighbors
+                     
             return neighbors
 
     return World

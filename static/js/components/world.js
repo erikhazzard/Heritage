@@ -33,19 +33,34 @@
         this.height = params.height || World.width;
         this.canvas = params.canvas || World.canvas;
         this.context = params.context || World.context;
-        this.neighborsByRadius = {};
+        this.neighborsByRadius = [];
         return this;
       }
 
       World.prototype.getNeighbors = function(radius) {
-        var entityId, i, j, neighbors, targetEntities, targetI, targetJ, _i, _j, _k, _l, _len, _len1;
+        var neighbors;
         if (radius != null) {
           radius = radius;
         } else {
           radius = 1;
         }
-        neighbors = [];
         if (radius < 1) {
+          radius = 0;
+        }
+        neighbors = [];
+        if (this.neighborsByRadius[radius]) {
+          neighbors = this.neighborsByRadius[radius];
+        } else {
+          neighbors = this.calculateNeighbors(radius);
+          this.neighborsByRadius[radius] = neighbors;
+        }
+        return neighbors;
+      };
+
+      World.prototype.calculateNeighbors = function(radius) {
+        var entityId, i, j, neighbors, targetEntities, targetI, targetJ, _i, _j, _k, _l, _len, _len1;
+        neighbors = [];
+        if (radius === 0) {
           if (World.grid[this.i] && World.grid[this.i][this.j]) {
             targetEntities = World.grid[this.i][this.j];
             for (_i = 0, _len = targetEntities.length; _i < _len; _i++) {
@@ -86,7 +101,6 @@
             }
           }
         }
-        this.neighborsByRadius[radius] = neighbors;
         return neighbors;
       };
 

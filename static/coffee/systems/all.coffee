@@ -16,7 +16,7 @@
 #============================================================================
 define([
     'systems/userMovable',
-    'systems/renderer',
+    'systems/flocking',
     'systems/physics',
     
     'systems/human',
@@ -27,12 +27,15 @@ define([
     'systems/combat',
 
     'systems/userInterface',
+    'systems/renderer',
     'systems/logger'
 
-    ], (UserMovable, Renderer, Physics,
+    ], (UserMovable,
+    Flocking, Physics,
     Human, Zombie,
     World, Spawner, Combat, UserInterface,
-    Logger
+    Renderer,
+    Logger,
     )->
     class Systems
         constructor: (entities)->
@@ -45,10 +48,14 @@ define([
                 #Check for user input
                 new UserMovable(@entities)
 
+                #Flocking (modifies physics)
+                new Flocking(@entities)
                 #Then update its position based on physics
                 new Physics(@entities)
                 
                 #And then the grid / get its neighbors
+                #TODO: Make sure position of this comes last-ish
+                #  grid should get updated AFTER movement has happened
                 new World(@entities)
                 
                 #Perform any fights

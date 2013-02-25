@@ -104,14 +104,6 @@
             if (entity.hasComponent('randomWalker')) {
               physics.applyForce(entity.components.randomWalker.walkForce());
             }
-            if (entity.hasComponent('flocking')) {
-              if (entity.hasComponent('human')) {
-                entity.components.flocking.flock(this.entities.entitiesIndex.human);
-              }
-              if (entity.hasComponent('zombie')) {
-                entity.components.flocking.flock(this.entities.entitiesIndex.zombie, 0.7);
-              }
-            }
             if (entity.hasComponent('human') && !entity.hasComponent('userMovable')) {
               this.humanZombieBehavior(entity);
               human = entity.components.human;

@@ -12,6 +12,10 @@
         return this;
       }
 
+      World.prototype.getGrid = function() {
+        return WorldComponent.grid;
+      };
+
       World.prototype.getCellFromPosition = function(position) {
         var i, j;
         i = Math.floor(position.y / WorldComponent.cellSize);
@@ -26,6 +30,7 @@
         for (id in _ref) {
           entity = _ref[id];
           world = entity.components.world;
+          world.neighborsByRadius.length = 0;
           position = entity.components.position;
           cell = this.getCellFromPosition(position);
           i = cell[0];

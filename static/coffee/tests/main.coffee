@@ -38,11 +38,11 @@ require(['require', 'lib/chai', 'lib/mocha'], (require,chai)->
         'tests/components/position',
         'tests/components/physics',
         'tests/components/randomWalker',
-        'tests/components/flocking',
 
         'tests/systems/combat',
         'tests/systems/human',
         'tests/systems/zombie',
+        'tests/systems/flocking',
         'tests/systems/physics',
         'tests/systems/spawner',
         'tests/systems/world',
