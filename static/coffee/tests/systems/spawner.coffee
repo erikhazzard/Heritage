@@ -28,24 +28,43 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
             .add(entityMale)
             .add(entityFemale)
         spawner = new Spawner(entities)
-            
-        it('should have no mate', ()->
-            hasMate = entityFemale.components.human.mateId?
-            hasMate.should.be.false
-        )
-        it('should find a mate', ()->
-            spawner.findMate(entityFemale, [entityMale.id]).should.be.true
-        )
-        it('female and males should be mates', ()->
-            hasMate = entityFemale.components.human.mateId?
-            hasMate.should.be.true
-            #Male and female should be mates
-            entityFemale.components.human.mateId.should.equal(
-                entityMale.id
+
+        #--------------------------------    
+        #Find mate
+        #--------------------------------    
+        describe('findMate()', ()->
+            it('should have no mate', ()->
+                hasMate = entityFemale.components.human.mateId?
+                hasMate.should.be.false
             )
-            entityMale.components.human.mateId.should.equal(
-                entityFemale.id
+            it('should find a mate', ()->
+                spawner.findMate(entityFemale, [entityMale.id]).should.be.true
             )
+            it('female and males should be mates', ()->
+                hasMate = entityFemale.components.human.mateId?
+                hasMate.should.be.true
+                #Male and female should be mates
+                entityFemale.components.human.mateId.should.equal(
+                    entityMale.id
+                )
+                entityMale.components.human.mateId.should.equal(
+                    entityFemale.id
+                )
+            )
+        )
+
+        #--------------------------------    
+        #Concieve
+        #--------------------------------    
+        describe('conceive()', ()->
+            #TESTS FOR GETTING ENTITY PREGNANT
+        )
+        
+        #--------------------------------    
+        #Make Baby
+        #--------------------------------    
+        describe('makeBaby()', ()->
+            #TESTS FOR MAKING A BABY
         )
     )
 )
