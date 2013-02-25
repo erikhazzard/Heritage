@@ -34,8 +34,8 @@
         entity.components.position.x = 250;
         entity.components.position.y = 250;
         this.entities.add(entity);
-        while (i < 150) {
-          if (Math.random() < 0.3) {
+        while (i < 100) {
+          if (Math.random() < 0.00003) {
             entity = Assemblages.zombie();
             entity.components.combat.attack = Math.random() * 10 | 0;
             entity.components.combat.defense = Math.random() * 5 | 0;
