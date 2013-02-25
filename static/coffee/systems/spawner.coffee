@@ -46,16 +46,20 @@ define(['entity', 'systems/human'], (Entity, Human)->
             #even if entity gets knocked up, it can't make a baby yet
             return false
         
-
-
         #--------------------------------
         #Attempt conception
         #--------------------------------
         conceive: (entity, neighbors)->
             #Try to make a baby
             #Already pregnant
-            if human.igPregnant
+            human = entity.components.human
+            resources = entity.components.resources.resources
+           
+            if human.isPregnant
                 return true
+
+            if human.sex == 'male' or human.age < 20 or human.age > 64 or resources < 15
+                return false
 
             if human.mateId
                 if neighbors.indexOf(human.mateId) > -1
@@ -73,9 +77,6 @@ define(['entity', 'systems/human'], (Entity, Human)->
 
             #If it has a mate, return false
             if human.mateId?
-                return false
-
-            if human.age < 20 or human.age > 64 or resources < 15
                 return false
             
             #Find a mate for this entity
@@ -170,21 +171,23 @@ define(['entity', 'systems/human'], (Entity, Human)->
                     continue
 
                 #Birth?
-                #   1. Can entity become pregnant
-                #   2. Can entity give birth
-                #------------------------
+                #1. Check to see if canBirth is true. If so, make a baby.
+                #2. Check to see if entity has a mate. If not, try to find one
+                #3. If entity has a mate, and is not pregnant, try to conceive
                 #NOTE: not far enough
-                #neighbors = entity.components.world.neighbors
                 
                 neighbors = entity.components.world.getNeighbors(3)
                 canBirth = @canBirth(entity, neighbors)
 
-                #find a mate for this entity if it doesn't have one
-                @findMate(entity, neighbors)
-                
                 #Make a baby
                 if canBirth
                     @makeBaby(entity)
+                    continue
+                
+                #find a mate for this entity if it doesn't have one
+                @findMate(entity, neighbors)
+                @conceive(entity, neighbors)
+                
                     
             return @
     

@@ -28,8 +28,14 @@
       };
 
       Spawner.prototype.conceive = function(entity, neighbors) {
-        if (human.igPregnant) {
+        var human, resources;
+        human = entity.components.human;
+        resources = entity.components.resources.resources;
+        if (human.isPregnant) {
           return true;
+        }
+        if (human.sex === 'male' || human.age < 20 || human.age > 64 || resources < 15) {
+          return false;
         }
         if (human.mateId) {
           if (neighbors.indexOf(human.mateId) > -1) {
@@ -45,9 +51,6 @@
         var human, neighbor, neighborHuman, neighborId, parentIndex, _i, _len, _ref;
         human = entity.components.human;
         if (human.mateId != null) {
-          return false;
-        }
-        if (human.age < 20 || human.age > 64 || resources < 15) {
           return false;
         }
         for (_i = 0, _len = neighbors.length; _i < _len; _i++) {
@@ -117,10 +120,12 @@
           }
           neighbors = entity.components.world.getNeighbors(3);
           canBirth = this.canBirth(entity, neighbors);
-          this.findMate(entity, neighbors);
           if (canBirth) {
             this.makeBaby(entity);
+            continue;
           }
+          this.findMate(entity, neighbors);
+          this.conceive(entity, neighbors);
         }
         return this;
       };

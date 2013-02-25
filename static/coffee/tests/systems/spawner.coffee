@@ -1,14 +1,28 @@
 #========================================
 #TEST - System - spawner
 #========================================
-define(['systems/spawner', 'entity', 'entities'], (Spawner, Entity, Entities)->
+define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
+    Spawner, Entity, Entities, Assemblages)->
     #--------------------------------
     #Basic tests
     #--------------------------------
-    describe('Spawner: Base Tests', ()->
-        it('should successfully create an entity', ()->
-            a = new Entity()
-            a.components.should.deep.equal({})
+    describe('Spawner System', ()->
+        entityMale = Assemblages.human()
+        entityFemale = Assemblages.human()
+            
+        #make them next to each other
+        entityMale.components.position.x = 10
+        entityMale.components.position.y = 10
+        
+        entityFemale.components.position.x = 10
+        entityFemale.components.position.y = 11
+        
+        entities = new Entities()
+            .add(entityMale)
+            .add(entityFemale)
+        spawner = new Spawner(entities)
+            
+        it('should exist', ()->
         )
     )
 )
