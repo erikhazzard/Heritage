@@ -2,6 +2,7 @@
 ## MAIN ##
 -Fix world wrapper in renderer
 -Fix spawner
+    -Think about spawner - make a subsystem of human?
 
 
 
