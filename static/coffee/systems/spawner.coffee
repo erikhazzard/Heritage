@@ -64,8 +64,9 @@ define(['entity', 'systems/human'], (Entity, Human)->
             if human.mateId?
                 if neighbors.indexOf(human.mateId) > -1
                     if Math.random() < human.pregnancyChance
-                        #initiate coitus 
+                        #impregnante it
                         human.isPregnant = true
+                        human.gestationTimeLeft = human.gestationLength
 
             return human.isPregnant
 

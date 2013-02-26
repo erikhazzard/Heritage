@@ -20,9 +20,6 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
         entityFemale.components.position.y = 11
         entityFemale.components.human.age = 22
         entityFemale.components.human.sex = 'female'
-        #always find first mate
-        entityFemale.components.human.findMateChance = 1
-        entityFemale.components.human.pregnancyChance = 1
         
         entities = new Entities()
             .add(entityMale)
@@ -33,6 +30,9 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
         #Find mate
         #--------------------------------    
         describe('findMate()', ()->
+            #always find first mate
+            entityFemale.components.human.findMateChance = 1
+            
             it('should have no mate', ()->
                 hasMate = entityFemale.components.human.mateId?
                 hasMate.should.be.false
@@ -58,6 +58,24 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
         #--------------------------------    
         describe('conceive()', ()->
             #TESTS FOR GETTING ENTITY PREGNANT
+            it('should not get pregnant if chance is 0', ()->
+                entityFemale.components.human.pregnancyChance = 0
+                entityFemale.components.human.isPregnant.should.be.false
+                spawner.conceive(entityFemale, [entityMale.id])
+                entityFemale.components.human.isPregnant.should.be.false
+            )
+            
+            it('should get pregnant if chance is 1', ()->
+                entityFemale.components.human.pregnancyChance = 1
+                entityFemale.components.human.isPregnant.should.be.false
+                spawner.conceive(entityFemale, [entityMale.id])
+                #When human is pregnant, the gestationTimeLeft should equal the 
+                #   gestationLength
+                entityFemale.components.human.isPregnant.should.be.true
+                entityFemale.components.human.gestationTimeLeft.should.equal(
+                    entityFemale.components.human.gestationLength
+                )
+            )
         )
         
         #--------------------------------    
@@ -65,6 +83,9 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
         #--------------------------------    
         describe('makeBaby()', ()->
             #TESTS FOR MAKING A BABY
+            it('should make a baby when it can', ()->
+
+            )
         )
     )
 )

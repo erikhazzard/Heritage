@@ -14,11 +14,10 @@
       entityFemale.components.position.y = 11;
       entityFemale.components.human.age = 22;
       entityFemale.components.human.sex = 'female';
-      entityFemale.components.human.findMateChance = 1;
-      entityFemale.components.human.pregnancyChance = 1;
       entities = new Entities().add(entityMale).add(entityFemale);
       spawner = new Spawner(entities);
       describe('findMate()', function() {
+        entityFemale.components.human.findMateChance = 1;
         it('should have no mate', function() {
           var hasMate;
           hasMate = entityFemale.components.human.mateId != null;
@@ -35,8 +34,24 @@
           return entityMale.components.human.mateId.should.equal(entityFemale.id);
         });
       });
-      describe('conceive()', function() {});
-      return describe('makeBaby()', function() {});
+      describe('conceive()', function() {
+        it('should not get pregnant if chance is 0', function() {
+          entityFemale.components.human.pregnancyChance = 0;
+          entityFemale.components.human.isPregnant.should.be["false"];
+          spawner.conceive(entityFemale, [entityMale.id]);
+          return entityFemale.components.human.isPregnant.should.be["false"];
+        });
+        return it('should get pregnant if chance is 1', function() {
+          entityFemale.components.human.pregnancyChance = 1;
+          entityFemale.components.human.isPregnant.should.be["false"];
+          spawner.conceive(entityFemale, [entityMale.id]);
+          entityFemale.components.human.isPregnant.should.be["true"];
+          return entityFemale.components.human.gestationTimeLeft.should.equal(entityFemale.components.human.gestationLength);
+        });
+      });
+      return describe('makeBaby()', function() {
+        return it('should make a baby when it can', function() {});
+      });
     });
   });
 

@@ -41,6 +41,7 @@
           if (neighbors.indexOf(human.mateId) > -1) {
             if (Math.random() < human.pregnancyChance) {
               human.isPregnant = true;
+              human.gestationTimeLeft = human.gestationLength;
             }
           }
         }
