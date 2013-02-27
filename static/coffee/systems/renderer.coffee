@@ -20,6 +20,9 @@ define(['components/world'], (World)->
             @entities = entities
             @canvasHalfWidth = canvas.width / 2
             @canvasHalfHeight = canvas.height / 2
+            @healthScale = d3.scale.linear()
+                .domain([0, 100])
+                .range([0, 20])
             return @
             
         tick: (delta)=>
@@ -137,10 +140,26 @@ define(['components/world'], (World)->
                         context.restore()
 
                 #ZOMBIE
+                #------------------------
                 if entity.hasComponent('zombie')
                     entityFill = 'rgba(255,100,100,1)'
+                    
+                #Draw HEALTH bar
+                #------------------------
+                if entity.components.health
+                    healthSize = @healthScale(entity.components.health.health)
+                    context.save()
+                    context.beginPath()
+                    context.moveTo(targetX - size, targetY - size - 10)
+                    context.lineTo(targetX + healthSize, targetY - size - 10)
+                    context.fillStyle = 'rgba(0,0,0,1)'
+                    context.fill()
+                    context.stroke()
+                    context.closePath()
+                    context.restore()
 
                 #Draw PC entity
+                #------------------------
                 context.save()
                 context.fillStyle= entityFill
                 context.fillRect(
@@ -151,6 +170,7 @@ define(['components/world'], (World)->
                 )
                 context.restore()
                 
+                #Draw outline around entity
                 if entity.hasComponent('userMovable')
                     context.save()
                     context.strokeStyle = 'rgba(100,150,200,1)'
@@ -164,6 +184,7 @@ define(['components/world'], (World)->
                     context.restore()
 
                 #COMBAT
+                #------------------------
                 if entity.hasComponent('combat')
                     if entity.components.combat.canAttack
                         context.save()

@@ -13,7 +13,7 @@ define([], ()->
             params = params || {}
             @entity = entity
 
-            @range = params.range || 4
+            @range = params.range || 3
             @baseRange = @range
             
             @defense = params.defense || 0

@@ -37,7 +37,10 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
             damage = combat.attack
 
             #Subtract the enemy attack damage with the entity's defense
-            damage -= enemyCombat.defense
+            damage -= (enemyCombat.defense / 2)
+            #If damage is mitigated because of enemy defense, do SOME damage
+            if damage < 0
+                damage = combat.attack * 0.02
             
             #Never return a negative number
             if damage < 0

@@ -80,7 +80,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             else if resources.resources > 100
                 modifier = (resources.resources / 4) * 0.1
                 combat.attack = combat.baseAttack + (modifier) | 0
-                combat.defense = combat.baseDefense + (modifier) | 0
+                combat.defense = combat.baseDefense + (modifier / 4 | 0)
             else
                 combat.attack = combat.baseAttack
                 combat.defense = combat.baseDefense

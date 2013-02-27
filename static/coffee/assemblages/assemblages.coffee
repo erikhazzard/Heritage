@@ -24,8 +24,8 @@ define(['entity', 'lib/d3'], (Entity, d3) ->
             entity = @baseCreature()
                 .addComponent('human')
                 .addComponent('combat', {
-                    defense: d3.random.normal(10,5)() | 0
-                    attack: d3.random.normal(10,5)() | 0
+                    defense: d3.random.normal(12,5)() | 0
+                    attack: d3.random.normal(12,5)() | 0
                 })
 
             return entity
