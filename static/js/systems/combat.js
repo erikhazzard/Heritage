@@ -24,7 +24,10 @@
         var damage;
         damage = 0;
         damage = combat.attack;
-        damage -= enemyCombat.defense;
+        damage -= enemyCombat.defense / 2;
+        if (damage < 0) {
+          damage = combat.attack * 0.02;
+        }
         if (damage < 0) {
           damage = 0;
         }

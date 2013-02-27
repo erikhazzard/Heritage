@@ -15,11 +15,12 @@
         this.entities = entities;
         this.canvasHalfWidth = canvas.width / 2;
         this.canvasHalfHeight = canvas.height / 2;
+        this.healthScale = d3.scale.linear().domain([0, 100]).range([0, 20]);
         return this;
       }
 
       Renderer.prototype.tick = function(delta) {
-        var alpha, entity, entityFill, id, renderPosition, size, targetX, targetY, _ref, _ref1;
+        var alpha, entity, entityFill, healthSize, id, renderPosition, size, targetX, targetY, _ref, _ref1;
         canvas.width = canvas.width;
         miniMapCanvas.width = miniMapCanvas.width;
         this.camera = {
@@ -79,6 +80,18 @@
           }
           if (entity.hasComponent('zombie')) {
             entityFill = 'rgba(255,100,100,1)';
+          }
+          if (entity.components.health) {
+            healthSize = this.healthScale(entity.components.health.health);
+            context.save();
+            context.beginPath();
+            context.moveTo(targetX - size, targetY - size - 10);
+            context.lineTo(targetX + healthSize, targetY - size - 10);
+            context.fillStyle = 'rgba(0,0,0,1)';
+            context.fill();
+            context.stroke();
+            context.closePath();
+            context.restore();
           }
           context.save();
           context.fillStyle = entityFill;

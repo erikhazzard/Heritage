@@ -55,23 +55,23 @@
         human = entity.components.human;
         maxSpeed = 0;
         if (human.age < 2) {
-          maxSpeed = 2;
+          maxSpeed = 3;
         } else if (human.age < 10) {
-          maxSpeed = 4;
+          maxSpeed = 5;
         } else if (human.age < 60) {
           maxSpeed = 8;
         } else if (human.age < 70) {
-          maxSpeed = 3;
+          maxSpeed = 4;
         } else {
-          maxSpeed = 2;
+          maxSpeed = 3;
         }
-        maxSpeed = maxSpeed - neighbors.length;
+        maxSpeed = maxSpeed - (neighbors.length * 0.5);
         if (maxSpeed < 0) {
-          maxSpeed = 0.2;
+          maxSpeed = 1;
         }
-        maxForce = 0.5 - (neighbors.length / 10);
+        maxForce = 0.5 - (neighbors.length * 0.1);
         if (human.health < 50) {
-          maxSped -= 1 / (human.health * 0.2);
+          maxSped -= 1 / (human.health * 0.1);
         }
         physics.maxSpeed = maxSpeed;
         physics.maxForce = maxForce;
@@ -86,7 +86,7 @@
         resources = entity.components.resources;
         human.age += human.ageSpeed;
         if (physics) {
-          neighbors = entity.components.world.getNeighbors(5);
+          neighbors = entity.components.world.getNeighbors(4);
           this.updateMaxSpeed(entity, neighbors);
         }
         resources.resources = this.calculateResources(entity);

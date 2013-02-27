@@ -5,6 +5,8 @@
     -Think about spawner - make a subsystem of human?
 
 -ADD INTERNAL COUNT FOR ENTITIES
+-WORLD CELL NEIGHBORS OPTIMIZATIONS
+-Human / zombie chase / flee behavior - make much bigger
 
 
 
