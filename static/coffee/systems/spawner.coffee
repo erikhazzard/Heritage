@@ -50,8 +50,7 @@ define(['entity', 'systems/human'], (Entity, Human)->
         #Attempt conception
         #--------------------------------
         conceive: (entity, neighbors)->
-            #Try to make a baby
-            #Already pregnant
+            #Try to impregnante entity
             human = entity.components.human
             resources = entity.components.resources.resources
            
