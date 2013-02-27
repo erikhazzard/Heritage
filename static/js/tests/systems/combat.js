@@ -25,14 +25,14 @@
           humanCombat.attack = 2;
           zombieCombat.defense = 1;
           damage = combat.calculateDamage(humanCombat, zombieCombat);
-          return damage.should.equal(1);
+          return damage.should.equal(1.5);
         });
         it('should return proper damage (attack === defense)', function() {
           var damage;
           humanCombat.attack = 1;
           zombieCombat.defense = 1;
           damage = combat.calculateDamage(humanCombat, zombieCombat);
-          return damage.should.equal(0);
+          return damage.should.equal(0.5);
         });
         it('should return proper damage (attack much > defense)', function() {
           var damage;
@@ -59,14 +59,20 @@
         entityHuman.components.position.y = 10;
         entityHuman.components.health.health = 100;
         entityHuman.components.combat.attack = 10;
+        entityHuman.components.combat.baseAttack = 10;
         entityHuman.components.combat.defense = 5;
+        entityHuman.components.combat.baseDefense = 5;
         entityHuman.components.combat.attackDelay = 4;
+        entityHuman.components.combat.baeAttackDelay = 4;
         entityZombie.components.position.x = 10;
         entityZombie.components.position.y = 11;
         entityZombie.components.health.health = 100;
         entityZombie.components.combat.attack = 15;
+        entityZombie.components.combat.baseAttack = 15;
         entityZombie.components.combat.defense = 2;
+        entityZombie.components.combat.baseDefense = 2;
         entityZombie.components.combat.attackDelay = 2;
+        entityZombie.components.combat.baseAttackDelay = 2;
         entities = new Entities().add(entityHuman).add(entityZombie);
         combat = new Combat(entities);
         humanCombat = entityHuman.components.combat;
@@ -78,7 +84,7 @@
           combat.fight(entityHuman, entityZombie);
           humanCombat.canAttack.should.be["false"];
           zombieCombat.canAttack.should.be["true"];
-          zombieHealth.health.should.equal(92);
+          zombieHealth.health.should.equal(91);
           return humanCombat.attackCounter.should.equal(humanCombat.attackDelay + 1);
         });
         it('should not let human attack yet, update delay', function() {
@@ -115,85 +121,93 @@
           return humanCombat.canAttack.should.be["true"];
         });
       });
-      return describe('Combat System: tick()', function() {
-        var combat, entities, entityHuman, entityZombie, humanCombat, humanHealth, world, zombieCombat, zombieHealth;
-        entityHuman = Assemblages.human();
-        entityZombie = Assemblages.zombie();
-        zombieHealth = entityZombie.components.health;
-        humanHealth = entityZombie.components.health;
-        entityHuman.components.position.x = 10;
-        entityHuman.components.position.y = 10;
-        entityHuman.components.health.health = 100;
-        entityHuman.components.combat.attack = 10;
-        entityHuman.components.combat.defense = 5;
-        entityHuman.components.combat.attackDelay = 4;
-        entityZombie.components.position.x = 10;
-        entityZombie.components.position.y = 11;
-        entityZombie.components.health.health = 100;
-        entityZombie.components.combat.attack = 15;
-        entityZombie.components.combat.defense = 2;
-        entityZombie.components.combat.attackDelay = 2;
-        entities = new Entities().add(entityHuman).add(entityZombie);
-        combat = new Combat(entities);
-        humanCombat = entityHuman.components.combat;
-        zombieCombat = entityZombie.components.combat;
-        world = new World(entities);
-        world.tick();
-        it('should fight both the human and zombie', function() {
-          combat.tick(0);
-          entityHuman.components.health.health.should.equal(90);
-          humanCombat.canAttack.should.be["false"];
-          entityZombie.components.health.health.should.equal(92);
-          zombieCombat.canAttack.should.be["false"];
-          humanCombat.attackCounter.should.equal(4);
-          return zombieCombat.attackCounter.should.equal(2);
-        });
-        it('should not fight when tick is called again', function() {
-          combat.tick(1);
-          zombieCombat.canAttack.should.be["false"];
-          humanCombat.canAttack.should.be["false"];
-          entityHuman.components.health.health.should.equal(90);
-          entityZombie.components.health.health.should.equal(92);
-          humanCombat.attackCounter.should.equal(3);
-          humanCombat.canAttack.should.be["false"];
-          zombieCombat.attackCounter.should.equal(1);
-          return zombieCombat.canAttack.should.be["false"];
-        });
-        it('should not fight when tick is called again again', function() {
-          combat.tick(2);
-          entityHuman.components.health.health.should.equal(90);
-          entityZombie.components.health.health.should.equal(92);
-          humanCombat.attackCounter.should.equal(2);
-          humanCombat.canAttack.should.be["false"];
-          zombieCombat.attackCounter.should.equal(0);
-          return zombieCombat.canAttack.should.be["true"];
-        });
-        it('should allow zombie to attack (two ticks have gone by since first attack)', function() {
-          combat.tick(3);
-          entityHuman.components.health.health.should.equal(80);
-          entityZombie.components.health.health.should.equal(92);
-          humanCombat.attackCounter.should.equal(1);
-          humanCombat.canAttack.should.be["false"];
-          zombieCombat.attackCounter.should.equal(2);
-          return zombieCombat.canAttack.should.be["false"];
-        });
-        it('should not fight, but ready to', function() {
-          combat.tick(4);
-          entityHuman.components.health.health.should.equal(80);
-          entityZombie.components.health.health.should.equal(92);
-          humanCombat.attackCounter.should.equal(0);
-          humanCombat.canAttack.should.be["true"];
-          zombieCombat.attackCounter.should.equal(1);
-          return zombieCombat.canAttack.should.be["false"];
-        });
-        return it('should let human fight', function() {
-          combat.tick(5);
-          entityHuman.components.health.health.should.equal(80);
-          entityZombie.components.health.health.should.equal(84);
-          humanCombat.attackCounter.should.equal(4);
-          humanCombat.canAttack.should.be["false"];
-          zombieCombat.attackCounter.should.equal(0);
-          return zombieCombat.canAttack.should.be["true"];
+      return describe('tick()', function() {
+        return describe('Combat System: tick()', function() {
+          var combat, entities, entityHuman, entityZombie, humanCombat, humanHealth, world, zombieCombat, zombieHealth;
+          entityHuman = Assemblages.human();
+          entityZombie = Assemblages.zombie();
+          zombieHealth = entityZombie.components.health;
+          humanHealth = entityZombie.components.health;
+          entityHuman.components.position.x = 10;
+          entityHuman.components.position.y = 10;
+          entityHuman.components.health.health = 100;
+          entityHuman.components.combat.attack = 10;
+          entityHuman.components.combat.baseAttack = 10;
+          entityHuman.components.combat.defense = 5;
+          entityHuman.components.combat.baseDefense = 5;
+          entityHuman.components.combat.attackDelay = 4;
+          entityHuman.components.combat.baeAttackDelay = 4;
+          entityZombie.components.position.x = 10;
+          entityZombie.components.position.y = 11;
+          entityZombie.components.health.health = 100;
+          entityZombie.components.combat.attack = 15;
+          entityZombie.components.combat.baseAttack = 15;
+          entityZombie.components.combat.defense = 2;
+          entityZombie.components.combat.baseDefense = 2;
+          entityZombie.components.combat.attackDelay = 2;
+          entityZombie.components.combat.baseAttackDelay = 2;
+          entities = new Entities().add(entityHuman).add(entityZombie);
+          combat = new Combat(entities);
+          humanCombat = entityHuman.components.combat;
+          zombieCombat = entityZombie.components.combat;
+          world = new World(entities);
+          world.tick();
+          it('should fight both the human and zombie', function() {
+            combat.tick(0);
+            entityHuman.components.health.health.should.equal(87.5);
+            humanCombat.canAttack.should.be["false"];
+            entityZombie.components.health.health.should.equal(91);
+            zombieCombat.canAttack.should.be["false"];
+            humanCombat.attackCounter.should.equal(4);
+            return zombieCombat.attackCounter.should.equal(2);
+          });
+          it('should not fight when tick is called again', function() {
+            combat.tick(1);
+            zombieCombat.canAttack.should.be["false"];
+            humanCombat.canAttack.should.be["false"];
+            entityHuman.components.health.health.should.equal(87.5);
+            entityZombie.components.health.health.should.equal(91);
+            humanCombat.attackCounter.should.equal(3);
+            humanCombat.canAttack.should.be["false"];
+            zombieCombat.attackCounter.should.equal(1);
+            return zombieCombat.canAttack.should.be["false"];
+          });
+          it('should not fight when tick is called again again', function() {
+            combat.tick(2);
+            entityHuman.components.health.health.should.equal(87.5);
+            entityZombie.components.health.health.should.equal(91);
+            humanCombat.attackCounter.should.equal(2);
+            humanCombat.canAttack.should.be["false"];
+            zombieCombat.attackCounter.should.equal(0);
+            return zombieCombat.canAttack.should.be["true"];
+          });
+          it('should allow zombie to attack (two ticks have gone by since first attack)', function() {
+            combat.tick(3);
+            entityHuman.components.health.health.should.equal(75);
+            entityZombie.components.health.health.should.equal(91);
+            humanCombat.attackCounter.should.equal(1);
+            humanCombat.canAttack.should.be["false"];
+            zombieCombat.attackCounter.should.equal(2);
+            return zombieCombat.canAttack.should.be["false"];
+          });
+          it('should not fight, but ready to', function() {
+            combat.tick(4);
+            entityHuman.components.health.health.should.equal(75);
+            entityZombie.components.health.health.should.equal(91);
+            humanCombat.attackCounter.should.equal(0);
+            humanCombat.canAttack.should.be["true"];
+            zombieCombat.attackCounter.should.equal(1);
+            return zombieCombat.canAttack.should.be["false"];
+          });
+          return it('should let human fight', function() {
+            combat.tick(5);
+            entityHuman.components.health.health.should.equal(75);
+            entityZombie.components.health.health.should.equal(82);
+            humanCombat.attackCounter.should.equal(4);
+            humanCombat.canAttack.should.be["false"];
+            zombieCombat.attackCounter.should.equal(0);
+            return zombieCombat.canAttack.should.be["true"];
+          });
         });
       });
     });

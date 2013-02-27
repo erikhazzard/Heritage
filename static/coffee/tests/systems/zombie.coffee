@@ -17,14 +17,5 @@ define(['systems/zombie', 'assemblages/assemblages', 'entity', 'entities'], (
         #Update resources
         #
         #------------------------------------
-        it('Should calculate health properly', ()->
-            zombieSystem = new Zombie()
-            entities = new Entities()
-            #add some entities
-            entities.add(Assemblages.zombie())
-                .add( Assemblages.zombie())
-            zombieSystem.calculateHealth.should.not.equal(undefined)
-            
-        )
     )
 )

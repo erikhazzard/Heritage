@@ -1,5 +1,7 @@
 #========================================
 #TEST - System - Combat
+#NOTE: Damage calculation is defense / 2, if < 0 then it's attack * 0.02
+#TODO: better damage algorithm
 #========================================
 define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/assemblages'], (
     Combat, World, Entity, Entities, Assemblages)->
@@ -48,7 +50,7 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
                     #pass in target to fight
                     zombieCombat
                 )
-                damage.should.equal(1)
+                damage.should.equal(1.5)
             )
             it('should return proper damage (attack === defense)', ()->
                 #More damage tests 
@@ -60,7 +62,7 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
                     #pass in target to fight
                     zombieCombat
                 )
-                damage.should.equal(0)
+                damage.should.equal(0.5)
             )
             it('should return proper damage (attack much > defense)', ()->
                 #More damage tests 
@@ -106,15 +108,23 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
             entityHuman.components.position.y = 10
             entityHuman.components.health.health = 100
             entityHuman.components.combat.attack = 10
+            entityHuman.components.combat.baseAttack = 10
             entityHuman.components.combat.defense = 5
+            entityHuman.components.combat.baseDefense = 5
             entityHuman.components.combat.attackDelay = 4
+            entityHuman.components.combat.baeAttackDelay = 4
 
+
+            #ZOMBIE
             entityZombie.components.position.x = 10
             entityZombie.components.position.y = 11
             entityZombie.components.health.health = 100
             entityZombie.components.combat.attack = 15
+            entityZombie.components.combat.baseAttack = 15
             entityZombie.components.combat.defense = 2
+            entityZombie.components.combat.baseDefense = 2
             entityZombie.components.combat.attackDelay = 2
+            entityZombie.components.combat.baseAttackDelay = 2
             
             entities = new Entities()
                 .add(entityHuman)
@@ -140,8 +150,8 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
 
                 #shouldn't affect zombie
                 zombieCombat.canAttack.should.be.true
-                #should have done 8 damage
-                zombieHealth.health.should.equal(92)
+                #should have done 9 damage
+                zombieHealth.health.should.equal(91)
                 humanCombat.attackCounter.should.equal(humanCombat.attackDelay + 1)
             )
             it('should not let human attack yet, update delay', ()->
@@ -189,114 +199,123 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
         #Test tick()
         #
         #--------------------------------
-        describe('Combat System: tick()', ()->
-            #SETUP
-            entityHuman = Assemblages.human()
-            entityZombie = Assemblages.zombie()
-            zombieHealth = entityZombie.components.health
-            humanHealth = entityZombie.components.health
+        describe('tick()', ()->
+            describe('Combat System: tick()', ()->
+                #SETUP
+                entityHuman = Assemblages.human()
+                entityZombie = Assemblages.zombie()
+                zombieHealth = entityZombie.components.health
+                humanHealth = entityZombie.components.health
+                    
+                #make them next to each other
+                entityHuman.components.position.x = 10
+                entityHuman.components.position.y = 10
+                entityHuman.components.health.health = 100
+                entityHuman.components.combat.attack = 10
+                entityHuman.components.combat.baseAttack = 10
+                entityHuman.components.combat.defense = 5
+                entityHuman.components.combat.baseDefense = 5
+                entityHuman.components.combat.attackDelay = 4
+                entityHuman.components.combat.baeAttackDelay = 4
+
+                #ZOMBIE
+                entityZombie.components.position.x = 10
+                entityZombie.components.position.y = 11
+                entityZombie.components.health.health = 100
+                entityZombie.components.combat.attack = 15
+                entityZombie.components.combat.baseAttack = 15
+                entityZombie.components.combat.defense = 2
+                entityZombie.components.combat.baseDefense = 2
+                entityZombie.components.combat.attackDelay = 2
+                entityZombie.components.combat.baseAttackDelay = 2
                 
-            #make them next to each other
-            entityHuman.components.position.x = 10
-            entityHuman.components.position.y = 10
-            entityHuman.components.health.health = 100
-            entityHuman.components.combat.attack = 10
-            entityHuman.components.combat.defense = 5
-            entityHuman.components.combat.attackDelay = 4
+                entities = new Entities()
+                    .add(entityHuman)
+                    .add(entityZombie)
+                
+                #When they're next to each other, they should fight
+                combat = new Combat(entities)
+                humanCombat = entityHuman.components.combat
+                zombieCombat = entityZombie.components.combat
+                #Must call world tick to setup grid
+                world = new World(entities)
+                world.tick()
 
-            entityZombie.components.position.x = 10
-            entityZombie.components.position.y = 11
-            entityZombie.components.health.health = 100
-            entityZombie.components.combat.attack = 15
-            entityZombie.components.combat.defense = 2
-            entityZombie.components.combat.attackDelay = 2
-            
-            entities = new Entities()
-                .add(entityHuman)
-                .add(entityZombie)
-            
-            #When they're next to each other, they should fight
-            combat = new Combat(entities)
-            humanCombat = entityHuman.components.combat
-            zombieCombat = entityZombie.components.combat
-            #Must call world tick to setup grid
-            world = new World(entities)
-            world.tick()
+                it('should fight both the human and zombie', ()->
+                    combat.tick(0)
+                    #Should update health for both entities
+                    # 100 health - (15 zombie attack - 5 human defense)
+                    entityHuman.components.health.health.should.equal(87.5)
+                    humanCombat.canAttack.should.be.false
 
-            it('should fight both the human and zombie', ()->
-                combat.tick(0)
-                #Should update health for both entities
-                # 100 health - (15 zombie attack - 5 human defense)
-                entityHuman.components.health.health.should.equal(90)
-                humanCombat.canAttack.should.be.false
+                    # 100 health - (10 human attack - 2 zombie defense)
+                    entityZombie.components.health.health.should.equal(91)
+                    zombieCombat.canAttack.should.be.false
 
-                # 100 health - (10 human attack - 2 zombie defense)
-                entityZombie.components.health.health.should.equal(92)
-                zombieCombat.canAttack.should.be.false
+                    #counter should be the delay, as the update is called at end of tick
+                    humanCombat.attackCounter.should.equal(4)
+                    zombieCombat.attackCounter.should.equal(2)
+                )
+                it('should not fight when tick is called again', ()->
+                    #FIRST TICK, NO FIGHTING
+                    #Note: counter is updated in next tick
+                    combat.tick(1)
+                    zombieCombat.canAttack.should.be.false
+                    humanCombat.canAttack.should.be.false
 
-                #counter should be the delay, as the update is called at end of tick
-                humanCombat.attackCounter.should.equal(4)
-                zombieCombat.attackCounter.should.equal(2)
-            )
-            it('should not fight when tick is called again', ()->
-                #FIRST TICK, NO FIGHTING
-                #Note: counter is updated in next tick
-                combat.tick(1)
-                zombieCombat.canAttack.should.be.false
-                humanCombat.canAttack.should.be.false
+                    entityHuman.components.health.health.should.equal(87.5)
+                    entityZombie.components.health.health.should.equal(91)
 
-                entityHuman.components.health.health.should.equal(90)
-                entityZombie.components.health.health.should.equal(92)
+                    humanCombat.attackCounter.should.equal(3)
+                    humanCombat.canAttack.should.be.false
+                    zombieCombat.attackCounter.should.equal(1)
+                    zombieCombat.canAttack.should.be.false
+                )
+                it('should not fight when tick is called again again', ()->
+                    #SECOND TICK, NO FIGHTING
+                    combat.tick(2)
+                    entityHuman.components.health.health.should.equal(87.5)
+                    entityZombie.components.health.health.should.equal(91)
 
-                humanCombat.attackCounter.should.equal(3)
-                humanCombat.canAttack.should.be.false
-                zombieCombat.attackCounter.should.equal(1)
-                zombieCombat.canAttack.should.be.false
-            )
-            it('should not fight when tick is called again again', ()->
-                #SECOND TICK, NO FIGHTING
-                combat.tick(2)
-                entityHuman.components.health.health.should.equal(90)
-                entityZombie.components.health.health.should.equal(92)
+                    humanCombat.attackCounter.should.equal(2)
+                    humanCombat.canAttack.should.be.false
+                    zombieCombat.attackCounter.should.equal(0)
+                    zombieCombat.canAttack.should.be.true
+                )
 
-                humanCombat.attackCounter.should.equal(2)
-                humanCombat.canAttack.should.be.false
-                zombieCombat.attackCounter.should.equal(0)
-                zombieCombat.canAttack.should.be.true
-            )
+                it('should allow zombie to attack (two ticks have gone by since first attack)', ()->
+                    #THIRD TICK, ZOMBIE FIGHTS - HUMAN NO FIGHT
+                    combat.tick(3)
+                    entityHuman.components.health.health.should.equal(75)
+                    entityZombie.components.health.health.should.equal(91)
 
-            it('should allow zombie to attack (two ticks have gone by since first attack)', ()->
-                #THIRD TICK, ZOMBIE FIGHTS - HUMAN NO FIGHT
-                combat.tick(3)
-                entityHuman.components.health.health.should.equal(80)
-                entityZombie.components.health.health.should.equal(92)
+                    humanCombat.attackCounter.should.equal(1)
+                    humanCombat.canAttack.should.be.false
+                    zombieCombat.attackCounter.should.equal(2)
+                    zombieCombat.canAttack.should.be.false
+                )
+                it('should not fight, but ready to', ()->
+                    #FOURTH TICK, NO FIGHT
+                    combat.tick(4)
+                    entityHuman.components.health.health.should.equal(75)
+                    entityZombie.components.health.health.should.equal(91)
 
-                humanCombat.attackCounter.should.equal(1)
-                humanCombat.canAttack.should.be.false
-                zombieCombat.attackCounter.should.equal(2)
-                zombieCombat.canAttack.should.be.false
-            )
-            it('should not fight, but ready to', ()->
-                #FOURTH TICK, NO FIGHT
-                combat.tick(4)
-                entityHuman.components.health.health.should.equal(80)
-                entityZombie.components.health.health.should.equal(92)
+                    humanCombat.attackCounter.should.equal(0)
+                    humanCombat.canAttack.should.be.true
+                    zombieCombat.attackCounter.should.equal(1)
+                    zombieCombat.canAttack.should.be.false
+                )
+                it('should let human fight', ()->
+                    #FIFTH tick, zombie fight
+                    combat.tick(5)
+                    entityHuman.components.health.health.should.equal(75)
+                    entityZombie.components.health.health.should.equal(82)
 
-                humanCombat.attackCounter.should.equal(0)
-                humanCombat.canAttack.should.be.true
-                zombieCombat.attackCounter.should.equal(1)
-                zombieCombat.canAttack.should.be.false
-            )
-            it('should let human fight', ()->
-                #FIFTH tick, zombie fight
-                combat.tick(5)
-                entityHuman.components.health.health.should.equal(80)
-                entityZombie.components.health.health.should.equal(84)
-
-                humanCombat.attackCounter.should.equal(4)
-                humanCombat.canAttack.should.be.false
-                zombieCombat.attackCounter.should.equal(0)
-                zombieCombat.canAttack.should.be.true
+                    humanCombat.attackCounter.should.equal(4)
+                    humanCombat.canAttack.should.be.false
+                    zombieCombat.attackCounter.should.equal(0)
+                    zombieCombat.canAttack.should.be.true
+                )
             )
         )
     )
