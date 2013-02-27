@@ -5,6 +5,12 @@
 #
 #   components used:
 #       physics
+#
+#   Zombie overview: 
+#       Does not naturally lose health, regardless of amount of resources
+#       If resources is 0, they won't fall below 0 but will slow down the 
+#       zombie's movement and attack / defense until it feeds on a human
+#       Does not naturally regain health either
 #============================================================================
 define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
     class Zombie
@@ -20,35 +26,66 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #  TODO: Other factors.  higher strength, higher resource
             #  comsumption
             #Resources decay naturally
-            resources -= (entity.components.zombie.decayRate)
+            if resources > 0
+                resources -= (entity.components.zombie.decayRate)
+            resources += @updateResourcesFromCombat(entity)
+
+            return resources
+        
+        updateResourcesFromCombat: (entity)->
+            #Update resources if entity did damage
+            combat = entity.components.combat
+            if not combat
+                return 0
+            
+            resources = 0
+            if combat.damageDealt.length > 0
+                resources += (10 * combat.damageDealt.length)
 
             return resources
 
-        calculateHealth: (entity)->
-            #Calculate current health based on resources
-            resources = entity.components.resources.resources
-            health = entity.components.health.health
-            
-            #Subtract health if resources are scarce
-            #happens faster if negative resources
-            if resources < 0
-                health -= (0.4 + Math.abs(resources * 0.04) )
-            #slow, natural decay
-            else if resources < 20
-                health -= (0.2 + Math.abs(resources * 0.01) )
-            #if resources are high, more life
-            else if resources > 50
-                health += (0.005 + Math.abs(resources * 0.005) )
-
-            return health
-
         calculateMaxSpeed: (entity)->
             #Returns max speed based on various factors
-            maxSpeed = entity.components.physics.maxSpeed
-            if entity.components.resourcesresources < 20
-                maxSpeed = 2
+            physics = entity.components.physics
+            maxSpeed = physics.maxSpeed
+            resources = entity.components.resources
+            if not resources
+                return false
+
+            if resources.resources < 10
+                maxSpeed = physics.baseMaxSpeed / 2
+            else if resources.resources < 20
+                maxSpeed = physics.baseMaxSpeed / 1.3
+            else if resources.resources > 100
+                modifier = (resources.resources / 4) * 0.1
+                maxSpeed = physics.baseMaxSpeed + (modifier) | 0
+            else
+                maxSpeed = physics.baseMaxSpeed
                 
             return maxSpeed
+        
+        updateCombatComponent: (entity)->
+            #Updats attack / defense based on resources
+            combat = entity.components.combat
+            resources = entity.components.resources
+            if not resources
+                return false
+
+            if resources.resources < 10
+                combat.attack = combat.baseAttack / 3
+                combat.defense = combat.baseDefense / 3
+            else if resources.resources < 20
+                combat.attack = combat.baseAttack / 2
+                combat.defense = combat.baseDefense / 2
+            else if resources.resources > 100
+                modifier = (resources.resources / 4) * 0.1
+                combat.attack = combat.baseAttack + (modifier) | 0
+                combat.defense = combat.baseDefense + (modifier) | 0
+            else
+                combat.attack = combat.baseAttack
+                combat.defense = combat.baseDefense
+
+            return true
 
         #--------------------------------
         #
@@ -60,19 +97,26 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             physics = entity.components.physics
             health = entity.components.health
             resources = entity.components.resources
+            combat = entity.components.combat
             
             #Update age
             #  NOTE: Age doesn't affect zombies in any way
             zombie.age += Zombie.ageSpeed
             
-            physics.maxSpeed = @calculateMaxSpeed(entity)
-            
+            #get attack / defense
+            if combat
+                #If entity dealt damage, increase resources
+                @updateCombatComponent(entity)
+                
             #update resources
-            resources.resources = @calculateResources(entity)
-            
+            if resources
+                resources.resources = @calculateResources(entity)
+            #Get max speed
+            if physics
+                physics.maxSpeed = @calculateMaxSpeed(entity)
+
             #Update health
             if health
-                health.health = @calculateHealth(entity)
                 zombie.isDead = zombie.getIsDead(health.health)
             
             #If the entity is dead, remove it

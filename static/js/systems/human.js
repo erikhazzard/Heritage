@@ -49,6 +49,35 @@
         return health;
       };
 
+      Living.prototype.updateMaxSpeed = function(entity, neighbors) {
+        var human, maxForce, maxSpeed, physics;
+        physics = entity.components.physics;
+        human = entity.components.human;
+        maxSpeed = 0;
+        if (human.age < 2) {
+          maxSpeed = 2;
+        } else if (human.age < 10) {
+          maxSpeed = 4;
+        } else if (human.age < 60) {
+          maxSpeed = 8;
+        } else if (human.age < 70) {
+          maxSpeed = 3;
+        } else {
+          maxSpeed = 2;
+        }
+        maxSpeed = maxSpeed - neighbors.length;
+        if (maxSpeed < 0) {
+          maxSpeed = 0.2;
+        }
+        maxForce = 0.5 - (neighbors.length / 10);
+        if (human.health < 50) {
+          maxSped -= 1 / (human.health * 0.2);
+        }
+        physics.maxSpeed = maxSpeed;
+        physics.maxForce = maxForce;
+        return maxSpeed;
+      };
+
       Living.prototype.updateHuman = function(entity) {
         var child, health, human, i, len, neighbors, newZombie, physics, resources;
         human = entity.components.human;
@@ -57,11 +86,9 @@
         resources = entity.components.resources;
         human.age += human.ageSpeed;
         if (physics) {
-          physics.maxSpeed = human.getMaxSpeed();
+          neighbors = entity.components.world.getNeighbors(5);
+          this.updateMaxSpeed(entity, neighbors);
         }
-        neighbors = entity.components.world.getNeighbors(5);
-        entity.components.physics.maxSpeed = 10 - neighbors.length;
-        entity.components.physics.maxForce = 0.5 - (neighbors.length / 10);
         resources.resources = this.calculateResources(entity);
         if (resources < 10) {
           if (Math.random() < 0.05) {

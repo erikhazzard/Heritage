@@ -6,21 +6,23 @@
     Assemblages = {
       baseCreature: function() {
         var entity;
-        entity = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('resources').addComponent('combat').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
+        entity = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('resources').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
         return entity;
       },
       human: function() {
         var entity;
-        entity = this.baseCreature().addComponent('human');
-        entity.components.combat.defense = d3.random.normal(10, 5)() | 0;
-        entity.components.combat.attack = d3.random.normal(10, 5)() | 0;
+        entity = this.baseCreature().addComponent('human').addComponent('combat', {
+          defense: d3.random.normal(10, 5)() | 0,
+          attack: d3.random.normal(10, 5)() | 0
+        });
         return entity;
       },
       zombie: function() {
         var entity;
-        entity = this.baseCreature().addComponent('zombie');
-        entity.components.combat.defense = d3.random.normal(0, 5)() | 0;
-        entity.components.combat.attack = d3.random.normal(15, 5)() | 0;
+        entity = this.baseCreature().addComponent('zombie').addComponent('combat', {
+          defense: d3.random.normal(0, 5)() | 0,
+          attack: d3.random.normal(20, 5)() | 0
+        });
         return entity;
       }
     };

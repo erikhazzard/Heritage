@@ -9,13 +9,11 @@
         params = params || {};
         this.entity = entity;
         this.age = params.age || 0.1;
-        this.maxSpeed = 4;
+        this.maxSpeed = 6;
         this.seekRange = 8;
         this.resources = params.resources || 100;
         this.isDead = false;
-        this.decayRate = params.decayRate || Math.abs(d3.random.normal(0.07, 0.01)());
-        this.strength = Math.random() * 20 | 0;
-        this.agility = Math.random() * 20 | 0;
+        this.decayRate = params.decayRate || Math.abs(d3.random.normal(0.2, 0.05)());
       }
 
       Zombie.prototype.getIsDead = function(health) {

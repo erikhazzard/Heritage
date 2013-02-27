@@ -17,7 +17,7 @@ define(['lib/d3'], (d3)->
 
             #Age doesn't affect anything - zombies are undead
             @age = params.age || 0.1
-            @maxSpeed = 4
+            @maxSpeed = 6
             
             #How far zombie will look for enemies with
             @seekRange = 8
@@ -27,15 +27,7 @@ define(['lib/d3'], (d3)->
             
             #If the zombie is killed / dead
             @isDead = false
-            @decayRate = params.decayRate || Math.abs(d3.random.normal(0.07,0.01)())
-            
-            #----------------------------
-            #Stats
-            #----------------------------
-            #more resources = higher strength?
-            @strength = Math.random() * 20 | 0
-            #Dodge chance? Max Speed?
-            @agility = Math.random() * 20 | 0
+            @decayRate = params.decayRate || Math.abs(d3.random.normal(0.2,0.05)())
         
         getIsDead: (health)->
             #If zombie has too low resources OR health < 0, it's dead

@@ -44,24 +44,6 @@
         return chance;
       };
 
-      Human.prototype.getMaxSpeed = function() {
-        var maxSpeed;
-        return this.maxSpeed;
-        maxSpeed = 0;
-        if (this.age < 2) {
-          maxSpeed = 2;
-        } else if (this.age < 10) {
-          maxSpeed = 4;
-        } else if (this.age < 60) {
-          maxSpeed = 8;
-        } else if (this.age < 70) {
-          maxSpeed = 3;
-        } else {
-          maxSpeed = 2;
-        }
-        return maxSpeed;
-      };
-
       return Human;
 
     })();

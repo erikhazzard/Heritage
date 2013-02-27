@@ -57,9 +57,7 @@
         });
       });
       return describe('makeBaby()', function() {
-        return it('should make a baby when it can', function() {
-          return console.log(spawner.makeBaby(entityFemale));
-        });
+        return it('should make a baby when it can', function() {});
       });
     });
   });

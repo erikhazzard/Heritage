@@ -25,11 +25,12 @@ define(['components/all','events'], (Components, events)->
         #Components
         #
         #--------------------------------
-        addComponent: (name)->
+        addComponent: (name, params)->
             #Create component, pass in this entity object
             #   NOTE: Interface for components always assume an entity is 
             #   passed in as first parameter
-            @components[name] = new Components[name](@)
+            #NOTE: can pass in params and params will be passed to component
+            @components[name] = new Components[name](@, params)
             events.trigger('entity:component:added', {
                 id: @id,
                 componentName: name

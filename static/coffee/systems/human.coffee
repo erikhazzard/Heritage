@@ -70,6 +70,45 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
                 
             return health
         
+        updateMaxSpeed: (entity, neighbors)->
+            #Returns the max speed for the entity. Used in the system
+            #TODO: base this off agility and injuries and whatnot
+            physics = entity.components.physics
+            human = entity.components.human
+            maxSpeed = 0
+            
+            if human.age < 2
+                maxSpeed = 2
+            else if human.age < 10
+                maxSpeed = 4
+                
+            else if human.age < 60
+                #In it's prime, normal max speed
+                maxSpeed = 8
+                
+            else if human.age < 70
+                maxSpeed = 3
+            else
+                maxSpeed = 2
+                
+            #TODO: should this go here...
+            maxSpeed = maxSpeed - neighbors.length
+            if maxSpeed < 0
+                maxSpeed = 0.2
+                
+            #Set max force
+            maxForce = 0.5 - (neighbors.length / 10)
+            
+            #Set speed based on health
+            if human.health < 50
+                maxSped -= (1 / (human.health * 0.2))
+            
+            #Set components
+            physics.maxSpeed = maxSpeed
+            physics.maxForce = maxForce
+            
+            return maxSpeed
+
         #--------------------------------
         #
         #Update logic
@@ -88,14 +127,9 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             human.age += human.ageSpeed
             
             if physics
-                physics.maxSpeed = human.getMaxSpeed()
-                
-
-            #Do stuff based on neighbors
-            neighbors = entity.components.world.getNeighbors(5)
-            #TODO: should this go here...
-            entity.components.physics.maxSpeed = 10 - neighbors.length
-            entity.components.physics.maxForce = 0.5 - (neighbors.length / 10)
+                #Do stuff based on neighbors
+                neighbors = entity.components.world.getNeighbors(5)
+                @updateMaxSpeed(entity, neighbors)
             
             #Get resources
             resources.resources = @calculateResources(entity)

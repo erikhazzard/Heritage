@@ -23,7 +23,7 @@
       };
 
       UserInterface.prototype.showUserMovableInfo = function() {
-        var entities, entity, html, key;
+        var combat, entities, entity, html, item, key, _i, _len, _ref;
         html = '';
         entities = this.entities.entitiesIndex.userMovable;
         for (key in entities) {
@@ -55,9 +55,14 @@
             html += '<br />I: ' + entity.components.world.i;
             html += '<br />J: ' + entity.components.world.j;
           }
-          if (entity.components.combat.damageTaken.length > 0) {
-            console.log('HIT!');
-            console.log(entity.components.combat.damageTaken);
+          combat = entity.components.combat;
+          if (combat && combat.damageTaken.length > 0) {
+            console.log('HIT! Damage taken for Entity:', entity.id);
+            _ref = combat.damageTaken;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              item = _ref[_i];
+              console.log(item[0], item[1]);
+            }
           }
         }
         this.$debug.innerHTML += html;

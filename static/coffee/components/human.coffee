@@ -77,28 +77,6 @@ define(['lib/d3'], (d3)->
                 
             chance += (damageTaken * 0.001)
             return chance
-        
-        getMaxSpeed: ()->
-            #Returns the max speed for the entity. Used in the system
-            #TODO: base this off agility and injuries and whatnot
-            return @maxSpeed
-            maxSpeed = 0
-            
-            if @age < 2
-                maxSpeed = 2
-            else if @age < 10
-                maxSpeed = 4
-                
-            else if @age < 60
-                #In it's prime, normal max speed
-                maxSpeed = 8
-                
-            else if @age < 70
-                maxSpeed = 3
-            else
-                maxSpeed = 2
-                
-            return maxSpeed
 
     return Human
 )

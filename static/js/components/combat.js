@@ -9,14 +9,20 @@
         params = params || {};
         this.entity = entity;
         this.range = params.range || 4;
+        this.baseRange = this.range;
         this.defense = params.defense || 0;
         this.attack = params.attack || 1;
+        this.baseDefense = this.defense;
+        this.baseAttack = this.attack;
         this.dodge = params.dodge || 0;
-        this.attackDelay = 10;
+        this.baseDodge = this.dodge;
+        this.attackDelay = params.attackDelay || 10;
+        this.baseAttackDelay = this.attackDelay;
         this.attackCounter = 0;
         this.canAttack = true;
         this.target = null;
         this.damageTaken = [];
+        this.damageDealt = [];
       }
 
       return Combat;

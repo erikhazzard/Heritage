@@ -102,7 +102,6 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
         describe('makeBaby()', ()->
             #TESTS FOR MAKING A BABY
             it('should make a baby when it can', ()->
-                console.log(spawner.makeBaby(entityFemale))
             )
         )
     )

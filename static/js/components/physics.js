@@ -12,6 +12,8 @@
         this.acceleration = params.acceleration || new Vector(0, 0);
         this.maxSpeed = params.maxSpeed || 8;
         this.maxForce = params.maxForce || 0.5;
+        this.baseMaxSpeed = this.maxSpeed;
+        this.baseMaxForce = this.maxForce;
         this.maxSeekForceDistance = params.maxSeekForceDistance || 150;
         this.mass = params.mass || 10;
         this.maxX = 500;

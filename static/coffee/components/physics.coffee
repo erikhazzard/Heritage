@@ -21,6 +21,9 @@ define(['components/vector', 'lib/d3'], (Vector, d3)->
             #limiting variables
             @maxSpeed = params.maxSpeed || 8
             @maxForce = params.maxForce || 0.5
+            #keep track of original value
+            @baseMaxSpeed = @maxSpeed
+            @baseMaxForce = @maxForce
             
             #furthest away an entity can seek
             @maxSeekForceDistance = params.maxSeekForceDistance || 150

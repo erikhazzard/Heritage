@@ -71,7 +71,8 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
                 health.health -= damage
 
             #Keep track of damage taken
-            enemyCombat.damageTaken.push(damage)
+            enemyCombat.damageTaken.push([entity.id, damage])
+            entityCombat.damageDealt.push([enemyEntity.id, damage])
             
             #Update the attack counter
             entityCombat.canAttack = false
@@ -111,6 +112,7 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
                 #only set to true when it gets hit
                 combat.wasHit = false
                 combat.damageTaken.length = 0
+                combat.damageDealt.length = 0
 
                 #If the entity can attack, do it
                 if combat.canAttack
@@ -145,8 +147,6 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
                     
                 #Update attack counter
                 @updateAttackCounter(combat)
-
-            #TODO: RESOLVE DAMAGE ON STACK
 
             return @
             

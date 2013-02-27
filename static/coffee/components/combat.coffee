@@ -14,21 +14,29 @@ define([], ()->
             @entity = entity
 
             @range = params.range || 4
+            @baseRange = @range
+            
             @defense = params.defense || 0
             @attack = params.attack || 1
+            @baseDefense = @defense
+            @baseAttack = @attack
+
             #percent chance to dodge attack (0 to 100)
             @dodge = params.dodge || 0
+            @baseDodge = @dodge
             
             #must wait n rounds before attacking again
-            @attackDelay = 10
+            @attackDelay = params.attackDelay || 10
+            @baseAttackDelay = @attackDelay
 
             #how many ticks before entity can attack again
             @attackCounter = 0
             @canAttack = true
             #ID of target entity
             @target = null
-            #Keep track of any damage done (per tick)
+            #Keep track of any damage taken and dealt(per tick)
             @damageTaken = []
+            @damageDealt = []
 
     return Combat
 )

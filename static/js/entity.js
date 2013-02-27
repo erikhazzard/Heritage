@@ -23,8 +23,8 @@
         return this;
       };
 
-      Entity.prototype.addComponent = function(name) {
-        this.components[name] = new Components[name](this);
+      Entity.prototype.addComponent = function(name, params) {
+        this.components[name] = new Components[name](this, params);
         events.trigger('entity:component:added', {
           id: this.id,
           componentName: name

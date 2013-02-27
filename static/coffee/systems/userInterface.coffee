@@ -58,10 +58,12 @@ define(['components/vector', 'components/world'], (Vector, World)->
                     html += '<br /><br />World'
                     html += '<br />I: ' + entity.components.world.i
                     html += '<br />J: ' + entity.components.world.j
-                if entity.components.combat.damageTaken.length > 0
-                    console.log('HIT!')
-                    console.log(entity.components.combat.damageTaken)
                     
+                combat = entity.components.combat
+                if combat and combat.damageTaken.length > 0
+                    console.log('HIT! Damage taken for Entity:', entity.id)
+                    for item in combat.damageTaken
+                        console.log(item[0], item[1])
                 
             @$debug.innerHTML += html
                     

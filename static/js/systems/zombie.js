@@ -15,44 +15,89 @@
       Zombie.prototype.calculateResources = function(entity) {
         var resources;
         resources = entity.components.resources.resources;
-        resources -= entity.components.zombie.decayRate;
+        if (resources > 0) {
+          resources -= entity.components.zombie.decayRate;
+        }
+        resources += this.updateResourcesFromCombat(entity);
         return resources;
       };
 
-      Zombie.prototype.calculateHealth = function(entity) {
-        var health, resources;
-        resources = entity.components.resources.resources;
-        health = entity.components.health.health;
-        if (resources < 0) {
-          health -= 0.4 + Math.abs(resources * 0.04);
-        } else if (resources < 20) {
-          health -= 0.2 + Math.abs(resources * 0.01);
-        } else if (resources > 50) {
-          health += 0.005 + Math.abs(resources * 0.005);
+      Zombie.prototype.updateResourcesFromCombat = function(entity) {
+        var combat, resources;
+        combat = entity.components.combat;
+        if (!combat) {
+          return 0;
         }
-        return health;
+        resources = 0;
+        if (combat.damageDealt.length > 0) {
+          resources += 10 * combat.damageDealt.length;
+        }
+        return resources;
       };
 
       Zombie.prototype.calculateMaxSpeed = function(entity) {
-        var maxSpeed;
-        maxSpeed = entity.components.physics.maxSpeed;
-        if (entity.components.resourcesresources < 20) {
-          maxSpeed = 2;
+        var maxSpeed, modifier, physics, resources;
+        physics = entity.components.physics;
+        maxSpeed = physics.maxSpeed;
+        resources = entity.components.resources;
+        if (!resources) {
+          return false;
+        }
+        if (resources.resources < 10) {
+          maxSpeed = physics.baseMaxSpeed / 2;
+        } else if (resources.resources < 20) {
+          maxSpeed = physics.baseMaxSpeed / 1.3;
+        } else if (resources.resources > 100) {
+          modifier = (resources.resources / 4) * 0.1;
+          maxSpeed = physics.baseMaxSpeed + modifier | 0;
+        } else {
+          maxSpeed = physics.baseMaxSpeed;
         }
         return maxSpeed;
       };
 
+      Zombie.prototype.updateCombatComponent = function(entity) {
+        var combat, modifier, resources;
+        combat = entity.components.combat;
+        resources = entity.components.resources;
+        if (!resources) {
+          return false;
+        }
+        if (resources.resources < 10) {
+          combat.attack = combat.baseAttack / 3;
+          combat.defense = combat.baseDefense / 3;
+        } else if (resources.resources < 20) {
+          combat.attack = combat.baseAttack / 2;
+          combat.defense = combat.baseDefense / 2;
+        } else if (resources.resources > 100) {
+          modifier = (resources.resources / 4) * 0.1;
+          combat.attack = combat.baseAttack + modifier | 0;
+          combat.defense = combat.baseDefense + modifier | 0;
+        } else {
+          combat.attack = combat.baseAttack;
+          combat.defense = combat.baseDefense;
+        }
+        return true;
+      };
+
       Zombie.prototype.updateZombie = function(entity) {
-        var health, physics, resources, zombie;
+        var combat, health, physics, resources, zombie;
         zombie = entity.components.zombie;
         physics = entity.components.physics;
         health = entity.components.health;
         resources = entity.components.resources;
+        combat = entity.components.combat;
         zombie.age += Zombie.ageSpeed;
-        physics.maxSpeed = this.calculateMaxSpeed(entity);
-        resources.resources = this.calculateResources(entity);
+        if (combat) {
+          this.updateCombatComponent(entity);
+        }
+        if (resources) {
+          resources.resources = this.calculateResources(entity);
+        }
+        if (physics) {
+          physics.maxSpeed = this.calculateMaxSpeed(entity);
+        }
         if (health) {
-          health.health = this.calculateHealth(entity);
           zombie.isDead = zombie.getIsDead(health.health);
         }
         if (zombie.isDead) {

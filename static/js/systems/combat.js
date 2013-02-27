@@ -46,7 +46,8 @@
         if (health) {
           health.health -= damage;
         }
-        enemyCombat.damageTaken.push(damage);
+        enemyCombat.damageTaken.push([entity.id, damage]);
+        entityCombat.damageDealt.push([enemyEntity.id, damage]);
         entityCombat.canAttack = false;
         entityCombat.attackCounter = entityCombat.attackDelay + 1;
         return true;
@@ -63,6 +64,7 @@
           combatTarget = entity.components.combat.target;
           combat.wasHit = false;
           combat.damageTaken.length = 0;
+          combat.damageDealt.length = 0;
           if (combat.canAttack) {
             health = entity.components.health;
             neighbors = WorldSystem.prototype.getNeighborsByCreatureType(entity, this.entities, combat.range, ['combat']);

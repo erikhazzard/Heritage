@@ -14,7 +14,6 @@ define(['entity', 'lib/d3'], (Entity, d3) ->
                 .addComponent('physics')
                 .addComponent('health')
                 .addComponent('resources')
-                .addComponent('combat')
                 .addComponent('randomWalker')
                 .addComponent('flocking')
                 .addComponent('renderer')
@@ -24,20 +23,21 @@ define(['entity', 'lib/d3'], (Entity, d3) ->
         human: ()->
             entity = @baseCreature()
                 .addComponent('human')
-                
-            #Give humans attack / defense
-            entity.components.combat.defense = d3.random.normal(10,5)() | 0
-            entity.components.combat.attack = d3.random.normal(10,5)() | 0
+                .addComponent('combat', {
+                    defense: d3.random.normal(10,5)() | 0
+                    attack: d3.random.normal(10,5)() | 0
+                })
 
             return entity
         
         zombie: ()->
             entity = @baseCreature()
                 .addComponent('zombie')
+                .addComponent('combat', {
+                    defense: d3.random.normal(0,5)() | 0
+                    attack: d3.random.normal(20,5)() | 0
+                })
                 
-            #Zombies have generally more attack than defense
-            entity.components.combat.defense = d3.random.normal(0,5)() | 0
-            entity.components.combat.attack = d3.random.normal(15,5)() | 0
             return entity
     }
     return Assemblages
