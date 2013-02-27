@@ -54,7 +54,6 @@ define(['components/vector'], (Vector)->
                 
             return entity
 
-        
         #--------------------------------
         #
         #HUAMN - Helpers
@@ -154,7 +153,9 @@ define(['components/vector'], (Vector)->
                 if entity.hasComponent('userMovable') == false
                     #If entity has a randomWalker component, make it walk
                     if entity.hasComponent('randomWalker')
-                        physics.applyForce( entity.components.randomWalker.walkForce() )
+                        physics.applyForce(
+                            entity.components.randomWalker.walkForce()
+                        )
                         
                     #------------------------
                     #Human movement - TODO: own system?
@@ -206,7 +207,7 @@ define(['components/vector'], (Vector)->
                                 #Chase human
                                 chaseForce = physics.seekForce(
                                     neighbor
-                                ).multiply(6)
+                                ).multiply(5)
                                 entity.components.physics.applyForce(
                                     chaseForce
                                 )
@@ -214,7 +215,6 @@ define(['components/vector'], (Vector)->
                                 #we found a human, so we're done with loop
                                 break
                             
-        
                 #UPDATE (tick)
                 #------------------------
                 #Lastly, call the physics component's tick function, which will

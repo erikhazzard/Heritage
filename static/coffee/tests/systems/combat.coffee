@@ -200,38 +200,38 @@ define(['systems/combat', 'systems/world', 'entity', 'entities', 'assemblages/as
         #
         #--------------------------------
         describe('tick()', ()->
-            describe('Combat System: tick()', ()->
-                #SETUP
-                entityHuman = Assemblages.human()
-                entityZombie = Assemblages.zombie()
-                zombieHealth = entityZombie.components.health
-                humanHealth = entityZombie.components.health
-                    
-                #make them next to each other
-                entityHuman.components.position.x = 10
-                entityHuman.components.position.y = 10
-                entityHuman.components.health.health = 100
-                entityHuman.components.combat.attack = 10
-                entityHuman.components.combat.baseAttack = 10
-                entityHuman.components.combat.defense = 5
-                entityHuman.components.combat.baseDefense = 5
-                entityHuman.components.combat.attackDelay = 4
-                entityHuman.components.combat.baeAttackDelay = 4
-
-                #ZOMBIE
-                entityZombie.components.position.x = 10
-                entityZombie.components.position.y = 11
-                entityZombie.components.health.health = 100
-                entityZombie.components.combat.attack = 15
-                entityZombie.components.combat.baseAttack = 15
-                entityZombie.components.combat.defense = 2
-                entityZombie.components.combat.baseDefense = 2
-                entityZombie.components.combat.attackDelay = 2
-                entityZombie.components.combat.baseAttackDelay = 2
+            #SETUP
+            entityHuman = Assemblages.human()
+            entityZombie = Assemblages.zombie()
+            zombieHealth = entityZombie.components.health
+            humanHealth = entityZombie.components.health
                 
-                entities = new Entities()
-                    .add(entityHuman)
-                    .add(entityZombie)
+            #make them next to each other
+            entityHuman.components.position.x = 10
+            entityHuman.components.position.y = 10
+            entityHuman.components.health.health = 100
+            entityHuman.components.combat.attack = 10
+            entityHuman.components.combat.baseAttack = 10
+            entityHuman.components.combat.defense = 5
+            entityHuman.components.combat.baseDefense = 5
+            entityHuman.components.combat.attackDelay = 4
+            entityHuman.components.combat.baeAttackDelay = 4
+
+            #ZOMBIE
+            entityZombie.components.position.x = 10
+            entityZombie.components.position.y = 11
+            entityZombie.components.health.health = 100
+            entityZombie.components.combat.attack = 15
+            entityZombie.components.combat.baseAttack = 15
+            entityZombie.components.combat.defense = 2
+            entityZombie.components.combat.baseDefense = 2
+            entityZombie.components.combat.attackDelay = 2
+            entityZombie.components.combat.baseAttackDelay = 2
+            
+            entities = new Entities()
+                .add(entityHuman)
+                .add(entityZombie)
+            describe('Combat System: tick()', ()->
                 
                 #When they're next to each other, they should fight
                 combat = new Combat(entities)

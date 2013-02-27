@@ -108,6 +108,23 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             physics.maxForce = maxForce
             
             return maxSpeed
+        
+        updateCombatProperties: (entity)->
+            #Update various combat component properties
+            human = entity.components.human
+            combat = entity.components.combat
+            
+            if human.age <= 10
+                combat.attack = combat.baseAttack / (human.age * 0.1)
+                combat.defense = combat.baseDefense / (human.age * 0.1)
+            else if human.age > 70
+                combat.attack = combat.baseAttack - ((human.age - 70) * 0.2)
+                combat.defense = combat.baseDefense - ((human.age - 70) * 0.2)
+            else
+                combat.attack = combat.baseAttack
+                combat.defense = combat.baseAttack
+
+            return true
 
         #--------------------------------
         #
@@ -122,6 +139,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             physics = entity.components.physics
             health = entity.components.health
             resources = entity.components.resources
+            combat = entity.components.combat
             
             #update properties
             human.age += human.ageSpeed
@@ -133,6 +151,9 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             
             #Get resources
             resources.resources = @calculateResources(entity)
+            
+            if combat
+                @updateCombatProperties(entity)
             
             #If entity is low on resources, make it not flock together so much
             if resources < 10

@@ -7,7 +7,7 @@
         var human;
         return human = new Human();
       });
-      return describe('Human System: Resources tests', function() {
+      describe('Human System: Resources tests', function() {
         return it('Should calculate health properly', function() {
           var entities, entity1, entity2, human, resources;
           entities = new Entities();
@@ -18,6 +18,20 @@
           entities.add(entity1).add(entity2);
           resources = human.calculateResources(entity1) < 100;
           return resources.should.be["true"];
+        });
+      });
+      return describe('updateCombatProperties()', function() {
+        var entity1, human;
+        human = new Human();
+        entity1 = Assemblages.human();
+        entity1.components.combat.attack = 10;
+        entity1.components.combat.baseAttack = 10;
+        entity1.components.combat.defense = 10;
+        entity1.components.combat.baseDefense = 10;
+        entity1.components.human.age = 1;
+        return it('Should calculate base attack / defense', function() {
+          human.updateCombatProperties(entity1);
+          return console.log(entity1.components.combat.attack);
         });
       });
     });

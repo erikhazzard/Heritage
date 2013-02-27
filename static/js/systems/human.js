@@ -78,18 +78,39 @@
         return maxSpeed;
       };
 
+      Living.prototype.updateCombatProperties = function(entity) {
+        var combat, human;
+        human = entity.components.human;
+        combat = entity.components.combat;
+        if (human.age <= 10) {
+          combat.attack = combat.baseAttack / (human.age * 0.1);
+          combat.defense = combat.baseDefense / (human.age * 0.1);
+        } else if (human.age > 70) {
+          combat.attack = combat.baseAttack - ((human.age - 70) * 0.2);
+          combat.defense = combat.baseDefense - ((human.age - 70) * 0.2);
+        } else {
+          combat.attack = combat.baseAttack;
+          combat.defense = combat.baseAttack;
+        }
+        return true;
+      };
+
       Living.prototype.updateHuman = function(entity) {
-        var child, health, human, i, len, neighbors, newZombie, physics, resources;
+        var child, combat, health, human, i, len, neighbors, newZombie, physics, resources;
         human = entity.components.human;
         physics = entity.components.physics;
         health = entity.components.health;
         resources = entity.components.resources;
+        combat = entity.components.combat;
         human.age += human.ageSpeed;
         if (physics) {
           neighbors = entity.components.world.getNeighbors(4);
           this.updateMaxSpeed(entity, neighbors);
         }
         resources.resources = this.calculateResources(entity);
+        if (combat) {
+          this.updateCombatProperties(entity);
+        }
         if (resources < 10) {
           if (Math.random() < 0.05) {
             entity.components.flocking.rules.cohesion = -1;

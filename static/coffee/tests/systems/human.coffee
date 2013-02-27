@@ -31,5 +31,22 @@ define(['systems/human', 'assemblages/assemblages', 'entity', 'entities'], (
                 
             )
         )
+
+        #------------------------------------
+        #Update combat properties test
+        #------------------------------------
+        describe('updateCombatProperties()', ()->
+            human = new Human()
+            entity1 = Assemblages.human()
+            entity1.components.combat.attack = 10
+            entity1.components.combat.baseAttack = 10
+            entity1.components.combat.defense = 10
+            entity1.components.combat.baseDefense = 10
+            entity1.components.human.age = 1
+            it('Should calculate base attack / defense', ()->
+                human.updateCombatProperties(entity1)
+                console.log(entity1.components.combat.attack)
+            )
+        )
     )
 )

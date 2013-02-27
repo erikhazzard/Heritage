@@ -134,7 +134,7 @@
                   continue;
                 }
                 if (neighbor.hasComponent('human')) {
-                  chaseForce = physics.seekForce(neighbor).multiply(6);
+                  chaseForce = physics.seekForce(neighbor).multiply(5);
                   entity.components.physics.applyForce(chaseForce);
                   break;
                 }
