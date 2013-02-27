@@ -10,7 +10,7 @@
         this.entity = entity;
         this.age = params.age || 0.1;
         this.maxSpeed = 4;
-        this.seekRange = 1 + (Math.random() * 17 | 0);
+        this.seekRange = 8;
         this.resources = params.resources || 100;
         this.isDead = false;
         this.decayRate = params.decayRate || Math.abs(d3.random.normal(0.07, 0.01)());

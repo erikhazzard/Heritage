@@ -17,6 +17,8 @@ define(['lib/d3'], (d3)->
 
             #Age increases by some amount each tick (set in Living system)
             @age = params.age || 0.1
+            @ageSpeed = params.ageSpeed || 0.1
+            
             #Keep track if human is dead - other components might
             # have different requirement for death
             @isDead = false
@@ -79,6 +81,7 @@ define(['lib/d3'], (d3)->
         getMaxSpeed: ()->
             #Returns the max speed for the entity. Used in the system
             #TODO: base this off agility and injuries and whatnot
+            return @maxSpeed
             maxSpeed = 0
             
             if @age < 2

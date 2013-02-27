@@ -77,6 +77,24 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
                 )
             )
         )
+        #--------------------------------    
+        #Test canBirth
+        #--------------------------------    
+        describe('canBirth()', ()->
+            it('should return false when gestationtimeleft is above 0', ()->
+                #check gestation length
+                entityFemale.components.human.gestationTimeLeft.should.equal(
+                    entityFemale.components.human.gestationLength
+                )
+                
+                #call can birth, will udpdate gestationtimeleft
+                spawner.canBirth(entityFemale).should.be.false
+                
+                entityFemale.components.human.gestationTimeLeft.should.equal(
+                    entityFemale.components.human.gestationLength - entityFemale.components.human.ageSpeed
+                )
+            )
+        )
         
         #--------------------------------    
         #Make Baby
@@ -84,7 +102,7 @@ define(['systems/spawner', 'entity', 'entities', 'assemblages/assemblages'], (
         describe('makeBaby()', ()->
             #TESTS FOR MAKING A BABY
             it('should make a baby when it can', ()->
-
+                console.log(spawner.makeBaby(entityFemale))
             )
         )
     )

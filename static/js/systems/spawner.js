@@ -19,12 +19,33 @@
           return false;
         }
         if (human.isPregnant) {
-          human.gestationTimeLeft -= Human.ageSpeed;
+          human.gestationTimeLeft -= human.ageSpeed;
           if (human.gestationTimeLeft < 0) {
             return true;
           }
         }
         return false;
+      };
+
+      Spawner.prototype.makeBaby = function(entity, neighbors) {
+        var human, newEntity;
+        human = entity.components.human;
+        human.isPregnant = false;
+        human.gestationTimeLeft = human.gestationLength;
+        newEntity = new Entity();
+        newEntity.addComponents(entity.getComponentNames());
+        if (newEntity.hasComponent('userMovable')) {
+          newEntity.removeComponent('userMovable');
+        }
+        newEntity.components.position = entity.components.position.copy();
+        newEntity.components.human.family.push(entity.id);
+        newEntity.components.human.family.push(human.mateId);
+        this.entities.add(newEntity);
+        human.children.push(newEntity.id);
+        if (this.entities.entities[human.mateId]) {
+          this.entities.entities[human.mateId].components.human.children.push(newEntity.id);
+        }
+        return newEntity;
       };
 
       Spawner.prototype.conceive = function(entity, neighbors) {
@@ -33,6 +54,12 @@
         resources = entity.components.resources.resources;
         if (human.isPregnant) {
           return true;
+        }
+        if (human.children.length > 4) {
+          return false;
+        }
+        if (Object.keys(this.entities.entitiesIndex.human).length > 160) {
+          return false;
         }
         if (human.sex === 'male' || human.age < 20 || human.age > 64 || resources < 15) {
           return false;
@@ -88,27 +115,6 @@
           }
         }
         return human.mateId != null;
-      };
-
-      Spawner.prototype.makeBaby = function(entity, neighbors) {
-        var human, newEntity;
-        human = entity.components.human;
-        human.isPregnant = false;
-        human.gestationTimeLeft = human.gestationLength;
-        newEntity = new Entity();
-        newEntity.addComponents(entity.getComponentNames());
-        if (newEntity.hasComponent('userMovable')) {
-          newEntity.removeComponent('userMovable');
-        }
-        newEntity.components.position = entity.components.position.copy();
-        newEntity.components.human.family.push(entity.id);
-        newEntity.components.human.family.push(human.mateId);
-        this.entities.add(newEntity);
-        human.children.push(newEntity.id);
-        if (this.entities.entities[human.mateId]) {
-          this.entities.entities[human.mateId].components.human.children.push(newEntity.id);
-        }
-        return newEntity;
       };
 
       Spawner.prototype.tick = function(delta) {

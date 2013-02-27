@@ -9,6 +9,7 @@
         params = params || {};
         this.entity = entity;
         this.age = params.age || 0.1;
+        this.ageSpeed = params.ageSpeed || 0.1;
         this.isDead = false;
         this.resources = params.resources || 100;
         this.sex = ['male', 'female'][Math.random() * 2 | 0];
@@ -45,6 +46,7 @@
 
       Human.prototype.getMaxSpeed = function() {
         var maxSpeed;
+        return this.maxSpeed;
         maxSpeed = 0;
         if (this.age < 2) {
           maxSpeed = 2;

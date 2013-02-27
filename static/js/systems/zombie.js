@@ -51,8 +51,10 @@
         zombie.age += Zombie.ageSpeed;
         physics.maxSpeed = this.calculateMaxSpeed(entity);
         resources.resources = this.calculateResources(entity);
-        health.health = this.calculateHealth(entity);
-        zombie.isDead = zombie.getIsDead(health.health);
+        if (health) {
+          health.health = this.calculateHealth(entity);
+          zombie.isDead = zombie.getIsDead(health.health);
+        }
         if (zombie.isDead) {
           this.entities.remove(entity);
         }

@@ -49,8 +49,17 @@
           return entityFemale.components.human.gestationTimeLeft.should.equal(entityFemale.components.human.gestationLength);
         });
       });
+      describe('canBirth()', function() {
+        return it('should return false when gestationtimeleft is above 0', function() {
+          entityFemale.components.human.gestationTimeLeft.should.equal(entityFemale.components.human.gestationLength);
+          spawner.canBirth(entityFemale).should.be["false"];
+          return entityFemale.components.human.gestationTimeLeft.should.equal(entityFemale.components.human.gestationLength - entityFemale.components.human.ageSpeed);
+        });
+      });
       return describe('makeBaby()', function() {
-        return it('should make a baby when it can', function() {});
+        return it('should make a baby when it can', function() {
+          return console.log(spawner.makeBaby(entityFemale));
+        });
       });
     });
   });

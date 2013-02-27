@@ -8,8 +8,6 @@
 #============================================================================
 define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
     class Living
-        @ageSpeed = 0.07
-
         constructor: (entities)->
             @entities = entities
             return @
@@ -87,15 +85,27 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             resources = entity.components.resources
             
             #update properties
-            human.age += Living.ageSpeed
+            human.age += human.ageSpeed
+            
             if physics
                 physics.maxSpeed = human.getMaxSpeed()
+                
+
+            #Do stuff based on neighbors
+            neighbors = entity.components.world.getNeighbors(5)
+            #TODO: should this go here...
+            entity.components.physics.maxSpeed = 10 - neighbors.length
+            entity.components.physics.maxForce = 0.5 - (neighbors.length / 10)
+            
+            #Get resources
             resources.resources = @calculateResources(entity)
             
             #If entity is low on resources, make it not flock together so much
             if resources < 10
-                entity.components.flocking.rules.cohesion = -1
-                entity.components.flocking.rules.align = -1
+                #chance they will want to seek resources on their own
+                if Math.random() < 0.05
+                    entity.components.flocking.rules.cohesion = -1
+                    entity.components.flocking.rules.align = -1
                 
             health.health = @calculateHealth(entity)
             

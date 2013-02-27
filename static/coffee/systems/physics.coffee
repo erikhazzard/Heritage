@@ -120,11 +120,11 @@ define(['components/vector'], (Vector)->
                         scale += pursuitDesire
                         
                         #don't go too crazy pursuing zombies
-                        if scale > 1
-                            scale = 1
+                        if scale > 3.5
+                            scale = 3.5
                         #or too crazy gettings away
-                        else if scale < -5
-                            scale = -5
+                        else if scale < -6
+                            scale = -6
 
                         #Apply the force. If it's positive, the human chases
                         #  zombie. If negative, human flees
@@ -177,7 +177,7 @@ define(['components/vector'], (Vector)->
                                         @entities.entities[mateId],
                                         #override how far to seek out a mate
                                         700, true
-                                    ).multiply(2.5)
+                                    ).multiply(2)
                                 )
                                 
                         #CHILDREN

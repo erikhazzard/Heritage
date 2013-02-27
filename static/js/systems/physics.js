@@ -81,10 +81,10 @@
               zombie = neighbor;
               scale = (numHumans / 2.5) - numZombies;
               scale += pursuitDesire;
-              if (scale > 1) {
-                scale = 1;
-              } else if (scale < -5) {
-                scale = -5;
+              if (scale > 3.5) {
+                scale = 3.5;
+              } else if (scale < -6) {
+                scale = -6;
               }
               behaviorForce = physics.seekForce(zombie).multiply(scale);
               physics.applyForce(behaviorForce);
@@ -110,7 +110,7 @@
               mateId = human.mateId;
               if (mateId !== null) {
                 if (this.entities.entities[mateId]) {
-                  physics.applyForce(physics.seekForce(this.entities.entities[mateId], 700, true).multiply(2.5));
+                  physics.applyForce(physics.seekForce(this.entities.entities[mateId], 700, true).multiply(2));
                 }
               }
               if (human.children.length > 0) {

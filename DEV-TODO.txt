@@ -4,6 +4,7 @@
 -Fix spawner
     -Think about spawner - make a subsystem of human?
 
+-ADD INTERNAL COUNT FOR ENTITIES
 
 
 

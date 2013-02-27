@@ -5,8 +5,6 @@
     var Living;
     Living = (function() {
 
-      Living.ageSpeed = 0.07;
-
       function Living(entities) {
         this.entities = entities;
         return this;
@@ -52,19 +50,24 @@
       };
 
       Living.prototype.updateHuman = function(entity) {
-        var child, health, human, i, len, newZombie, physics, resources;
+        var child, health, human, i, len, neighbors, newZombie, physics, resources;
         human = entity.components.human;
         physics = entity.components.physics;
         health = entity.components.health;
         resources = entity.components.resources;
-        human.age += Living.ageSpeed;
+        human.age += human.ageSpeed;
         if (physics) {
           physics.maxSpeed = human.getMaxSpeed();
         }
+        neighbors = entity.components.world.getNeighbors(5);
+        entity.components.physics.maxSpeed = 10 - neighbors.length;
+        entity.components.physics.maxForce = 0.5 - (neighbors.length / 10);
         resources.resources = this.calculateResources(entity);
         if (resources < 10) {
-          entity.components.flocking.rules.cohesion = -1;
-          entity.components.flocking.rules.align = -1;
+          if (Math.random() < 0.05) {
+            entity.components.flocking.rules.cohesion = -1;
+            entity.components.flocking.rules.align = -1;
+          }
         }
         health.health = this.calculateHealth(entity);
         human.isDead = human.getIsDead(health.health);

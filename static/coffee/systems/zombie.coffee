@@ -4,7 +4,6 @@
 #   Handles logic to keep a zombie 'alive' - updates it each tick
 #
 #   components used:
-#       human
 #       physics
 #============================================================================
 define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
@@ -72,8 +71,9 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             resources.resources = @calculateResources(entity)
             
             #Update health
-            health.health = @calculateHealth(entity)
-            zombie.isDead = zombie.getIsDead(health.health)
+            if health
+                health.health = @calculateHealth(entity)
+                zombie.isDead = zombie.getIsDead(health.health)
             
             #If the entity is dead, remove it
             #------------------------

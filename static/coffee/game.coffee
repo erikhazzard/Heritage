@@ -34,15 +34,16 @@ define(['entity', 'entities', 'components/all',
 
             #Create the PC's entity
             entity = Assemblages.zombie()
-            #entity.components.human.age = 20
             entity.addComponent('userMovable')
+            entity.removeComponent('health')
             entity.components.position.x = 250
             entity.components.position.y = 250
+            entity.components.physics.maxSpeed = 20
             @entities.add(entity)
             
             #TODO: tweak this for testing
             while i < 100
-                if Math.random() < 0.00003
+                if Math.random() < 0.0001
                     entity = Assemblages.zombie()
                     entity.components.combat.attack = Math.random() * 10 | 0
                     entity.components.combat.defense = Math.random() * 5 | 0

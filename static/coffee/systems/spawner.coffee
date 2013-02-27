@@ -35,7 +35,7 @@ define(['entity', 'systems/human'], (Entity, Human)->
             #If it's pregnant, we can potentially make a baby!
             #----------------------------
             if human.isPregnant
-                human.gestationTimeLeft -= Human.ageSpeed
+                human.gestationTimeLeft -= human.ageSpeed
                 
                 #If it's time, a baby can be born
                 #NOTE: This is the only true case
@@ -47,6 +47,44 @@ define(['entity', 'systems/human'], (Entity, Human)->
             return false
         
         #--------------------------------
+        #Make a baby
+        #--------------------------------
+        makeBaby: (entity, neighbors)->
+            #Makes a new entity based on the parent entities
+            human = entity.components.human
+            
+            #Reset the human's pregnancy status
+            human.isPregnant = false
+            human.gestationTimeLeft = human.gestationLength
+            
+            #Make a baby
+            newEntity = new Entity()
+            #Inherit parent components
+            newEntity.addComponents(entity.getComponentNames())
+            if newEntity.hasComponent('userMovable')
+                newEntity.removeComponent('userMovable')
+            
+            #Derive position from current entity position
+            newEntity.components.position = entity.components.position.copy()
+
+            #Keep track of a family tree - entities can't inbreed
+            newEntity.components.human.family.push(entity.id)
+            newEntity.components.human.family.push(human.mateId)
+            
+            #add to the entities list
+            @entities.add(newEntity)
+            
+            #Keep track of the children this entity has
+            human.children.push(newEntity.id)
+            
+            #and the children for the father
+            if @entities.entities[human.mateId]
+                #make sure father still exists
+                @entities.entities[human.mateId].components.human.children.push(newEntity.id)
+            
+            return newEntity
+        
+        #--------------------------------
         #Attempt conception
         #--------------------------------
         conceive: (entity, neighbors)->
@@ -56,6 +94,14 @@ define(['entity', 'systems/human'], (Entity, Human)->
            
             if human.isPregnant
                 return true
+            
+            #TEMPORARY - LIMIT NUMBER OF CHILDREN BORN
+            if human.children.length > 4
+                return false
+            
+            #LIMIT TOTAL POPULATION
+            if Object.keys(@entities.entitiesIndex.human).length > 160
+                return false
 
             if human.sex == 'male' or human.age < 20 or human.age > 64 or resources < 15
                 return false
@@ -121,46 +167,11 @@ define(['entity', 'systems/human'], (Entity, Human)->
                         continue
                     
             return human.mateId?
-        #--------------------------------
-        #Make a baby
-        #--------------------------------
-        makeBaby: (entity, neighbors)->
-            #Makes a new entity based on the parent entities
-            human = entity.components.human
-            
-            #Reset the human's pregnancy status
-            human.isPregnant = false
-            human.gestationTimeLeft = human.gestationLength
-            
-            #Make a baby
-            newEntity = new Entity()
-            #Inherit parent components
-            newEntity.addComponents(entity.getComponentNames())
-            if newEntity.hasComponent('userMovable')
-                newEntity.removeComponent('userMovable')
-            
-            #Derive position from current entity position
-            newEntity.components.position = entity.components.position.copy()
-
-            #Keep track of a family tree - entities can't inbreed
-            newEntity.components.human.family.push(entity.id)
-            newEntity.components.human.family.push(human.mateId)
-            
-            #add to the entities list
-            @entities.add(newEntity)
-            
-            #Keep track of the children this entity has
-            human.children.push(newEntity.id)
-            
-            #and the children for the father
-            if @entities.entities[human.mateId]
-                #make sure father still exists
-                @entities.entities[human.mateId].components.human.children.push(newEntity.id)
-            
-            return newEntity
 
         #--------------------------------
+        #
         #Tick function
+        #
         #--------------------------------
         tick: (delta)->
             #Go through all spawners 
@@ -178,6 +189,7 @@ define(['entity', 'systems/human'], (Entity, Human)->
                 #NOTE: not far enough
                 
                 neighbors = entity.components.world.getNeighbors(3)
+
                 canBirth = @canBirth(entity, neighbors)
 
                 #Make a baby
