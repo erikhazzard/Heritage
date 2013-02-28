@@ -18,7 +18,9 @@
         if (resources > 0) {
           resources -= entity.components.zombie.decayRate;
         }
-        resources += this.updateResourcesFromCombat(entity);
+        if (entity.components.combat) {
+          resources += this.updateResourcesFromCombat(entity);
+        }
         return resources;
       };
 
@@ -33,6 +35,24 @@
           resources += 10 * combat.damageDealt.length;
         }
         return resources;
+      };
+
+      Zombie.prototype.calculateHealth = function(entity) {
+        var combat, damage, health, resources, _i, _len, _ref;
+        health = entity.components.health.health;
+        combat = entity.components.combat;
+        resources = entity.components.resources.resources;
+        if (combat && combat.damageDealt.length > 0) {
+          _ref = combat.damageDealt;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            damage = _ref[_i];
+            health += damage[1] * 0.5 | 0;
+          }
+        }
+        if (resources && resources < 1) {
+          health -= 0.1;
+        }
+        return health;
       };
 
       Zombie.prototype.calculateMaxSpeed = function(entity) {
@@ -77,22 +97,37 @@
           combat.attack = combat.baseAttack;
           combat.defense = combat.baseDefense;
         }
+        if (combat.neighbors && combat.neighbors.zombie) {
+          combat.attack += combat.neighbors.zombie.length;
+          combat.defense += combat.neighbors.zombie.length * 1.2;
+        }
+        if (combat.neighbors && combat.neighbors.human) {
+          combat.attack -= combat.neighbors.human.length * 0.2;
+          combat.defense -= combat.neighbors.human.length * 1.2;
+        }
         return true;
       };
 
       Zombie.prototype.updateZombie = function(entity) {
-        var combat, health, physics, resources, zombie;
+        var combat, health, neighbors, physics, resources, zombie, zombies;
         zombie = entity.components.zombie;
         physics = entity.components.physics;
         health = entity.components.health;
         resources = entity.components.resources;
         combat = entity.components.combat;
         zombie.age += Zombie.ageSpeed;
+        neighbors = null;
         if (combat) {
           this.updateCombatComponent(entity);
+          if (combat.neighbors && combat.neighbors.zombie) {
+            neighbors = combat.neighbors.zombie;
+          }
         }
         if (resources) {
           resources.resources = this.calculateResources(entity);
+        }
+        if (health) {
+          health.health = this.calculateHealth(entity);
         }
         if (physics) {
           physics.maxSpeed = this.calculateMaxSpeed(entity);
@@ -102,6 +137,16 @@
         }
         if (zombie.isDead) {
           this.entities.remove(entity);
+          if (entity.components.userMovable) {
+            if (neighbors && neighbors.length > 0) {
+              this.entities.PC = neighbors[0];
+              this.entities.entities[neighbors[0]].addComponent('userMovable');
+            } else {
+              zombies = this.entities.entitiesIndex.zombie;
+              this.entities.PC = zombies[Object.keys(zombies)[0]].id;
+              zombies[Object.keys(zombies)[0]].addComponent('userMovable');
+            }
+          }
         }
         return true;
       };

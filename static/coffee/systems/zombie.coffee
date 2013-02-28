@@ -7,10 +7,10 @@
 #       physics
 #
 #   Zombie overview: 
-#       Does not naturally lose health, regardless of amount of resources
-#       If resources is 0, they won't fall below 0 but will slow down the 
-#       zombie's movement and attack / defense until it feeds on a human
-#       Does not naturally regain health either
+#       If resources is 0, zombie's movement and attack / defense until it 
+#       feeds on a human. Does not naturally regain health, damages to humans
+#       regend health.
+#       Loses health slowly when resources are depleted
 #============================================================================
 define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
     class Zombie
@@ -19,6 +19,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             @entities = entities
             return @
 
+        #--------------------------------
         #Helpers
         #--------------------------------
         calculateResources: (entity)->
@@ -28,7 +29,9 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #Resources decay naturally
             if resources > 0
                 resources -= (entity.components.zombie.decayRate)
-            resources += @updateResourcesFromCombat(entity)
+            
+            if entity.components.combat
+                resources += @updateResourcesFromCombat(entity)
 
             return resources
         
@@ -43,6 +46,23 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
                 resources += (10 * combat.damageDealt.length)
 
             return resources
+        
+        #HEALTH
+        #--------------------------------
+        calculateHealth: (entity)->
+            health = entity.components.health.health
+            combat = entity.components.combat
+            resources = entity.components.resources.resources
+            
+            if combat and combat.damageDealt.length > 0
+                for damage in combat.damageDealt
+                    health += damage[1] * 0.5 | 0
+                    
+            #Lower from resources
+            if resources and resources < 1
+                health -= 0.1
+
+            return health
 
         calculateMaxSpeed: (entity)->
             #Returns max speed based on various factors
@@ -64,6 +84,8 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
                 
             return maxSpeed
         
+        #Combat
+        #--------------------------------
         updateCombatComponent: (entity)->
             #Updats attack / defense based on resources
             combat = entity.components.combat
@@ -84,6 +106,16 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             else
                 combat.attack = combat.baseAttack
                 combat.defense = combat.baseDefense
+                
+            #The more neighbors, the more attack 
+            if combat.neighbors and combat.neighbors.zombie
+                combat.attack += combat.neighbors.zombie.length
+                combat.defense += (combat.neighbors.zombie.length * 1.2)
+                
+            #The more human neighbors, the less defense
+            if combat.neighbors and combat.neighbors.human
+                combat.attack -= (combat.neighbors.human.length * 0.2)
+                combat.defense -= (combat.neighbors.human.length * 1.2)
 
             return true
 
@@ -103,14 +135,24 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #  NOTE: Age doesn't affect zombies in any way
             zombie.age += Zombie.ageSpeed
             
+            neighbors = null
             #get attack / defense
             if combat
-                #If entity dealt damage, increase resources
+                #Update combat values based on resources
                 @updateCombatComponent(entity)
+                if combat.neighbors and combat.neighbors.zombie
+                    neighbors = combat.neighbors.zombie
                 
             #update resources
             if resources
+                #update resources b
                 resources.resources = @calculateResources(entity)
+                
+            #Update health based on preivously dealt damage
+            if health
+                #update health
+                health.health = @calculateHealth(entity)
+
             #Get max speed
             if physics
                 physics.maxSpeed = @calculateMaxSpeed(entity)
@@ -123,7 +165,20 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #------------------------
             if zombie.isDead
                 @entities.remove(entity)
-            
+                
+                #Transfer control to another zombie if this is a PC
+                if entity.components.userMovable
+                    #If there re neighbors, transfer control to one
+                    if neighbors and neighbors.length > 0
+                        @entities.PC = neighbors[0]
+                        @entities.entities[neighbors[0]].addComponent('userMovable')
+                    else
+
+                        #Transfer control to random zombie
+                        zombies = @entities.entitiesIndex.zombie
+                        @entities.PC = zombies[Object.keys(zombies)[0]].id
+                        zombies[Object.keys(zombies)[0]].addComponent('userMovable')
+                    
             return true
     
         #--------------------------------

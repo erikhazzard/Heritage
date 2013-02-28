@@ -34,16 +34,6 @@
         return this.isDead;
       };
 
-      Human.prototype.getInfectionChance = function(health, damageTaken) {
-        var chance;
-        chance = this.infectionScale(health);
-        if (this.age > 70) {
-          chance += 0.2;
-        }
-        chance += damageTaken * 0.001;
-        return chance;
-      };
-
       return Human;
 
     })();

@@ -29,12 +29,14 @@
       Game.prototype.start = function() {
         var entity, i;
         i = 0;
-        entity = Assemblages.zombie();
+        entity = Assemblages.human();
         entity.addComponent('userMovable');
         entity.components.position.x = 250;
         entity.components.position.y = 250;
+        entity.components.human.age = 20;
         entity.components.physics.maxSpeed = 20;
         this.entities.add(entity);
+        this.entities.PC = entity.id;
         while (i < 100) {
           if (Math.random() < 0.3) {
             entity = Assemblages.zombie();

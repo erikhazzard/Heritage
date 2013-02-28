@@ -16,11 +16,12 @@
         this.canvasHalfWidth = canvas.width / 2;
         this.canvasHalfHeight = canvas.height / 2;
         this.healthScale = d3.scale.linear().domain([0, 100]).range([0, 20]);
+        this.currentPC = null;
         return this;
       }
 
       Renderer.prototype.tick = function(delta) {
-        var alpha, entity, entityFill, healthSize, id, renderPosition, size, targetX, targetY, _ref, _ref1;
+        var alpha, entity, entityFill, healthSize, id, pc, renderPosition, size, targetX, targetY, _ref;
         canvas.width = canvas.width;
         miniMapCanvas.width = miniMapCanvas.width;
         this.camera = {
@@ -28,15 +29,21 @@
           y: 0,
           radius: 20
         };
-        _ref = this.entities.entitiesIndex['userMovable'];
+        pc = this.entities.entities[this.entities.PC];
+        if (pc !== this.currentPc) {
+          console.log('NEW PC');
+        }
+        this.currentPc = pc;
+        if (pc) {
+          this.camera.x = pc.components.position.x;
+          this.camera.y = pc.components.position.y;
+        } else {
+          this.camera.x = 0;
+          this.camera.y = 0;
+        }
+        _ref = this.entities.entitiesIndex['renderer'];
         for (id in _ref) {
           entity = _ref[id];
-          this.camera.x = entity.components.position.x;
-          this.camera.y = entity.components.position.y;
-        }
-        _ref1 = this.entities.entitiesIndex['renderer'];
-        for (id in _ref1) {
-          entity = _ref1[id];
           context.save();
           renderPosition = entity.components.position;
           size = entity.components.renderer.size;

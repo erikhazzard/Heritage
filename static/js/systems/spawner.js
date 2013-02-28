@@ -81,6 +81,9 @@
         if (human.mateId != null) {
           return false;
         }
+        if (human.age < 20) {
+          return false;
+        }
         for (_i = 0, _len = neighbors.length; _i < _len; _i++) {
           neighborId = neighbors[_i];
           neighbor = this.entities.entities[neighborId];
@@ -103,11 +106,15 @@
               continue;
             }
             if (!(neighborHuman.mateId != null)) {
-              if (Math.random() < human.findMateChance) {
-                neighborHuman.mateId = entity.id;
-                human.mateId = neighbor.id;
-              } else {
+              if (neighborHuman.age < 20) {
                 continue;
+              } else {
+                if (Math.random() < human.findMateChance) {
+                  neighborHuman.mateId = entity.id;
+                  human.mateId = neighbor.id;
+                } else {
+                  continue;
+                }
               }
             } else if (neighborHuman.mateId !== entity.id) {
               continue;

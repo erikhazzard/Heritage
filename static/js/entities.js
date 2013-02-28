@@ -10,6 +10,7 @@
         this.entities = {};
         this._currentId = 0;
         this.entitiesIndex = {};
+        this.PC = null;
         events.on('entity:component:added', function(data) {
           return _this.addToIndex(data.componentName, data.id);
         });

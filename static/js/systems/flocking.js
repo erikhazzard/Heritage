@@ -169,7 +169,7 @@
             this.flock(entity, neighbors.human);
           }
           if (entity.hasComponent('zombie')) {
-            this.flock(entity, neighbors.zombie, 0.5);
+            this.flock(entity, neighbors.zombie, 0.9);
           }
         }
         return this;

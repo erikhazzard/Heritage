@@ -5,8 +5,10 @@
 #
 #   components used:
 #       human
+#
+#   #TODO: CONSISTENT NEIGHBOR INTERFACE
 #============================================================================
-define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
+define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assemblages, WorldSystem)->
     class Living
         constructor: (entities)->
             @entities = entities
@@ -17,7 +19,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
         #Update helpers
         #
         #--------------------------------
-        calculateResources: (entity)->
+        calculateResources: (entity, neighbors)->
             #Base resource consumption on age and other factors
             #  TODO: Other factors.  higher strength, higher resource
             #  comsumption
@@ -38,9 +40,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
                     resources -= 0.05
                     
             ##Higher resource consumpation based on number of neighbors
-            #neighbors = entity.components.world.neighborsByRange[4]
-            #if neighbors.length > 1
-                #resources -= ((neighbors.length * neighbors.length) * 0.08)
+            resources -= ((neighbors.length) * 0.08)
                 
             return resources
         
@@ -109,7 +109,7 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             
             return maxSpeed
         
-        updateCombatProperties: (entity)->
+        updateCombatProperties: (entity, neighbors)->
             #Update various combat component properties
             human = entity.components.human
             combat = entity.components.combat
@@ -123,9 +123,36 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             else
                 combat.attack = combat.baseAttack
                 combat.defense = combat.baseAttack
+                
+            #More neighbors there are, the more defense and attack entity has
+            combat.defense += (((neighbors.length * neighbors.length) * 0.05) * 1.2)
+            combat.attack += (neighbors.length * 0.8)
 
             return true
 
+        updateZombieInfection: (entity, neighbors)->
+            #If the entity was damaged, there's a chance for infection
+            combat = entity.components.combat
+            human = entity.components.human
+            health = entity.components.health
+            human.hasZombieInfection = false
+            
+            #Healthier entity is, less chance it has for infection
+            if health
+                #Can only get infection if damage was done
+                if combat and combat.damageTaken.length > 0
+                    chance = human.infectionScale(health.health)
+                    if @age > 70
+                        chance += 0.5
+                    for damage in combat.damageTaken
+                        chance += (damage[1] * 0.05)
+                    #more zombies around, more chance
+                    chance += (neighbors.zombie.length * 0.01)
+                    
+                    if Math.random() < chance
+                        human.hasZombieInfection = true
+                        
+            return human.hasZombieInfection
         #--------------------------------
         #
         #Update logic
@@ -144,16 +171,22 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             #update properties
             human.age += human.ageSpeed
             
+            #TODO: HACK: Use world cell caching
+            neighbors = WorldSystem.prototype.getNeighborsByCreatureType(
+                entity, @entities, 4, ['world']
+            )
+            
             if physics
                 #Do stuff based on neighbors
-                neighbors = entity.components.world.getNeighbors(4)
-                @updateMaxSpeed(entity, neighbors)
+                @updateMaxSpeed(entity, neighbors.human)
             
             #Get resources
-            resources.resources = @calculateResources(entity)
+            resources.resources = @calculateResources(entity, neighbors.human)
             
             if combat
-                @updateCombatProperties(entity)
+                @updateCombatProperties(entity, neighbors.human)
+                #Check for chance of infection
+                @updateZombieInfection(entity, neighbors)
             
             #If entity is low on resources, make it not flock together so much
             if resources < 10
@@ -173,14 +206,15 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
             if human.isDead and human.hasZombieInfection
                 #Create a zombie from this human
                 newZombie = Assemblages.zombie()
-                    
+                newZombie.components.position.x = entity.components.position.x
+                newZombie.components.position.y = entity.components.position.y
+                
+                @entities.add(newZombie)
+
                 #Turn entity to a zombie
                 if entity.hasComponent('userMovable')
                     newZombie.addComponent('userMovable')
-                    
-                newZombie.components.position.x = entity.components.position.x
-                newZombie.components.position.y = entity.components.position.y
-                @entities.add(newZombie)
+                    @entities.PC = newZombie.id
                 
             #If the entity is dead, remove it
             #------------------------
@@ -195,8 +229,8 @@ define(['entity', 'assemblages/assemblages'], (Entity, Assemblages)->
                             child = @entities.entities[ human.children[i] ]
                             if child and child.hasComponent('human') and not child.components.human.isDead
                                 child.addComponent('userMovable')
+                                @entities.PC = child.id
                             break
-                    
 
                 #TODO: remove from children and family arrays
                 @entities.remove(entity)

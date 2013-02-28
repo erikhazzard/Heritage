@@ -125,6 +125,10 @@ define(['entity', 'systems/human'], (Entity, Human)->
             if human.mateId?
                 return false
             
+            #cannot find a mate if entity is below 20
+            if human.age < 20
+                return false
+            
             #Find a mate for this entity
             for neighborId in neighbors
                 neighbor = @entities.entities[neighborId]
@@ -156,12 +160,16 @@ define(['entity', 'systems/human'], (Entity, Human)->
                 
                     #Monogamus male
                     if not neighborHuman.mateId?
-                        #Some chance that they become mates
-                        if Math.random() < human.findMateChance
-                            neighborHuman.mateId = entity.id
-                            human.mateId = neighbor.id
-                        else
+                        #make sure neighbor is above 20
+                        if neighborHuman.age < 20
                             continue
+                        else
+                            #Some chance that they become mates
+                            if Math.random() < human.findMateChance
+                                neighborHuman.mateId = entity.id
+                                human.mateId = neighbor.id
+                            else
+                                continue
                         
                     else if neighborHuman.mateId != entity.id
                         continue
@@ -200,7 +208,6 @@ define(['entity', 'systems/human'], (Entity, Human)->
                 #find a mate for this entity if it doesn't have one
                 @findMate(entity, neighbors)
                 @conceive(entity, neighbors)
-                
                     
             return @
     

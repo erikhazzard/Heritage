@@ -33,12 +33,14 @@ define(['entity', 'entities', 'components/all',
             i=0
 
             #Create the PC's entity
-            entity = Assemblages.zombie()
+            entity = Assemblages.human()
             entity.addComponent('userMovable')
             entity.components.position.x = 250
             entity.components.position.y = 250
+            entity.components.human.age = 20
             entity.components.physics.maxSpeed = 20
             @entities.add(entity)
+            @entities.PC = entity.id
             
             #TODO: tweak this for testing
             while i < 100

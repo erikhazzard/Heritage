@@ -77,8 +77,10 @@
             if (isZombie) {
               targetGroup = 'human';
             }
+            combat.neighbors.length = 0;
+            combat.neighbors = neighbors;
             if (neighbors[targetGroup].length < 1) {
-              entity.components.combat.target = null;
+              combat.target = null;
             } else {
               targetEntityId = neighbors[targetGroup][0];
               if ((combatTarget != null) && this.entities.entities[combatTarget]) {
@@ -86,7 +88,7 @@
               } else {
                 targetEntity = this.entities.entities[targetEntityId];
               }
-              entity.components.combat.target = targetEntity.id;
+              combat.target = targetEntity.id;
               this.fight(entity, targetEntity);
             }
           }

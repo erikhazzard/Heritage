@@ -41,13 +41,13 @@
       };
 
       Physics.prototype.humanZombieBehavior = function(entity) {
-        var behaviorForce, behvaiorForce, neighbor, neighborId, neighbors, numHumans, numZombies, physics, pursuitDesire, scale, zombie, _i, _j, _len, _len1, _ref;
+        var behaviorForce, behvaiorForce, neighbor, neighborId, neighbors, numHumans, numZombies, physics, pursuitDesire, scale, _i, _j, _len, _len1, _ref;
         physics = entity.components.physics;
         behvaiorForce = new Vector(0, 0);
         if (entity.hasComponent('human') && this.entities.entitiesIndex.zombie) {
           numHumans = numZombies = 0;
           neighbors = [];
-          _ref = entity.components.world.getNeighbors(5);
+          _ref = entity.components.world.getNeighbors(10);
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             neighborId = _ref[_i];
             neighbor = this.entities.entities[neighborId];
@@ -78,15 +78,9 @@
               continue;
             }
             if (neighbor.hasComponent('zombie')) {
-              zombie = neighbor;
-              scale = (numHumans / 2.5) - numZombies;
+              scale = numHumans - numZombies;
               scale += pursuitDesire;
-              if (scale > 3.5) {
-                scale = 3.5;
-              } else if (scale < -6) {
-                scale = -6;
-              }
-              behaviorForce = physics.seekForce(zombie).multiply(scale);
+              behaviorForce = physics.seekForce(neighbor).multiply(scale);
               physics.applyForce(behaviorForce);
             }
           }
@@ -95,7 +89,7 @@
       };
 
       Physics.prototype.tick = function(delta) {
-        var chaseForce, child, childId, entity, human, id, mateId, neighbor, neighborId, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+        var chaseForce, child, childId, childPhysics, entity, human, id, mateId, matePhysics, neighbor, neighborId, physics, zombie, _i, _j, _len, _len1, _ref, _ref1, _ref2;
         _ref = this.entities.entitiesIndex['physics'];
         for (id in _ref) {
           entity = _ref[id];
@@ -106,11 +100,16 @@
             }
             if (entity.hasComponent('human') && !entity.hasComponent('userMovable')) {
               this.humanZombieBehavior(entity);
+              if (this.entities.entities[this.entities.PC]) {
+                physics.applyForce(physics.seekForce(this.entities.entities[this.entities.PC], 80, false).multiply(1));
+              }
               human = entity.components.human;
               mateId = human.mateId;
               if (mateId !== null) {
                 if (this.entities.entities[mateId]) {
-                  physics.applyForce(physics.seekForce(this.entities.entities[mateId], 700, true).multiply(2));
+                  physics.applyForce(physics.seekForce(this.entities.entities[mateId], 700, true).multiply(1.1));
+                  matePhysics = this.entities.entities[mateId].components.physics;
+                  matePhysics.applyForce(matePhysics.seekForce(entity, 700, true).multiply(1.1));
                 }
               }
               if (human.children.length > 0) {
@@ -119,7 +118,9 @@
                   childId = _ref1[_i];
                   child = this.entities.entities[childId];
                   if (child && child.components.human.age < 10) {
-                    physics.applyForce(physics.seekForce(child).multiply(1.4));
+                    physics.applyForce(physics.seekForce(child).multiply(1.3));
+                    childPhysics = child.components.physics;
+                    childPhysics.applyForce(childPhysics.seekForce(entity).multiply(1.3));
                   }
                 }
               }
@@ -132,6 +133,15 @@
                 neighbor = this.entities.entities[neighborId];
                 if (!(neighbor != null)) {
                   continue;
+                }
+                if (neighbor.id === this.entities.PC) {
+                  chaseForce = physics.seekForce(neighbor).multiply(4);
+                  entity.components.physics.applyForce(chaseForce);
+                  if (neighbor.components.zombie) {
+                    if (neighbor.components.zombie.group.indexOf(entity.id) === -1) {
+                      neighbor.components.zombie.group.push(entity.id);
+                    }
+                  }
                 }
                 if (neighbor.hasComponent('human')) {
                   chaseForce = physics.seekForce(neighbor).multiply(5);

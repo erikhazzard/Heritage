@@ -37,6 +37,8 @@ define([], ()->
             #Keep track of any damage taken and dealt(per tick)
             @damageTaken = []
             @damageDealt = []
+            
+            @neighbors = []
 
     return Combat
 )

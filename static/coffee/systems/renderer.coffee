@@ -23,6 +23,7 @@ define(['components/world'], (World)->
             @healthScale = d3.scale.linear()
                 .domain([0, 100])
                 .range([0, 20])
+            @currentPC = null
             return @
             
         tick: (delta)=>
@@ -37,9 +38,22 @@ define(['components/world'], (World)->
             
             #Setup camera
             #TODO: Should only center camera on one entity...
-            for id, entity of @entities.entitiesIndex['userMovable']
-                @camera.x = entity.components.position.x
-                @camera.y = entity.components.position.y
+            #for id, entity of @entities.entitiesIndex['userMovable']
+                #@camera.x = entity.components.position.x
+                #@camera.y = entity.components.position.y
+
+            pc = @entities.entities[@entities.PC]
+            #TODO: check for change of player control
+            if pc != @currentPc
+                console.log('NEW PC')
+                
+            @currentPc = pc
+            if pc
+                @camera.x = pc.components.position.x
+                @camera.y = pc.components.position.y
+            else
+                @camera.x = 0
+                @camera.y = 0
             
             #Renders to the canvas. Ideally, we'd use events here
             for id, entity of @entities.entitiesIndex['renderer']

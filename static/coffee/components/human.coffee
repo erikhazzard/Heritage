@@ -67,16 +67,6 @@ define(['lib/d3'], (d3)->
             if health <= 0
                 @isDead = true
             return @isDead
-        
-        getInfectionChance: (health, damageTaken)->
-            #Lower health is, higher chance for infection
-            #Older age, higher infection chance
-            chance = @infectionScale(health)
-            if @age > 70
-                chance += 0.2
-                
-            chance += (damageTaken * 0.001)
-            return chance
 
     return Human
 )

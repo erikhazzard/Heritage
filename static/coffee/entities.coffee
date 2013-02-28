@@ -14,6 +14,9 @@ define(['events'], (events)->
             #  used in systems
             @entitiesIndex = { }
             
+            #reference to player controlled entity. TODO: Do this differently?
+            @PC = null
+            
             #Listen for events, update entities when an entity changes
             events.on('entity:component:added', (data)=>
                 @addToIndex(data.componentName, data.id)

@@ -6,7 +6,11 @@
 
 -ADD INTERNAL COUNT FOR ENTITIES
 -WORLD CELL NEIGHBORS OPTIMIZATIONS
+    -to fix: get neighbors in combat
+        -in human and zombie systems, uses neighbors from combat
 -Human / zombie chase / flee behavior - make much bigger
+-Human system - consisten neighbors interface
+
 
 
 

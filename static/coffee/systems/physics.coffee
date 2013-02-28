@@ -81,7 +81,8 @@ define(['components/vector'], (Vector)->
                 #
                 #First we need to count number of zombies and human neighbors
                 neighbors = []
-                for neighborId in entity.components.world.getNeighbors(5)
+                #TODO: WORLD CELL NEIGHBOR CACHING
+                for neighborId in entity.components.world.getNeighbors(10)
                     neighbor = @entities.entities[neighborId]
                     if not neighbor?
                         continue
@@ -114,21 +115,13 @@ define(['components/vector'], (Vector)->
 
                     #if it's a zombie
                     if neighbor.hasComponent('zombie')
-                        zombie = neighbor
-                        scale = (numHumans / 2.5) - numZombies
+                        scale = numHumans - numZombies
                         scale += pursuitDesire
                         
-                        #don't go too crazy pursuing zombies
-                        if scale > 3.5
-                            scale = 3.5
-                        #or too crazy gettings away
-                        else if scale < -6
-                            scale = -6
-
                         #Apply the force. If it's positive, the human chases
                         #  zombie. If negative, human flees
                         behaviorForce = physics.seekForce(
-                            zombie
+                            neighbor
                         ).multiply(scale)
                         #add it
                         physics.applyForce(
@@ -163,6 +156,16 @@ define(['components/vector'], (Vector)->
                     if entity.hasComponent('human') and not entity.hasComponent('userMovable')
                         # Flee or Pusue zombies
                         @humanZombieBehavior(entity)
+                        
+                        #seek out PC
+                        if @entities.entities[@entities.PC]
+                            physics.applyForce(
+                                physics.seekForce(
+                                    @entities.entities[@entities.PC],
+                                    #override how far to seek out a mate
+                                    80, false
+                                ).multiply(1)
+                            )
 
                         #Human - Seek out mate and children
                         #------------------------
@@ -178,7 +181,16 @@ define(['components/vector'], (Vector)->
                                         @entities.entities[mateId],
                                         #override how far to seek out a mate
                                         700, true
-                                    ).multiply(2)
+                                    ).multiply(1.1)
+                                )
+                                #make mate seek out this entity
+                                matePhysics = @entities.entities[mateId].components.physics
+                                matePhysics.applyForce(
+                                    matePhysics.seekForce(
+                                        entity,
+                                        #override how far to seek out a mate
+                                        700, true
+                                    ).multiply(1.1)
                                 )
                                 
                         #CHILDREN
@@ -187,10 +199,19 @@ define(['components/vector'], (Vector)->
                                 child = @entities.entities[childId]
                                 #Stay near the child if the child isn't too old
                                 if child and child.components.human.age < 10
+                                    #Make the human seek the child
                                     physics.applyForce(
                                         physics.seekForce(
                                             child
-                                        ).multiply(1.4)
+                                        ).multiply(1.3)
+                                    )
+                                    
+                                    #make the child seek the parent (this entity)
+                                    childPhysics = child.components.physics
+                                    childPhysics.applyForce(
+                                        childPhysics.seekForce(
+                                            entity
+                                        ).multiply(1.3)
                                     )
                     #------------------------
                     #ZOMBIE movement - TODO: own system?
@@ -203,6 +224,21 @@ define(['components/vector'], (Vector)->
                             neighbor = @entities.entities[neighborId]
                             if not neighbor?
                                 continue
+                            
+                            #try to chase PC
+                            if neighbor.id == @entities.PC
+                                #Chase user movable component
+                                chaseForce = physics.seekForce(
+                                    neighbor
+                                ).multiply(4)
+                                entity.components.physics.applyForce(
+                                    chaseForce
+                                )
+                                #keep track of friends
+                                if neighbor.components.zombie
+                                    if neighbor.components.zombie.group.indexOf(entity.id) == -1
+                                        neighbor.components.zombie.group.push(entity.id)
+
                             if neighbor.hasComponent('human')
                                 #Chase human
                                 chaseForce = physics.seekForce(

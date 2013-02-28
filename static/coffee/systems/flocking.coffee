@@ -231,7 +231,7 @@ define(['components/vector', 'components/physics', 'systems/world'], (
                     @flock(
                         entity,
                         neighbors.zombie
-                        0.5
+                        0.9
                     )
 
             return @

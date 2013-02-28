@@ -23,6 +23,7 @@
         this.target = null;
         this.damageTaken = [];
         this.damageDealt = [];
+        this.neighbors = [];
       }
 
       return Combat;

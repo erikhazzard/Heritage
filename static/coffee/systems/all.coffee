@@ -63,6 +63,8 @@ define([
                 
                 #------------------------
                 #Check for living / dead state
+                #   NOTE: This must happen after world and combat, as those
+                #   systems set up various properites like getting neighbors
                 #------------------------
                 new Human(@entities)
                 new Zombie(@entities)

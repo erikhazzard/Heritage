@@ -129,14 +129,18 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
                     if isZombie
                         targetGroup = 'human'
 
+                    #Store reference to neighbors, used in components
+                    combat.neighbors.length = 0
+                    combat.neighbors = neighbors
+                    
                     #Reset target if there are no neighbors
                     if neighbors[targetGroup].length < 1
-                        entity.components.combat.target = null
+                        combat.target = null
                     else
                         #There's at least one neighbor, so use it as the new 
                         #target
                         targetEntityId = neighbors[targetGroup][0]
-
+                        
                         #Try to fight the same target
                         if combatTarget? and @entities.entities[combatTarget]
                             targetEntity = @entities.entities[combatTarget]
@@ -144,7 +148,7 @@ define(['components/world', 'systems/world'], (World, WorldSystem)->
                             targetEntity = @entities.entities[targetEntityId]
 
                         #Set the target to the first entity found
-                        entity.components.combat.target = targetEntity.id
+                        combat.target = targetEntity.id
 
                         @fight(entity, targetEntity)
                     

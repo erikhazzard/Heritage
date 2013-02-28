@@ -16,8 +16,21 @@
           entity1.components.resources.resources = 100;
           entity2 = Assemblages.human();
           entities.add(entity1).add(entity2);
-          resources = human.calculateResources(entity1) < 100;
+          resources = human.calculateResources(entity1, []) < 100;
           return resources.should.be["true"];
+        });
+      });
+      describe('updateCombatProperties()', function() {
+        var entity1, human;
+        human = new Human();
+        entity1 = Assemblages.human();
+        entity1.components.combat.attack = 10;
+        entity1.components.combat.baseAttack = 10;
+        entity1.components.combat.defense = 10;
+        entity1.components.combat.baseDefense = 10;
+        entity1.components.human.age = 1;
+        return it('Should calculate base attack / defense', function() {
+          return human.updateCombatProperties(entity1, []);
         });
       });
       return describe('updateCombatProperties()', function() {
@@ -29,9 +42,8 @@
         entity1.components.combat.defense = 10;
         entity1.components.combat.baseDefense = 10;
         entity1.components.human.age = 1;
-        return it('Should calculate base attack / defense', function() {
-          human.updateCombatProperties(entity1);
-          return console.log(entity1.components.combat.attack);
+        return it('Should check zombie infection', function() {
+          return human.updateZombieInfection(entity1).should.be["false"];
         });
       });
     });

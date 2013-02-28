@@ -6,7 +6,7 @@
     Assemblages = {
       baseCreature: function() {
         var entity;
-        entity = new Entity().addComponent('world').addComponent('position').addComponent('physics').addComponent('health').addComponent('resources').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
+        entity = new Entity().addComponent('world').addComponent('position').addComponent('health').addComponent('resources').addComponent('physics').addComponent('randomWalker').addComponent('flocking').addComponent('renderer');
         return entity;
       },
       human: function() {
