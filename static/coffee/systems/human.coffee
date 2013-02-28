@@ -6,6 +6,17 @@
 #   components used:
 #       human
 #
+#   OVERVIEW:
+#       Human will age lose health quickly as human ages
+#       Will get more health slowly over time.
+#       Will increase attack and defense slowly after taking or receiving
+#         damage
+#       Can make babies (spawner class)
+#       Can get a zombie infection (based on damage received and mitigated
+#           by defense)
+#       When dies, if entity is user controlled, will pass control to a
+#           child
+#
 #   #TODO: CONSISTENT NEIGHBOR INTERFACE
 #============================================================================
 define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assemblages, WorldSystem)->
@@ -51,11 +62,12 @@ define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assembla
             resources = entity.components.resources.resources
             health = entity.components.health.health
 
-            #Subtract health if resources are scarce
-            if resources < 0
-                health -= (0.1 + Math.abs(resources * 0.02) )
+            #Testing how behavior works if resources aren't involved
+            ##Subtract health if resources are scarce
+            #if resources < 0
+                #health -= (0.1 + Math.abs(resources * 0.02) )
                 
-            #If entity is old, subtract health
+            ##If entity is old, subtract health
             if human.age > 70
                 health -= (0.1 + (human.age * 0.005))
                 
@@ -63,6 +75,7 @@ define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assembla
                 #much greater chance of death older entity is
                 if Math.random() < 0.1
                     health = -1
+            health += 0.01
 
             #If it has an infection, decrease health
             if human.hasZombieInfection
@@ -92,7 +105,7 @@ define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assembla
                 maxSpeed = 3
                 
             #TODO: should this go here...
-            maxSpeed = maxSpeed - (neighbors.length * 0.5)
+            maxSpeed = maxSpeed - (neighbors.length * 0.9)
             if maxSpeed < 0
                 maxSpeed = 1
                 
@@ -113,7 +126,19 @@ define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assembla
             #Update various combat component properties
             human = entity.components.human
             combat = entity.components.combat
+                
+            #Update combat stats based on damage done / recieved
+            if combat.damageTaken
+                for damage in combat.damageTaken
+                    #damage is in format of [entity, damageAmount]
+                    combat.baseDefense += (damage[1] * 0.005)
+                    
+            if combat.damageDealt
+                for damage in combat.damageDealt
+                    #damage is in format of [entity, damageAmount]
+                    combat.baseAttack += (damage[1] * 0.002)
             
+            #Update combat stats based on age
             if human.age <= 10
                 combat.attack = combat.baseAttack / (human.age * 0.1)
                 combat.defense = combat.baseDefense / (human.age * 0.1)
@@ -125,9 +150,9 @@ define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assembla
                 combat.defense = combat.baseAttack
                 
             #More neighbors there are, the more defense and attack entity has
-            combat.defense += (((neighbors.length * neighbors.length) * 0.05) * 1.2)
+            combat.defense += (((neighbors.length * neighbors.length) * 0.05) * 1)
             combat.attack += (neighbors.length * 0.8)
-
+            
             return true
 
         updateZombieInfection: (entity, neighbors)->
@@ -144,13 +169,22 @@ define(['entity', 'assemblages/assemblages', 'systems/world'], (Entity, Assembla
                     chance = human.infectionScale(health.health)
                     if @age > 70
                         chance += 0.5
-                    for damage in combat.damageTaken
-                        chance += (damage[1] * 0.05)
+                    #Decrease chance based on defense
+                    chance -= combat.defense * 0.03
                     #more zombies around, more chance
                     chance += (neighbors.zombie.length * 0.01)
                     
-                    if Math.random() < chance
-                        human.hasZombieInfection = true
+                    #For each damage taken, calculate infection chance
+                    for damage in combat.damageTaken
+                        chance += (damage[1] * 0.05)
+                        if Math.random() < chance
+                            human.hasZombieInfection = true
+                            #keep track of who infected human
+                            human.zombieInfector = damage[0]
+                            #Keep track of this entity the zombie infects
+                            @entities.entities[human.zombieInfector].components.zombie.humansInfected.push(
+                                entity.id
+                            )
                         
             return human.hasZombieInfection
         #--------------------------------

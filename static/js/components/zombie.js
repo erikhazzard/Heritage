@@ -16,6 +16,7 @@
         this.group = [];
         this.isDead = false;
         this.decayRate = params.decayRate || Math.abs(d3.random.normal(0.4, 0.05)());
+        this.humansInfected = [];
       }
 
       Zombie.prototype.getIsDead = function(health) {

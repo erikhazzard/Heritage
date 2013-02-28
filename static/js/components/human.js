@@ -23,6 +23,7 @@
         this.family = [];
         this.hasZombieInfection = false;
         this.infectionScale = d3.scale.linear().domain([0, 100]).range([0.3, 0.001]).clamp(true);
+        this.zombieInfector = null;
         this.strength = Math.random() * 20 | 0;
         this.agility = Math.random() * 20 | 0;
       }

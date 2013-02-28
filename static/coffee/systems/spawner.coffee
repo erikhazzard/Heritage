@@ -103,7 +103,7 @@ define(['entity', 'systems/human'], (Entity, Human)->
             if Object.keys(@entities.entitiesIndex.human).length > 160
                 return false
 
-            if human.sex == 'male' or human.age < 20 or human.age > 64 or resources < 15
+            if human.sex == 'male' or human.age < 20 or human.age > 64 
                 return false
 
             if human.mateId?
@@ -123,7 +123,11 @@ define(['entity', 'systems/human'], (Entity, Human)->
 
             #If it has a mate, return false
             if human.mateId?
-                return false
+                if @entities.entities[human.mateId]
+                    return false
+                else
+                    #If the mate is dead, allow human to mate
+                    human.mateId = null
             
             #cannot find a mate if entity is below 20
             if human.age < 20

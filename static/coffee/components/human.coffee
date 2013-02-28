@@ -55,6 +55,8 @@ define(['lib/d3'], (d3)->
                 .domain([0, 100])
                 .range([0.3,0.001])
                 .clamp(true)
+            #zombies responsible for infection
+            @zombieInfector = null
             
             #----------------------------
             #Stats

@@ -61,7 +61,7 @@
         if (Object.keys(this.entities.entitiesIndex.human).length > 160) {
           return false;
         }
-        if (human.sex === 'male' || human.age < 20 || human.age > 64 || resources < 15) {
+        if (human.sex === 'male' || human.age < 20 || human.age > 64) {
           return false;
         }
         if (human.mateId != null) {
@@ -79,7 +79,11 @@
         var human, neighbor, neighborHuman, neighborId, parentIndex, _i, _len, _ref;
         human = entity.components.human;
         if (human.mateId != null) {
-          return false;
+          if (this.entities.entities[human.mateId]) {
+            return false;
+          } else {
+            human.mateId = null;
+          }
         }
         if (human.age < 20) {
           return false;

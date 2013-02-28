@@ -34,6 +34,8 @@ define(['lib/d3'], (d3)->
             #If the zombie is killed / dead
             @isDead = false
             @decayRate = params.decayRate || Math.abs(d3.random.normal(0.4,0.05)())
+            
+            @humansInfected = []
         
         getIsDead: (health)->
             #If zombie has too low resources OR health < 0, it's dead

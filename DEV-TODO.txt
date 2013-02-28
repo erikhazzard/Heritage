@@ -11,7 +11,11 @@
 -Human / zombie chase / flee behavior - make much bigger
 -Human system - consisten neighbors interface
 
+-ZOMBIE system - only transfer control to one of the infected humans(?)
 
+-TESTING humans not needing resources and regening health slowly over time
+
+-HUMAN SYSTEM: GREATER infection chance if zombie is PC
 
 
 ### World ###

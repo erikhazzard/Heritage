@@ -33,9 +33,6 @@
         human = entity.components.human;
         resources = entity.components.resources.resources;
         health = entity.components.health.health;
-        if (resources < 0) {
-          health -= 0.1 + Math.abs(resources * 0.02);
-        }
         if (human.age > 70) {
           health -= 0.1 + (human.age * 0.005);
         }
@@ -44,6 +41,7 @@
             health = -1;
           }
         }
+        health += 0.01;
         if (human.hasZombieInfection) {
           health -= 5;
         }
@@ -66,7 +64,7 @@
         } else {
           maxSpeed = 3;
         }
-        maxSpeed = maxSpeed - (neighbors.length * 0.5);
+        maxSpeed = maxSpeed - (neighbors.length * 0.9);
         if (maxSpeed < 0) {
           maxSpeed = 1;
         }
@@ -80,9 +78,23 @@
       };
 
       Living.prototype.updateCombatProperties = function(entity, neighbors) {
-        var combat, human;
+        var combat, damage, human, _i, _j, _len, _len1, _ref, _ref1;
         human = entity.components.human;
         combat = entity.components.combat;
+        if (combat.damageTaken) {
+          _ref = combat.damageTaken;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            damage = _ref[_i];
+            combat.baseDefense += damage[1] * 0.005;
+          }
+        }
+        if (combat.damageDealt) {
+          _ref1 = combat.damageDealt;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            damage = _ref1[_j];
+            combat.baseAttack += damage[1] * 0.002;
+          }
+        }
         if (human.age <= 10) {
           combat.attack = combat.baseAttack / (human.age * 0.1);
           combat.defense = combat.baseDefense / (human.age * 0.1);
@@ -93,7 +105,7 @@
           combat.attack = combat.baseAttack;
           combat.defense = combat.baseAttack;
         }
-        combat.defense += ((neighbors.length * neighbors.length) * 0.05) * 1.2;
+        combat.defense += ((neighbors.length * neighbors.length) * 0.05) * 1;
         combat.attack += neighbors.length * 0.8;
         return true;
       };
@@ -110,14 +122,17 @@
             if (this.age > 70) {
               chance += 0.5;
             }
+            chance -= combat.defense * 0.03;
+            chance += neighbors.zombie.length * 0.01;
             _ref = combat.damageTaken;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               damage = _ref[_i];
               chance += damage[1] * 0.05;
-            }
-            chance += neighbors.zombie.length * 0.01;
-            if (Math.random() < chance) {
-              human.hasZombieInfection = true;
+              if (Math.random() < chance) {
+                human.hasZombieInfection = true;
+                human.zombieInfector = damage[0];
+                this.entities.entities[human.zombieInfector].components.zombie.humansInfected.push(entity.id);
+              }
             }
           }
         }
